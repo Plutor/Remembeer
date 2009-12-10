@@ -1,0 +1,12 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string name="app_name">Beer Log</string>
+
+    <string name="beername">Beer name:</string>
+    <string name="container">Container:</string>
+<string name="container_prompt">Choose the container</string>
+<string name="drink_now">Drink now</string>
+<string name="drink_tenminago">10 minutes ago</string>
+<string name="drink_specifytime">Specify time</string>
+<string name="drink_when">Drink when:</string>
+</resources>
