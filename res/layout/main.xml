@@ -32,19 +32,9 @@
 	    android:text="@string/drink_when"
 	    />
     
-	<RadioGroup xmlns:android="http://schemas.android.com/apk/res/android"
-	    android:orientation="vertical"
-	    android:layout_width="fill_parent"
-	    android:layout_height="wrap_content"
-	    >
-	    <RadioButton android:id="@+id/drink_now"
-		    android:text="@string/drink_now"
-        	/>
-	    <RadioButton android:id="@+id/drink_tenminago"
-		    android:text="@string/drink_tenminago"
-        	/>
-	    <RadioButton android:id="@+id/drink_specifytime"
-		    android:text="@string/drink_specifytime"
-        	/>
-	</RadioGroup>
+    <Spinner android:id="@+id/drinkwhen"
+        android:layout_width="fill_parent"
+        android:layout_height="wrap_content"
+        android:drawSelectorOnTop="true"
+        android:prompt="@string/drink_when_prompt" />
 </LinearLayout>

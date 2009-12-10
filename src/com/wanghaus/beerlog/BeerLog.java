@@ -27,9 +27,11 @@ public class BeerLog extends Activity {
         containerAdapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
         containerSpinner.setAdapter(containerAdapter);
         
-        //CompoundButton button1 = (CompoundButton) findViewById(R.id.drink_now);
-        //CompoundButton button2 = (CompoundButton) findViewById(R.id.drink_tenminago);
-        //CompoundButton button3 = (CompoundButton) findViewById(R.id.drink_specifytime);
-        
+        // Drinkwhen dropdown
+        Spinner drinkWhenSpinner = (Spinner) findViewById(R.id.drinkwhen);
+        ArrayAdapter drinkWhenAdapter = ArrayAdapter.createFromResource(this,
+                R.array.drinkwhens, android.R.layout.simple_spinner_item);
+        drinkWhenAdapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
+        drinkWhenSpinner.setAdapter(drinkWhenAdapter);
     }
 }

@@ -55,4 +55,11 @@
    	    <item>Triple Bock</item>
    	    <item>Utica Club</item>
     </string-array>
+    
+    <string-array name="drinkwhens">
+    	<item>Drink now</item>
+    	<item>Ten minutes ago</item>
+    	<item>Last night</item>
+    	<item>Specify time...</item>
+    </string-array>
 </resources>
