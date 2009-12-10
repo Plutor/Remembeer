@@ -1,13 +1,12 @@
-package com.plutor.helloandroid;
+package com.wanghaus.beerlog;
 
 import android.app.Activity;
 import android.os.Bundle;
 import android.widget.ArrayAdapter;
 import android.widget.AutoCompleteTextView;
-import android.widget.CompoundButton;
 import android.widget.Spinner;
 
-public class HelloAndroid extends Activity {
+public class BeerLog extends Activity {
 	
     /** Called when the activity is first created. */
     @Override
