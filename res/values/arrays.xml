@@ -60,6 +60,6 @@
     	<item>Drink now</item>
     	<item>Ten minutes ago</item>
     	<item>Last night</item>
-    	<item>Specify time...</item>
+    	<item>Specify date and time...</item>
     </string-array>
 </resources>
