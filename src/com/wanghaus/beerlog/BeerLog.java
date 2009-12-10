@@ -1,12 +1,33 @@
 package com.wanghaus.beerlog;
 
 import android.app.Activity;
+import android.app.Dialog;
+import android.app.TimePickerDialog;
 import android.os.Bundle;
+import android.view.View;
+import android.widget.AdapterView;
 import android.widget.ArrayAdapter;
 import android.widget.AutoCompleteTextView;
 import android.widget.Spinner;
+import android.widget.TimePicker;
+import android.widget.AdapterView.OnItemSelectedListener;
 
 public class BeerLog extends Activity {
+	private static final int DATETIME_DIALOG_ID = 0;
+	
+	private Spinner drinkWhenSpinner;
+	private int hour;
+	private int minute;
+
+	private TimePickerDialog.OnTimeSetListener timeSetListener =
+	    new TimePickerDialog.OnTimeSetListener() {
+	        public void onTimeSet(TimePicker view, int hourOfDay, int minuteArg) {
+	            hour = hourOfDay;
+	            minute = minuteArg;
+	            
+	            // TODO - Add to the drinkWhenSpinner dropdown
+	        }
+	    };
 	
     /** Called when the activity is first created. */
     @Override
@@ -28,10 +49,39 @@ public class BeerLog extends Activity {
         containerSpinner.setAdapter(containerAdapter);
         
         // Drinkwhen dropdown
-        Spinner drinkWhenSpinner = (Spinner) findViewById(R.id.drinkwhen);
+        drinkWhenSpinner = (Spinner) findViewById(R.id.drinkwhen);
         ArrayAdapter drinkWhenAdapter = ArrayAdapter.createFromResource(this,
                 R.array.drinkwhens, android.R.layout.simple_spinner_item);
         drinkWhenAdapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
         drinkWhenSpinner.setAdapter(drinkWhenAdapter);
+        drinkWhenSpinner.setOnItemSelectedListener( new OnItemSelectedListener() {
+			public void onItemSelected(AdapterView<?> parent, View view,
+					int selected, long id) {
+				if (selected == 3) {
+					// Show the date time popup
+					showDialog(DATETIME_DIALOG_ID);
+				} else {
+					removeSpecificTime();
+				}
+			}
+
+			public void onNothingSelected(AdapterView<?> parent) {
+				removeSpecificTime(); 
+			}
+			
+			public void removeSpecificTime() {
+				// TODO - Remove the 4th option if it exists
+			}
+        });
+    }
+    
+    @Override
+    protected Dialog onCreateDialog(int id) {
+        switch (id) {
+        case DATETIME_DIALOG_ID:
+            return new TimePickerDialog(this,
+                    timeSetListener, hour, minute, false);
+        }
+        return null;
     }
 }
