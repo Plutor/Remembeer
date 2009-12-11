@@ -10,4 +10,6 @@
 
 <string name="drink_when">Drink when:</string>
 <string name="drink_when_prompt">Choose a time</string>
+<string name="save">Save beer!</string>
+<string name="skip">Cancel</string>
 </resources>
