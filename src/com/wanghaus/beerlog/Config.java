@@ -7,6 +7,6 @@ public class Config extends Activity {
     @Override
     public void onCreate(Bundle savedInstanceState) {
     	super.onCreate(savedInstanceState);
-        setContentView(R.layout.stats);
+        setContentView(R.layout.config);
     }
 }
