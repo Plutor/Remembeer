@@ -12,4 +12,6 @@
 <string name="drink_when_prompt">Choose a time</string>
 <string name="save">Save beer!</string>
 <string name="skip">Cancel</string>
+<string name="stats_placeholder">This is where the stats tab goes</string>
+<string name="config_placeholder">This is where the config tab goes</string>
 </resources>

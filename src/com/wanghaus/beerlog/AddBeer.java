@@ -18,7 +18,7 @@ import android.widget.Spinner;
 import android.widget.TimePicker;
 import android.widget.AdapterView.OnItemSelectedListener;
 
-public class BeerLog extends Activity {
+public class AddBeer extends Activity {
 	private static final int DATE_DIALOG_ID = 0;
 	private static final int TIME_DIALOG_ID = 1;
 	
@@ -55,7 +55,7 @@ public class BeerLog extends Activity {
     @Override
     public void onCreate(Bundle savedInstanceState) {
     	super.onCreate(savedInstanceState);
-        setContentView(R.layout.main);
+        setContentView(R.layout.addbeer);
         
         // Beer name autocomplete text field
         AutoCompleteTextView textView = (AutoCompleteTextView) findViewById(R.id.beername);
