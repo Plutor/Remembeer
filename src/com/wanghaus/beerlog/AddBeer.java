@@ -8,11 +8,13 @@ import android.app.Activity;
 import android.app.DatePickerDialog;
 import android.app.Dialog;
 import android.app.TimePickerDialog;
+import android.content.Intent;
 import android.os.Bundle;
 import android.view.View;
 import android.widget.AdapterView;
 import android.widget.ArrayAdapter;
 import android.widget.AutoCompleteTextView;
+import android.widget.Button;
 import android.widget.DatePicker;
 import android.widget.Spinner;
 import android.widget.TimePicker;
@@ -108,6 +110,25 @@ public class AddBeer extends Activity {
 	        		drinkWhenAdapter.remove( drinkWhenAdapter.getItem(4) );
 			}
         });
+        
+        // Save button
+        Button saveButton = (Button) findViewById(R.id.save);
+        
+        saveButton.setOnClickListener(new View.OnClickListener() {
+            public void onClick(View view) {
+            	saveBeer();
+            }
+        });
+    }
+    
+    private void saveBeer() {
+    	Intent nextIntent = new Intent(this, AddBeerDone.class);
+
+    	// TODO - do we fill a bundle, or do we actually save here?
+    	Bundle bundle = new Bundle();
+    	nextIntent.putExtras(bundle);
+    	
+    	startActivity(nextIntent);
     }
     
     @Override

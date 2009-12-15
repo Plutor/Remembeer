@@ -14,4 +14,7 @@
 <string name="skip">Cancel</string>
 <string name="stats_placeholder">This is where the stats tab goes</string>
 <string name="config_placeholder">This is where the config tab goes</string>
+<string name="addbeerdone_placeholder">You've drunk 999 beers!</string>
+<string name="morestats">See more stats</string>
+<string name="addanother">Drink another!</string>
 </resources>
