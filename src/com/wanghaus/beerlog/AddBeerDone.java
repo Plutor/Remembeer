@@ -35,14 +35,14 @@ public class AddBeerDone extends Activity {
     }
 
     private void viewMoreStats() {
-    	Intent nextIntent = new Intent(this, Container.class);
+    	Intent nextIntent = new Intent(this, Main.class);
     	nextIntent.putExtra("selectedTab", "tab2");
     	startActivity(nextIntent);
     	finish();
     }
     
     private void viewAddAnother() {
-    	Intent nextIntent = new Intent(this, Container.class); 	
+    	Intent nextIntent = new Intent(this, Main.class); 	
     	nextIntent.putExtra("selectedTab", "tab1");
     	startActivity(nextIntent);
     	finish();
