@@ -4,10 +4,10 @@ import java.text.DateFormat;
 import java.util.Calendar;
 import java.util.Date;
 
-import android.app.Activity;
 import android.app.DatePickerDialog;
 import android.app.Dialog;
 import android.app.TimePickerDialog;
+import android.content.ContentValues;
 import android.content.Intent;
 import android.os.Bundle;
 import android.view.View;
@@ -17,22 +17,23 @@ import android.widget.AutoCompleteTextView;
 import android.widget.Button;
 import android.widget.DatePicker;
 import android.widget.Spinner;
+import android.widget.TextView;
 import android.widget.TimePicker;
 import android.widget.AdapterView.OnItemSelectedListener;
 
-public class AddBeer extends Activity {
+public class AddBeer extends BaseActivity {
 	private static final int DATE_DIALOG_ID = 0;
 	private static final int TIME_DIALOG_ID = 1;
 	
 	private Spinner drinkWhenSpinner;
-	private Calendar specificDate = Calendar.getInstance();
+	private Calendar specificTime = Calendar.getInstance();
 
 	private DatePickerDialog.OnDateSetListener dateSetListener =
 		new DatePickerDialog.OnDateSetListener() {
 			public void onDateSet(DatePicker arg0, int arg1, int arg2, int arg3) {
-				specificDate.set(Calendar.YEAR, arg1);
-				specificDate.set(Calendar.MONTH, arg2);
-				specificDate.set(Calendar.DAY_OF_MONTH, arg3);
+				specificTime.set(Calendar.YEAR, arg1);
+				specificTime.set(Calendar.MONTH, arg2);
+				specificTime.set(Calendar.DAY_OF_MONTH, arg3);
 				showDialog(TIME_DIALOG_ID);
 			}
 	};
@@ -40,15 +41,15 @@ public class AddBeer extends Activity {
 	    new TimePickerDialog.OnTimeSetListener() {
 			@SuppressWarnings("unchecked")
 			public void onTimeSet(TimePicker view, int hourOfDay, int minuteArg) {
-	        	specificDate.set(Calendar.HOUR, hourOfDay);
-	        	specificDate.set(Calendar.MINUTE, minuteArg);
+	        	specificTime.set(Calendar.HOUR, hourOfDay);
+	        	specificTime.set(Calendar.MINUTE, minuteArg);
 	            
 	            // Add to the drinkWhenSpinner dropdown and select it
 	        	ArrayAdapter<CharSequence> drinkWhenAdapter = (ArrayAdapter<CharSequence>) drinkWhenSpinner.getAdapter();
 	        	while (drinkWhenAdapter.getCount() > 4)
 	        		drinkWhenAdapter.remove( drinkWhenAdapter.getItem(4) );
 	        	
-	        	drinkWhenAdapter.add( DateFormat.getDateTimeInstance().format(specificDate.getTime()) );
+	        	drinkWhenAdapter.add( DateFormat.getDateTimeInstance().format(specificTime.getTime()) );
 	        	drinkWhenSpinner.setSelection( drinkWhenAdapter.getCount() - 1 );
 	        }
 	    };
@@ -73,7 +74,7 @@ public class AddBeer extends Activity {
         containerSpinner.setAdapter(containerAdapter);
         
         // Initialize the specificDate
-        specificDate.setTime( new Date() );
+        specificTime.setTime( new Date() );
         
         // Drinkwhen dropdown
         drinkWhenSpinner = (Spinner) findViewById(R.id.drinkwhen);
@@ -90,11 +91,26 @@ public class AddBeer extends Activity {
         drinkWhenSpinner.setOnItemSelectedListener( new OnItemSelectedListener() {
 			public void onItemSelected(AdapterView<?> parent, View view,
 					int selected, long id) {
-				if (selected == 3) {
-					// Show the date time popup
-					showDialog(DATE_DIALOG_ID);
-				} else if (selected < 3) {
+				switch (selected) {
+				case 0: // now
+					specificTime.setTime( new Date() );
 					removeSpecificTime();
+					break;
+				case 1: // ten minutes ago
+					specificTime.setTime( new Date() );
+					specificTime.add( Calendar.MINUTE, -10 );
+					removeSpecificTime();
+					break;
+				case 2: // last night (lets say 9pm)
+					specificTime.setTime( new Date() );
+					specificTime.add( Calendar.DATE, -1 );
+					specificTime.set( Calendar.HOUR_OF_DAY, 21 );
+					specificTime.set( Calendar.MINUTE, 0 );
+					specificTime.set( Calendar.SECOND, 0 );
+					removeSpecificTime();
+					break;
+				case 3:
+					showDialog(DATE_DIALOG_ID);
 				}
 			}
 
@@ -124,9 +140,22 @@ public class AddBeer extends Activity {
     private void saveBeer() {
     	Intent nextIntent = new Intent(this, AddBeerDone.class);
 
-    	// TODO - do we fill a bundle, or do we actually save here?
-    	Bundle bundle = new Bundle();
-    	nextIntent.putExtras(bundle);
+    	// Save
+    	if (db != null) {
+    		ContentValues newRow = new ContentValues();
+    		
+            TextView beername = (TextView) findViewById(R.id.beername);
+            newRow.put("beername", beername.toString());
+    		
+            Spinner containerSpinner = (Spinner) findViewById(R.id.container);
+            newRow.put("container", containerSpinner.toString());
+            
+            newRow.put("stamp", DateFormat.getDateTimeInstance().format(specificTime.getTime()));
+    		
+    		db.insert(DB_TABLE, null, newRow);
+    	} else {
+    		// TODO - throw an error?
+    	}
     	
     	startActivity(nextIntent);
     }
@@ -137,15 +166,15 @@ public class AddBeer extends Activity {
 	        case DATE_DIALOG_ID:
 	            return new DatePickerDialog(this,
                     dateSetListener,
-                    specificDate.get(Calendar.YEAR),
-                    specificDate.get(Calendar.MONTH),
-                    specificDate.get(Calendar.DAY_OF_MONTH)
+                    specificTime.get(Calendar.YEAR),
+                    specificTime.get(Calendar.MONTH),
+                    specificTime.get(Calendar.DAY_OF_MONTH)
                 );
 	        case TIME_DIALOG_ID:
 	            return new TimePickerDialog(this,
                     timeSetListener,
-                    specificDate.get(Calendar.HOUR),
-                    specificDate.get(Calendar.MINUTE),
+                    specificTime.get(Calendar.HOUR),
+                    specificTime.get(Calendar.MINUTE),
                     false
                 );
         }

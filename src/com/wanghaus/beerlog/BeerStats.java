@@ -1,9 +1,8 @@
 package com.wanghaus.beerlog;
 
-import android.app.Activity;
 import android.os.Bundle;
 
-public class BeerStats extends Activity {
+public class BeerStats extends BaseActivity {
     @Override
     public void onCreate(Bundle savedInstanceState) {
     	super.onCreate(savedInstanceState);
