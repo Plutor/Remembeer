@@ -3,7 +3,7 @@
       android:versionCode="1"
       android:versionName="1.0" package="com.wanghaus.beerlog">
     <application android:icon="@drawable/icon" android:label="@string/app_name" android:debuggable="true">
-        <activity android:name=".Main"
+        <activity android:name=".activity.Main"
                   android:label="@string/app_name">
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
@@ -11,11 +11,12 @@
             </intent-filter>
         </activity>
 
-		<activity android:name="AddBeer"></activity>  
-		<activity android:name="AddBeerDone"
+		<activity android:name=".activity.AddBeer"></activity>  
+		<activity android:name=".activity.AddBeerDone"
 			android:theme="@android:style/Theme.Dialog"></activity>  
-		<activity android:name="BeerStats"></activity>  
-		<activity android:name="Config"></activity>  
+		<activity android:name=".activity.BeerStats"></activity>  
+		<activity android:name=".activity.History"></activity>  
+		<activity android:name=".activity.Config"></activity>  
     </application>
     <uses-sdk android:minSdkVersion="3" />
 

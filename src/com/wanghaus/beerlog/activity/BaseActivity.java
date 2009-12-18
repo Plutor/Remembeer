@@ -1,4 +1,4 @@
-package com.wanghaus.beerlog;
+package com.wanghaus.beerlog.activity;
 
 import android.app.Activity;
 import android.database.sqlite.SQLiteDatabase;

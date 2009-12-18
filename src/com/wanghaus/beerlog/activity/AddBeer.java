@@ -1,4 +1,4 @@
-package com.wanghaus.beerlog;
+package com.wanghaus.beerlog.activity;
 
 import java.text.DateFormat;
 import java.util.Calendar;
@@ -20,6 +20,8 @@ import android.widget.Spinner;
 import android.widget.TextView;
 import android.widget.TimePicker;
 import android.widget.AdapterView.OnItemSelectedListener;
+
+import com.wanghaus.beerlog.R;
 
 public class AddBeer extends BaseActivity {
 	private static final int DATE_DIALOG_ID = 0;
@@ -145,7 +147,7 @@ public class AddBeer extends BaseActivity {
     		ContentValues newRow = new ContentValues();
     		
             TextView beername = (TextView) findViewById(R.id.beername);
-            newRow.put("beername", beername.toString());
+            newRow.put("beername", beername.getText().toString());
     		
             Spinner containerSpinner = (Spinner) findViewById(R.id.container);
             newRow.put("container", containerSpinner.toString());

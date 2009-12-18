@@ -1,4 +1,4 @@
-package com.wanghaus.beerlog;
+package com.wanghaus.beerlog.activity;
 
 import android.content.Intent;
 import android.database.Cursor;
@@ -6,6 +6,8 @@ import android.os.Bundle;
 import android.view.View;
 import android.widget.Button;
 import android.widget.TextView;
+
+import com.wanghaus.beerlog.R;
 
 public class AddBeerDone extends BaseActivity {
     @Override
@@ -53,14 +55,14 @@ public class AddBeerDone extends BaseActivity {
 
     private void viewMoreStats() {
     	Intent nextIntent = new Intent(this, Main.class);
-    	nextIntent.putExtra("selectedTab", "tab2");
+    	nextIntent.putExtra("selectedTab", "stats");
     	startActivity(nextIntent);
     	finish();
     }
     
     private void viewAddAnother() {
     	Intent nextIntent = new Intent(this, Main.class); 	
-    	nextIntent.putExtra("selectedTab", "tab1");
+    	nextIntent.putExtra("selectedTab", "addbeer");
     	startActivity(nextIntent);
     	finish();
     }

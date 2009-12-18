@@ -1,4 +1,4 @@
-package com.wanghaus.beerlog;
+package com.wanghaus.beerlog.activity;
 
 import android.app.TabActivity;
 import android.content.Intent;
@@ -12,9 +12,9 @@ public class Main extends TabActivity {
     	
         TabHost host = getTabHost();
        
-        host.addTab(host.newTabSpec("tab1").setIndicator("Add beer").setContent(new Intent(this, AddBeer.class)));  
-        host.addTab(host.newTabSpec("tab2").setIndicator("Stats").setContent(new Intent(this, BeerStats.class)));  
-        host.addTab(host.newTabSpec("tab3").setIndicator("Config").setContent(new Intent(this, Config.class)));
+        host.addTab(host.newTabSpec("addbeer").setIndicator("Add beer").setContent(new Intent(this, AddBeer.class)));  
+        host.addTab(host.newTabSpec("history").setIndicator("History").setContent(new Intent(this, History.class)));  
+        host.addTab(host.newTabSpec("stats").setIndicator("Stats").setContent(new Intent(this, BeerStats.class)));  
 
         try {
         	String selectedTab = getIntent().getExtras().getString("selectedTab");
