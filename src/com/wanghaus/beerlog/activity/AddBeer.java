@@ -150,7 +150,7 @@ public class AddBeer extends BaseActivity {
             newRow.put("beername", beername.getText().toString());
     		
             Spinner containerSpinner = (Spinner) findViewById(R.id.container);
-            newRow.put("container", containerSpinner.toString());
+            newRow.put("container", containerSpinner.getSelectedItem().toString());
             
             newRow.put("stamp", DateFormat.getDateTimeInstance().format(specificTime.getTime()));
     		
