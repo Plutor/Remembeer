@@ -6,56 +6,6 @@
         <item>Draught</item>
     </string-array>
     
-    <string-array name="beernames">
-       	<item>Abita Brewing Company</item>
-   		<item>Big Bear</item>
-   	    <item>Billy Beer</item>
-   	    <item>Blue Moon</item>
-   	    <item>Brew Keeper</item>
-   	    <item>Budweiser</item>
-   	    <item>Budweiser American Ale</item>
-   	    <item>Busch Beer</item>
-   	    <item>Champale</item>
-   	    <item>Clix Malt Liquor</item>
-   	    <item>Colt 45</item>
-   	    <item>Drewry's</item>
-   	    <item>Genesee Cream Ale</item>
-   	    <item>Governator Ale</item>
-   	    <item>Grain Belt</item>
-   	    <item>Half Acre Beer</item>
-   	    <item>Hurricane High Gravity Lager</item>
-   	    <item>Kentucky Common Beer</item>
-   	    <item>Keystone</item>
-   	    <item>Killian's</item>
-   	    <item>Land Shark Lager</item>
-   	    <item>Laser</item>
-   	    <item>Lionshead</item>
-   	    <item>Lone Star Beer</item>
-   	    <item>Lucky Lager</item>
-   	    <item>Michelob</item>
-   	    <item>Mickey's</item>
-   	    <item>Midas Touch Golden Elixir</item>
-   	    <item>Miller Lite</item>
-   	    <item>National Bohemian</item>
-   	    <item>Old Milwaukee</item>
-   	    <item>Old Vienna</item>
-   	    <item>Olde English 800</item>
-   	    <item>Pabst Blue Ribbon</item>
-   	    <item>Private Stock</item>
-   	    <item>Red Dog</item>
-   	    <item>Red White &amp; Blue Beer</item>
-   	    <item>Reisch Beer</item>
-   	    <item>Rolling Rock</item>
-   	    <item>Schaefer Beer</item>
-   	    <item>Shock Top</item>
-   	    <item>Spoetzl Brewery</item>
-   	    <item>St. Ides</item>
-   	    <item>Stampede Light</item>
-   	    <item>Sweetwater Brewing Company</item>
-   	    <item>Triple Bock</item>
-   	    <item>Utica Club</item>
-    </string-array>
-    
     <string-array name="drinkwhens">
     	<item>Drink now</item>
     	<item>Ten minutes ago</item>
