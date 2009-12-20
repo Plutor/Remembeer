@@ -1,8 +1,10 @@
 package com.wanghaus.beerlog.stats;
 
+import android.graphics.drawable.Drawable;
+
 import com.wanghaus.beerlog.R;
 
-public abstract class BeerStat {
+public abstract class BaseStat {
 	private String name;
 	private String type;
 
@@ -28,4 +30,6 @@ public abstract class BeerStat {
 		
 		return R.drawable.barchart_thumb;
 	}
+	
+	public abstract Drawable getImage(int width, int height);
 }

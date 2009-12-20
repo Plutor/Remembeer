@@ -17,4 +17,5 @@
 <string name="addbeerdone_placeholder">You've drunk 999 beers!</string>
 <string name="morestats">See more stats</string>
 <string name="addanother">Drink another!</string>
+<string name="viewstat_placeholder">This is where the stat name goes</string>
 </resources>

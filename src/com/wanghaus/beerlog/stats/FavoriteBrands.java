@@ -1,10 +1,9 @@
 package com.wanghaus.beerlog.stats;
 
-public class FavoriteBrands extends BeerStat {
+public class FavoriteBrands extends BarStat {
 	public FavoriteBrands() {
 		super();
 		setName("Favorite brands");
-		setType("bar");
 	}
 	
 }
