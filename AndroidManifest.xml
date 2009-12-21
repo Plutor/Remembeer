@@ -14,7 +14,8 @@
 		<activity android:name=".activity.AddBeer"></activity>  
 		<activity android:name=".activity.AddBeerDone"
 			android:theme="@android:style/Theme.Dialog"></activity>  
-		<activity android:name=".activity.BeerStats"></activity>  
+		<activity android:name=".activity.StatsList"></activity>
+		<activity android:name=".activity.ViewStat"></activity>  
 		<activity android:name=".activity.History"></activity>  
 		<activity android:name=".activity.Config"></activity>  
     </application>

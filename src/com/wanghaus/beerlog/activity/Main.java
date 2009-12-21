@@ -14,7 +14,7 @@ public class Main extends TabActivity {
        
         host.addTab(host.newTabSpec("addbeer").setIndicator("Add beer").setContent(new Intent(this, AddBeer.class)));  
         host.addTab(host.newTabSpec("history").setIndicator("History").setContent(new Intent(this, History.class)));  
-        host.addTab(host.newTabSpec("stats").setIndicator("Stats").setContent(new Intent(this, BeerStats.class)));  
+        host.addTab(host.newTabSpec("stats").setIndicator("Stats").setContent(new Intent(this, StatsList.class)));  
 
         try {
         	String selectedTab = getIntent().getExtras().getString("selectedTab");

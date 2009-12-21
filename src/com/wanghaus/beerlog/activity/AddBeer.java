@@ -64,9 +64,10 @@ public class AddBeer extends BaseActivity {
         
         // Beer name autocomplete text field
         AutoCompleteTextView textView = (AutoCompleteTextView) findViewById(R.id.beername);
-        ArrayAdapter<CharSequence> beerNameAdapter = ArrayAdapter.createFromResource(this,
-                R.array.beernames, android.R.layout.simple_dropdown_item_1line);
-        textView.setAdapter(beerNameAdapter);
+        // TODO - Replace with a list of past beers drunk (from db)
+        //ArrayAdapter<CharSequence> beerNameAdapter = ArrayAdapter.createFromResource(this,
+        //        R.array.beernames, android.R.layout.simple_dropdown_item_1line);
+        //textView.setAdapter(beerNameAdapter);
      
         // Containers dropdown
         Spinner containerSpinner = (Spinner) findViewById(R.id.container);
