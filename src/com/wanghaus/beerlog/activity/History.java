@@ -2,15 +2,15 @@ package com.wanghaus.beerlog.activity;
 
 import android.app.AlertDialog;
 import android.content.DialogInterface;
+import android.content.Intent;
 import android.content.DialogInterface.OnClickListener;
 import android.database.Cursor;
 import android.os.Bundle;
-import android.os.Handler;
-import android.os.Message;
 import android.util.Log;
 import android.view.ContextMenu;
 import android.view.MenuItem;
 import android.view.View;
+import android.view.ContextMenu.ContextMenuInfo;
 import android.view.View.OnCreateContextMenuListener;
 import android.widget.ListAdapter;
 import android.widget.ListView;
@@ -20,7 +20,7 @@ import android.widget.AdapterView.AdapterContextMenuInfo;
 import com.wanghaus.beerlog.R;
 
 public class History extends BaseActivity {
-	static final int SHOW_DETAILS = 1;
+	static final int DRINK_ANOTHER = 1;
 	static final int DELETE = 2;
 	static final int DO_DELETE = 3;
 	
@@ -48,13 +48,32 @@ public class History extends BaseActivity {
         
         /* Add Context menu listener to the ListView. */
         historyList.setOnCreateContextMenuListener(new OnCreateContextMenuListener() {
-             public void onCreateContextMenu(ContextMenu menu, View v, ContextMenu.ContextMenuInfo menuInfo) {  
-                  menu.setHeaderTitle("ContextMenu");
-                  menu.add(0, SHOW_DETAILS, 0, "Details");
-                  menu.add(0, DELETE, 0, "Delete");
+             public void onCreateContextMenu(ContextMenu menu, View v, ContextMenuInfo menuInfo) {
+                 menu.setHeaderTitle("ContextMenu");
+
+                 String beername = getBeerName(menuInfo);
+                 if (beername != null)
+                	 menu.add(0, DRINK_ANOTHER, 0, "Drink another " + beername);
+            	 
+                 menu.add(0, DELETE, 0, "Delete");
              }
        });
     }
+    
+    public String getBeerName(ContextMenuInfo menuInfo) {
+		try {
+			AdapterContextMenuInfo info = (AdapterContextMenuInfo) menuInfo;
+			int position = info.position;
+			Cursor thisItem = (Cursor) historyList.getAdapter().getItem(
+					position);
+			int column = thisItem.getColumnIndexOrThrow("beername");
+
+			return thisItem.getString(column);
+		} catch (Exception e) {
+			Log.e("drinkanother", "Can't determine beer name", e);
+		}
+		return null;
+	}
     
     @Override
     public boolean onContextItemSelected(MenuItem aItem) {
@@ -63,10 +82,14 @@ public class History extends BaseActivity {
 
          /* Switch on the ID of the item, to get what the user selected. */
          switch (aItem.getItemId()) {
-         case SHOW_DETAILS:
-             // TODO
-             
-             return true; /* true means: "we handled the event". */
+         case DRINK_ANOTHER:
+			Intent nextIntent = new Intent(this, Main.class);
+			nextIntent.putExtra("selectedTab", "addbeer");
+			nextIntent.putExtra("beername", getBeerName(menuInfo));
+			// TODO - Also put container
+			startActivity(nextIntent);
+
+			return true; /* true means: "we handled the event". */
          case DELETE:
     	     new AlertDialog.Builder(this)
     	       .setTitle("Delete this beer?")

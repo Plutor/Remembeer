@@ -41,7 +41,11 @@ public class AddBeer extends BaseActivity {
     	super.onCreate(savedInstanceState);
         setContentView(R.layout.addbeer);
         
-        initBeernameAutoComplete();
+        String beername = "";
+        try {
+        	beername = getIntent().getStringExtra("beername");
+        } catch (Exception e) {}
+        initBeernameAutoComplete(beername);
         initContainerSpinner();
         initDrinkWhenSpinner();
         
@@ -55,7 +59,7 @@ public class AddBeer extends BaseActivity {
         });
     }
     
-    private void initBeernameAutoComplete() {
+    private void initBeernameAutoComplete(String beername) {
         // Beer name autocomplete text field
         AutoCompleteTextView beernameView = (AutoCompleteTextView) findViewById(R.id.beername);
         
@@ -65,6 +69,9 @@ public class AddBeer extends BaseActivity {
         
         BeerNameAutocompleteAdapter list = new BeerNameAutocompleteAdapter(this, cursor);
         beernameView.setAdapter(list); 
+        
+        if (beername != null)
+        	beernameView.setText(beername);
     }
 
     private class BeerNameAutocompleteAdapter extends CursorAdapter {
