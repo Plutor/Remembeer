@@ -1,9 +1,6 @@
 package com.wanghaus.beerlog.activity;
 
-import java.text.DateFormat;
-
 import android.app.Activity;
-import android.content.ContentValues;
 import android.content.Intent;
 import android.os.Bundle;
 import android.view.LayoutInflater;
@@ -13,7 +10,6 @@ import android.view.View.OnClickListener;
 import android.widget.ArrayAdapter;
 import android.widget.ImageView;
 import android.widget.ListView;
-import android.widget.Spinner;
 import android.widget.TextView;
 
 import com.wanghaus.beerlog.R;
@@ -61,7 +57,6 @@ public class StatsList extends BaseActivity {
 			icon.setImageResource( stats[position].getThumbnailRef() );
 
 			row.setOnClickListener(new OnClickListener() {
-				@Override
 				public void onClick(View view) {
 					openViewStat(view);
 				}
