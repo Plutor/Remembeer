@@ -24,7 +24,8 @@ public class History extends BaseActivity {
 	static final int DELETE = 2;
 	static final int DO_DELETE = 3;
 	
-	ListView historyList;
+	private ListView historyList;
+	private Cursor lastTenBeers;
 	
     @Override
     public void onCreate(Bundle savedInstanceState) {
@@ -34,8 +35,8 @@ public class History extends BaseActivity {
         historyList = (ListView)findViewById(R.id.history_list);
         
         // Get the last ten beers
-        Cursor lastTenBeers = db.query(DB_TABLE,
-        		new String[] {"ROWID AS _id", "beername", "container || ' at ' || stamp AS details"},
+        lastTenBeers = db.query(DB_TABLE,
+        		new String[] {"ROWID AS _id", "beername", "container || ' at ' || stamp AS details", "container"},
         		null, null, null, null, "stamp DESC", "10");
         
         // Map Cursor columns to views defined in simple_list_item_2.xml
@@ -51,7 +52,7 @@ public class History extends BaseActivity {
              public void onCreateContextMenu(ContextMenu menu, View v, ContextMenuInfo menuInfo) {
                  menu.setHeaderTitle("ContextMenu");
 
-                 String beername = getBeerName(menuInfo);
+                 String beername = getBeerValue(menuInfo, "beername");
                  if (beername != null)
                 	 menu.add(0, DRINK_ANOTHER, 0, "Drink another " + beername);
             	 
@@ -60,17 +61,16 @@ public class History extends BaseActivity {
        });
     }
     
-    public String getBeerName(ContextMenuInfo menuInfo) {
+    private String getBeerValue(ContextMenuInfo menuInfo, String colName) {
 		try {
 			AdapterContextMenuInfo info = (AdapterContextMenuInfo) menuInfo;
-			int position = info.position;
-			Cursor thisItem = (Cursor) historyList.getAdapter().getItem(
-					position);
-			int column = thisItem.getColumnIndexOrThrow("beername");
-
-			return thisItem.getString(column);
+			lastTenBeers.moveToPosition(info.position);
+			int column = lastTenBeers.getColumnIndexOrThrow(colName);
+			String rv = lastTenBeers.getString(column);
+			
+			return rv;
 		} catch (Exception e) {
-			Log.e("drinkanother", "Can't determine beer name", e);
+			Log.e("getBeerValue", "Can't determine beer " + colName, e);
 		}
 		return null;
 	}
@@ -85,8 +85,8 @@ public class History extends BaseActivity {
          case DRINK_ANOTHER:
 			Intent nextIntent = new Intent(this, Main.class);
 			nextIntent.putExtra("selectedTab", "addbeer");
-			nextIntent.putExtra("beername", getBeerName(menuInfo));
-			// TODO - Also put container
+			nextIntent.putExtra("beername", getBeerValue(menuInfo, "beername"));
+			nextIntent.putExtra("container", getBeerValue(menuInfo, "container"));
 			startActivity(nextIntent);
 
 			return true; /* true means: "we handled the event". */

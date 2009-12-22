@@ -12,6 +12,7 @@ import android.content.Context;
 import android.content.Intent;
 import android.database.Cursor;
 import android.os.Bundle;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -41,11 +42,7 @@ public class AddBeer extends BaseActivity {
     	super.onCreate(savedInstanceState);
         setContentView(R.layout.addbeer);
         
-        String beername = "";
-        try {
-        	beername = getIntent().getStringExtra("beername");
-        } catch (Exception e) {}
-        initBeernameAutoComplete(beername);
+        initBeernameAutoComplete();
         initContainerSpinner();
         initDrinkWhenSpinner();
         
@@ -59,7 +56,7 @@ public class AddBeer extends BaseActivity {
         });
     }
     
-    private void initBeernameAutoComplete(String beername) {
+    private void initBeernameAutoComplete() {
         // Beer name autocomplete text field
         AutoCompleteTextView beernameView = (AutoCompleteTextView) findViewById(R.id.beername);
         
@@ -70,8 +67,14 @@ public class AddBeer extends BaseActivity {
         BeerNameAutocompleteAdapter list = new BeerNameAutocompleteAdapter(this, cursor);
         beernameView.setAdapter(list); 
         
-        if (beername != null)
-        	beernameView.setText(beername);
+        // See if we were passed a beer name
+        try {
+        	String beername = getIntent().getStringExtra("beername");
+            if (beername != null)
+            	beernameView.setText(beername);
+        } catch (Exception e) {
+        	// Do nothing
+        }
     }
 
     private class BeerNameAutocompleteAdapter extends CursorAdapter {
@@ -125,6 +128,22 @@ public class AddBeer extends BaseActivity {
                 R.array.containers, android.R.layout.simple_spinner_item);
         containerAdapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
         containerSpinner.setAdapter(containerAdapter);
+        
+        // See if we were passed a container
+        try {
+        	String container = getIntent().getStringExtra("container");
+            if (container != null)
+            	for (int i=0; i<containerSpinner.getCount(); ++i) {
+            		String thisContainer = containerSpinner.getItemAtPosition(i).toString();
+            		if (thisContainer.equals(container)) {
+            			containerSpinner.setSelection(i);
+            			break;
+            		}
+            	}
+        } catch (Exception e) {
+        	// Do nothing
+        	Log.e("getcontainer", "Can't figure out container from intent extras", e);
+        }
     }
 
     private void initDrinkWhenSpinner() {
