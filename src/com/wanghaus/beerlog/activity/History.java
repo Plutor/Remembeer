@@ -25,7 +25,7 @@ public class History extends BaseActivity {
 	static final int DO_DELETE = 3;
 	
 	private ListView historyList;
-	private Cursor lastTenBeers;
+	private Cursor recentBeers;
 	
     @Override
     public void onCreate(Bundle savedInstanceState) {
@@ -35,13 +35,13 @@ public class History extends BaseActivity {
         historyList = (ListView)findViewById(R.id.history_list);
         
         // Get the last ten beers
-        lastTenBeers = db.query(DB_TABLE,
+        recentBeers = db.query(DB_TABLE,
         		new String[] {"ROWID AS _id", "beername", "container || ' at ' || stamp AS details", "container"},
-        		null, null, null, null, "stamp DESC", "10");
+        		null, null, null, null, "stamp DESC");
         
         // Map Cursor columns to views defined in simple_list_item_2.xml
         ListAdapter historyAdapter = new SimpleCursorAdapter(this,
-                android.R.layout.simple_list_item_2, lastTenBeers, 
+                android.R.layout.simple_list_item_2, recentBeers, 
                         new String[] { "beername", "details" }, 
                         new int[] { android.R.id.text1, android.R.id.text2 });
 
@@ -64,9 +64,9 @@ public class History extends BaseActivity {
     private String getBeerValue(ContextMenuInfo menuInfo, String colName) {
 		try {
 			AdapterContextMenuInfo info = (AdapterContextMenuInfo) menuInfo;
-			lastTenBeers.moveToPosition(info.position);
-			int column = lastTenBeers.getColumnIndexOrThrow(colName);
-			String rv = lastTenBeers.getString(column);
+			recentBeers.moveToPosition(info.position);
+			int column = recentBeers.getColumnIndexOrThrow(colName);
+			String rv = recentBeers.getString(column);
 			
 			return rv;
 		} catch (Exception e) {
