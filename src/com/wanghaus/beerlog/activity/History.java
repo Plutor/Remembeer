@@ -18,6 +18,7 @@ import android.widget.SimpleCursorAdapter;
 import android.widget.AdapterView.AdapterContextMenuInfo;
 
 import com.wanghaus.beerlog.R;
+import com.wanghaus.beerlog.service.BeerDbService;
 
 public class History extends BaseActivity {
 	static final int DRINK_ANOTHER = 1;
@@ -26,6 +27,7 @@ public class History extends BaseActivity {
 	
 	private ListView historyList;
 	private Cursor recentBeers;
+	private BeerDbService dbs;
 	
     @Override
     public void onCreate(Bundle savedInstanceState) {
@@ -35,9 +37,8 @@ public class History extends BaseActivity {
         historyList = (ListView)findViewById(R.id.history_list);
         
         // Get the last ten beers
-        recentBeers = db.query(DB_TABLE,
-        		new String[] {"ROWID AS _id", "beername", "container || ' at ' || stamp AS details", "container"},
-        		null, null, null, null, "stamp DESC");
+        dbs = new BeerDbService(this);
+        recentBeers = dbs.getBeerHistory();
         
         // Map Cursor columns to views defined in simple_list_item_2.xml
         ListAdapter historyAdapter = new SimpleCursorAdapter(this,
@@ -96,7 +97,7 @@ public class History extends BaseActivity {
     	       .setMessage("This action cannot be undone.")
     	       .setPositiveButton((CharSequence)"Delete", new OnClickListener() {
 					public void onClick(DialogInterface arg0, int arg1) {
-						db.execSQL("DELETE FROM " + DB_TABLE + " WHERE ROWID = " + String.valueOf(beerId));
+						dbs.deleteBeer(beerId);
 						// Update the view
 						SimpleCursorAdapter listAdapter = (SimpleCursorAdapter) historyList.getAdapter();
 						listAdapter.getCursor().requery();

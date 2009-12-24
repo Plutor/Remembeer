@@ -14,6 +14,7 @@ import android.widget.ListView;
 import android.widget.TextView;
 
 import com.wanghaus.beerlog.R;
+import com.wanghaus.beerlog.service.BeerDbService;
 
 public class Stats extends BaseActivity {
 	private Map<String, String> stats = new HashMap<String, String>();
@@ -23,9 +24,11 @@ public class Stats extends BaseActivity {
     	super.onCreate(savedInstanceState);
         setContentView(R.layout.stats);
         
-        stats.put("Number of beers drunk", "100");
-        stats.put("Favorite beer", "Something or other");
-        stats.put("Favorite drinking hour", "8pm");
+        BeerDbService dbs = new BeerDbService(this);
+        stats.put("Number of beers drunk", String.valueOf(dbs.getBeerCount()));
+        stats.put("Favorite beer", dbs.getFavoriteBeer());
+        stats.put("Favorite drinking hour", dbs.getFavoriteDrinkingHour());
+        dbs.close();
         
         ListView statList = (ListView) findViewById(R.id.stats_list);
         ArrayAdapter<Map.Entry<String, String>> adapter = new BeerStatListAdapter(this);

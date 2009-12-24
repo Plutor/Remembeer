@@ -1,13 +1,13 @@
 package com.wanghaus.beerlog.activity;
 
 import android.content.Intent;
-import android.database.Cursor;
 import android.os.Bundle;
 import android.view.View;
 import android.widget.Button;
 import android.widget.TextView;
 
 import com.wanghaus.beerlog.R;
+import com.wanghaus.beerlog.service.BeerDbService;
 
 public class AddBeerDone extends BaseActivity {
     @Override
@@ -21,8 +21,8 @@ public class AddBeerDone extends BaseActivity {
         // Put in stats
         String beercount = "???";
         try {
-        	Cursor beercountQuery = db.query(DB_TABLE, new String[] {"ROWID"}, null, null, null, null, null);
-        	beercount = String.valueOf(beercountQuery.getCount());
+        	BeerDbService dbs = new BeerDbService(this);
+        	beercount = String.valueOf( dbs.getBeerCount() );
         } catch (Exception e) {
         	// TODO - Hm
         }
