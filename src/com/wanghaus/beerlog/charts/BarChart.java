@@ -1,13 +1,13 @@
-package com.wanghaus.beerlog.stats;
+package com.wanghaus.beerlog.charts;
 
 import android.graphics.drawable.Drawable;
 import android.graphics.drawable.ShapeDrawable;
 import android.graphics.drawable.shapes.OvalShape;
 
-public abstract class PieStat extends BaseStat {
-	public PieStat() {
+public abstract class BarChart extends BaseChart {
+	public BarChart() {
 		super();
-		setType("pie");
+		setType("bar");
 	}
 	
 	@Override

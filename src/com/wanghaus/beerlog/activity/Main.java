@@ -27,7 +27,7 @@ public class Main extends TabActivity {
         host.addTab(host.newTabSpec("stats")
         		.setIndicator("Stats", getResources().getDrawable(R.drawable.stats))
         		.setContent(
-	        		new Intent(this, StatsList.class).putExtras(getIntent())
+	        		new Intent(this, Stats.class).putExtras(getIntent())
 				));  
 
         try {
