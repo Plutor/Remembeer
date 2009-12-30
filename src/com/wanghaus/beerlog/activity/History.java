@@ -1,20 +1,23 @@
 package com.wanghaus.beerlog.activity;
 
 import android.app.AlertDialog;
+import android.content.Context;
 import android.content.DialogInterface;
 import android.content.Intent;
-import android.content.DialogInterface.OnClickListener;
 import android.database.Cursor;
 import android.os.Bundle;
 import android.util.Log;
 import android.view.ContextMenu;
+import android.view.LayoutInflater;
 import android.view.MenuItem;
 import android.view.View;
+import android.view.ViewGroup;
 import android.view.ContextMenu.ContextMenuInfo;
-import android.view.View.OnCreateContextMenuListener;
 import android.widget.ListAdapter;
 import android.widget.ListView;
+import android.widget.RatingBar;
 import android.widget.SimpleCursorAdapter;
+import android.widget.TextView;
 import android.widget.AdapterView.AdapterContextMenuInfo;
 
 import com.wanghaus.beerlog.R;
@@ -41,15 +44,15 @@ public class History extends BaseActivity {
         recentBeers = dbs.getBeerHistory();
         
         // Map Cursor columns to views defined in simple_list_item_2.xml
-        ListAdapter historyAdapter = new SimpleCursorAdapter(this,
-                android.R.layout.simple_list_item_2, recentBeers, 
-                        new String[] { "beername", "details" }, 
-                        new int[] { android.R.id.text1, android.R.id.text2 });
+        ListAdapter historyAdapter = new HistoryCursorAdapter(this,
+                R.layout.history_row, recentBeers, 
+                new String[] { "beername", "details" }, 
+                new int[] { R.id.beername, R.id.details });
 
         historyList.setAdapter(historyAdapter);
         
         /* Add Context menu listener to the ListView. */
-        historyList.setOnCreateContextMenuListener(new OnCreateContextMenuListener() {
+        historyList.setOnCreateContextMenuListener(new View.OnCreateContextMenuListener() {
              public void onCreateContextMenu(ContextMenu menu, View v, ContextMenuInfo menuInfo) {
                  menu.setHeaderTitle("ContextMenu");
 
@@ -95,7 +98,7 @@ public class History extends BaseActivity {
     	     new AlertDialog.Builder(this)
     	       .setTitle("Delete this beer?")
     	       .setMessage("This action cannot be undone.")
-    	       .setPositiveButton((CharSequence)"Delete", new OnClickListener() {
+    	       .setPositiveButton((CharSequence)"Delete", new DialogInterface.OnClickListener() {
 					public void onClick(DialogInterface arg0, int arg1) {
 						dbs.deleteBeer(beerId);
 						// Update the view
@@ -109,5 +112,59 @@ public class History extends BaseActivity {
              return true; /* true means: "we handled the event". */
          }
          return false;
-    } 
+    }
+    
+    public class HistoryCursorAdapter extends SimpleCursorAdapter {
+    	private Context context;
+    	@SuppressWarnings("unused")
+		private int layout;
+    	
+		public HistoryCursorAdapter(Context context, int layout, Cursor c, String[] from, int[] to) {
+			super(context, layout, c, from, to);
+			
+			this.context = context;
+			this.layout = layout;
+		}
+
+	     public View getView(int position, View convertView, ViewGroup parent) {
+	         // Cursor to current item
+	         final Cursor cursor = getCursor();
+	         cursor.moveToPosition(position);
+	         int index;
+	         
+	         LayoutInflater inflater = LayoutInflater.from(context);
+	         View row = inflater.inflate(R.layout.history_row, null);
+				
+	         TextView beername = (TextView) row.findViewById(R.id.beername);
+	         index = cursor.getColumnIndex("beername");
+	         beername.setText(cursor.getString(index));
+	         
+	         TextView details = (TextView) row.findViewById(R.id.details);
+	         index = cursor.getColumnIndex("details");
+	         details.setText(cursor.getString(index));
+
+	         RatingBar ratingBar = (RatingBar) row.findViewById(R.id.rating);
+	         index = cursor.getColumnIndex("rating");
+	         ratingBar.setRating( cursor.getFloat(index) );
+	         ratingBar.setTag(position);
+	         
+	         ratingBar.setOnRatingBarChangeListener( new RatingBar.OnRatingBarChangeListener() {
+	        	 public void onRatingChanged(RatingBar ratingBar, float rating, boolean fromUser) {
+	        		 Integer position = (Integer) ratingBar.getTag();
+	        		 cursor.moveToPosition(position);
+	        		 int index;
+	        		 
+	        		 index = cursor.getColumnIndex("_id");
+	        		 long id = cursor.getLong(index);
+	        		 
+	        		 Integer intRating = ((Float)rating).intValue();
+	        		 
+	        		 BeerDbService bds = new BeerDbService(context);
+	        		 bds.setBeerRating(id, intRating);
+				}
+	         });
+	         
+	         return row;
+	     } 
+    }
 }

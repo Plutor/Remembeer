@@ -17,13 +17,14 @@ import android.widget.TextView;
 public class BeerDbService {
 	private static final String DB_NAME = "BeerLog";
 	private static final String DB_TABLE = "beer_log";
-	private static final int DB_VERSION = 1;
+	private static final int DB_VERSION = 2;
 
 	private static final String DB_CREATE = 
 		"CREATE TABLE IF NOT EXISTS " + DB_TABLE + "(" +
 			"beername VARCHAR(255) NOT NULL, " +
 			"container VARCHAR(32) NOT NULL, " +
 			"stamp DATETIME NOT NULL" +
+			"rating INT NOT NULL DEFAULT 0" +
 		")";
 
     private final Context context; 
@@ -48,7 +49,12 @@ public class BeerDbService {
 
         @Override
         public void onUpgrade(SQLiteDatabase db, int oldVersion, int newVersion) {
-        	// Let's worry about this later
+        	if (oldVersion < 2) {
+        		db.execSQL("ALTER TABLE " + DB_TABLE + " " +
+        				"ADD COLUMN rating INT NOT NULL DEFAULT 0");
+        	}
+        	
+        	// if (oldVersion < 3) etc..
         }
     }    
     
@@ -85,7 +91,7 @@ public class BeerDbService {
     		strLimit = limit.toString();
     	
         return db.query(DB_TABLE,
-        		new String[] {"ROWID AS _id", "beername", "container || ' at ' || stamp AS details", "container"},
+        		new String[] {"ROWID AS _id", "beername", "container || ' at ' || stamp AS details", "rating", "container"},
         		null, null, null, null, "stamp DESC", strLimit);
     }
     
@@ -152,4 +158,11 @@ public class BeerDbService {
     	
     	return favoriteHour;
     }
+
+	public void setBeerRating(long id, int rating) {
+		ContentValues newRow = new ContentValues();
+        newRow.put("rating", rating);
+
+        db.update(DB_TABLE, newRow, "ROWID = ?", new String[] { String.valueOf(id) });
+	}
 }
