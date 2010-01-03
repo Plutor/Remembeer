@@ -1,6 +1,7 @@
 package com.wanghaus.beerlog.activity;
 
 import java.text.DateFormat;
+import java.text.SimpleDateFormat;
 import java.util.Calendar;
 import java.util.Date;
 
@@ -241,7 +242,8 @@ public class AddBeer extends BaseActivity {
             Spinner containerSpinner = (Spinner) findViewById(R.id.container);
             newRow.put("container", containerSpinner.getSelectedItem().toString());
             
-            newRow.put("stamp", DateFormat.getDateTimeInstance().format(specificTime.getTime()));
+            SimpleDateFormat formatter = new SimpleDateFormat("MMMM dd, yyyy hh:mm a");
+            newRow.put("stamp", formatter.format(specificTime.getTime()));
     		
     		db.insert(DB_TABLE, null, newRow);
     	} else {
