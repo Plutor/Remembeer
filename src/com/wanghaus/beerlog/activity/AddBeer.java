@@ -242,7 +242,7 @@ public class AddBeer extends BaseActivity {
             Spinner containerSpinner = (Spinner) findViewById(R.id.container);
             newRow.put("container", containerSpinner.getSelectedItem().toString());
             
-            SimpleDateFormat formatter = new SimpleDateFormat("MMMM dd, yyyy hh:mm a");
+            SimpleDateFormat formatter = new SimpleDateFormat("MMM dd, yyyy hh:mm a");
             newRow.put("stamp", formatter.format(specificTime.getTime()));
     		
     		db.insert(DB_TABLE, null, newRow);
