@@ -29,6 +29,7 @@ import android.widget.TimePicker;
 import android.widget.AdapterView.OnItemSelectedListener;
 
 import com.wanghaus.beerlog.R;
+import com.wanghaus.beerlog.service.BeerDbService;
 
 public class AddBeer extends BaseActivity {
 	private static final int DATE_DIALOG_ID = 0;
@@ -36,13 +37,16 @@ public class AddBeer extends BaseActivity {
 	
 	private Spinner drinkWhenSpinner;
 	private Calendar specificTime = Calendar.getInstance();
-
+	private BeerDbService dbs;
+	
     /** Called when the activity is first created. */
     @Override
     public void onCreate(Bundle savedInstanceState) {
     	super.onCreate(savedInstanceState);
         setContentView(R.layout.addbeer);
         
+        dbs = new BeerDbService(this);
+
         initBeernameAutoComplete();
         initContainerSpinner();
         initDrinkWhenSpinner();
@@ -61,9 +65,7 @@ public class AddBeer extends BaseActivity {
         // Beer name autocomplete text field
         AutoCompleteTextView beernameView = (AutoCompleteTextView) findViewById(R.id.beername);
         
-        Cursor cursor = db.query(DB_TABLE,
-        		new String[] {"MAX(ROWID) AS _id", "beername"},
-        		null, null, "beername", null, null);
+        Cursor cursor = dbs.getBeerNames();
         
         BeerNameAutocompleteAdapter list = new BeerNameAutocompleteAdapter(this, cursor);
         beernameView.setAdapter(list); 
@@ -106,19 +108,10 @@ public class AddBeer extends BaseActivity {
 
             @Override
             public Cursor runQueryOnBackgroundThread(CharSequence constraint) {
-                    if (constraint == null)
-                        return db.query(DB_TABLE,
-                        		new String[] {"MAX(ROWID) AS _id", "beername"},
-                        		null, null,
-                        		"beername",
-                        		null, null);
+            	if (constraint == null)
+            		return dbs.getBeerNames();
 
-                    return db.query(DB_TABLE,
-                    		new String[] {"MAX(ROWID) AS _id", "beername"},
-                    		"beername LIKE ?",
-                    		new String[] { "%" + constraint.toString() + "%" },
-                    		"beername",
-                    		null, null);
+                return dbs.getBeerNames( constraint.toString() );
             }
     } 
 
@@ -218,6 +211,7 @@ public class AddBeer extends BaseActivity {
 			public void onTimeSet(TimePicker view, int hourOfDay, int minuteArg) {
 	        	specificTime.set(Calendar.HOUR, hourOfDay);
 	        	specificTime.set(Calendar.MINUTE, minuteArg);
+				specificTime.set(Calendar.SECOND, 0);
 	            
 	            // Add to the drinkWhenSpinner dropdown and select it
 	        	ArrayAdapter<CharSequence> drinkWhenAdapter = (ArrayAdapter<CharSequence>) drinkWhenSpinner.getAdapter();
@@ -233,19 +227,20 @@ public class AddBeer extends BaseActivity {
     	Intent nextIntent = new Intent(this, AddBeerDone.class);
 
     	// Save
-    	if (db != null) {
+    	if (dbs != null) {
     		ContentValues newRow = new ContentValues();
     		
-            TextView beername = (TextView) findViewById(R.id.beername);
-            newRow.put("beername", beername.getText().toString());
+            TextView beernameView = (TextView) findViewById(R.id.beername);
+            String beername = beernameView.getText().toString();
     		
             Spinner containerSpinner = (Spinner) findViewById(R.id.container);
-            newRow.put("container", containerSpinner.getSelectedItem().toString());
+            String container = containerSpinner.getSelectedItem().toString();
             
             SimpleDateFormat formatter = new SimpleDateFormat("MMM dd, yyyy hh:mm a");
             newRow.put("stamp", formatter.format(specificTime.getTime()));
     		
-    		db.insert(DB_TABLE, null, newRow);
+            db.insert(DB_TABLE, null, newRow);
+            dbs.addBeer(beername, container, formatter.format(specificTime.getTime()));
     	} else {
     		// TODO - throw an error?
     	}

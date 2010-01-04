@@ -4,17 +4,17 @@ import android.os.Bundle;
 import android.widget.ImageView;
 
 import com.wanghaus.beerlog.R;
-import com.wanghaus.beerlog.stats.BaseStat;
-import com.wanghaus.beerlog.stats.BeersPerMonth;
+import com.wanghaus.beerlog.charts.BaseChart;
+import com.wanghaus.beerlog.charts.BeersPerMonth;
 
-public class ViewStat extends BaseActivity {
+public class ViewChart extends BaseActivity {
     @Override
     public void onCreate(Bundle savedInstanceState) {
     	super.onCreate(savedInstanceState);
-        setContentView(R.layout.viewstat);
+        setContentView(R.layout.viewchart);
         
         ImageView image = (ImageView) findViewById(R.id.viewstat_image);
-        BaseStat statToView = new BeersPerMonth(); // TODO - Get the right object based on the Bundle
+        BaseChart statToView = new BeersPerMonth(); // TODO - Get the right object based on the Bundle
 
         // This represents a poor understanding of drawables and images.
         // TODO - Understand it better

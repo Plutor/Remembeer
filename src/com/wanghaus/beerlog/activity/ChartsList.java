@@ -13,14 +13,14 @@ import android.widget.ListView;
 import android.widget.TextView;
 
 import com.wanghaus.beerlog.R;
-import com.wanghaus.beerlog.stats.BaseStat;
-import com.wanghaus.beerlog.stats.BeerTypes;
-import com.wanghaus.beerlog.stats.BeersPerMonth;
-import com.wanghaus.beerlog.stats.Containers;
-import com.wanghaus.beerlog.stats.FavoriteBrands;
+import com.wanghaus.beerlog.charts.BaseChart;
+import com.wanghaus.beerlog.charts.BeerTypes;
+import com.wanghaus.beerlog.charts.BeersPerMonth;
+import com.wanghaus.beerlog.charts.Containers;
+import com.wanghaus.beerlog.charts.FavoriteBrands;
 
-public class StatsList extends BaseActivity {
-	private BaseStat[] stats = new BaseStat[]{
+public class ChartsList extends BaseActivity {
+	private BaseChart[] stats = new BaseChart[]{
 			new BeersPerMonth(),
 			new Containers(),
 			new BeerTypes(),
@@ -30,25 +30,25 @@ public class StatsList extends BaseActivity {
     @Override
     public void onCreate(Bundle savedInstanceState) {
     	super.onCreate(savedInstanceState);
-        setContentView(R.layout.stats);
+        setContentView(R.layout.chartslist);
         
-        ListView statList = (ListView) findViewById(R.id.stats_list);
-        ArrayAdapter<BaseStat> adapter = new BeerStatListAdapter(this);
+        ListView statList = (ListView) findViewById(R.id.charts_list);
+        ArrayAdapter<BaseChart> adapter = new BeerChartListAdapter(this);
         statList.setAdapter(adapter);
     }
     
-    private class BeerStatListAdapter extends ArrayAdapter<BaseStat> {
+    private class BeerChartListAdapter extends ArrayAdapter<BaseChart> {
     	Activity context;
     	
-    	public BeerStatListAdapter(Activity context) {
-    		super(context, R.layout.stats_list_row, stats);
+    	public BeerChartListAdapter(Activity context) {
+    		super(context, R.layout.chartslist_row, stats);
     		this.context = context;
     	}
 
 		@Override
 		public View getView(int position, View convertView, ViewGroup parent) {
 			LayoutInflater inflater = context.getLayoutInflater();
-			View row = inflater.inflate(R.layout.stats_list_row, null);
+			View row = inflater.inflate(R.layout.chartslist_row, null);
 
 			TextView label = (TextView)row.findViewById(R.id.label);
 			label.setText( stats[position].getName() );
@@ -66,7 +66,7 @@ public class StatsList extends BaseActivity {
     }
 
     private void openViewStat(View statToView) {
-    	Intent nextIntent = new Intent(this, ViewStat.class);
+    	Intent nextIntent = new Intent(this, ViewChart.class);
 
     	Bundle bundle = new Bundle();
     	// TODO - send the right stat name in the bundle

@@ -18,4 +18,5 @@
 <string name="morestats">See more stats</string>
 <string name="addanother">Drink another!</string>
 <string name="viewstat_placeholder">This is where the stat name goes</string>
+<string name="your_rating">Your rating:</string>
 </resources>

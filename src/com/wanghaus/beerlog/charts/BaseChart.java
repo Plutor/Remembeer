@@ -1,10 +1,10 @@
-package com.wanghaus.beerlog.stats;
+package com.wanghaus.beerlog.charts;
 
 import android.graphics.drawable.Drawable;
 
 import com.wanghaus.beerlog.R;
 
-public abstract class BaseStat {
+public abstract class BaseChart {
 	private String name;
 	private String type;
 

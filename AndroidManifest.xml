@@ -1,8 +1,8 @@
 <?xml version="1.0" encoding="utf-8"?>
 <manifest xmlns:android="http://schemas.android.com/apk/res/android"
-      android:versionCode="1"
-      android:versionName="1.0" package="com.wanghaus.beerlog">
-    <application android:icon="@drawable/icon" android:label="@string/app_name" android:debuggable="true">
+      android:versionCode="3"
+      android:versionName="0.3" package="com.wanghaus.beerlog">
+    <application android:icon="@drawable/icon" android:label="@string/app_name">
         <activity android:name=".activity.Main"
                   android:label="@string/app_name">
             <intent-filter>
@@ -14,10 +14,13 @@
 		<activity android:name=".activity.AddBeer"></activity>  
 		<activity android:name=".activity.AddBeerDone"
 			android:theme="@android:style/Theme.Dialog"></activity>  
-		<activity android:name=".activity.StatsList"></activity>
-		<activity android:name=".activity.ViewStat"></activity>  
+		<activity android:name=".activity.Stats"></activity>  
 		<activity android:name=".activity.History"></activity>  
-		<activity android:name=".activity.Config"></activity>  
+		<activity android:name=".activity.Config"></activity> 
+
+		<!-- Eventually -->		
+		<!-- <activity android:name=".activity.ChartsList"></activity>
+		<activity android:name=".activity.ViewChart"></activity> -->  
     </application>
     <uses-sdk android:minSdkVersion="3" />
 
