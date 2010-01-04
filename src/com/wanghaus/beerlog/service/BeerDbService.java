@@ -70,7 +70,12 @@ public class BeerDbService {
 		
         newRow.put("beername", beername);
         newRow.put("container", container);
-        newRow.put("stamp", DateFormat.getDateTimeInstance().format(stamp));
+        
+        // Get the sqlite format for the stamp
+        Cursor stampCursor = db.rawQuery( "SELECT DATETIME(?, 'unixepoch', 'localtime')",
+        		new String[] { String.valueOf(stamp.getTime()/1000) } );
+        stampCursor.moveToFirst();
+        newRow.put("stamp", stampCursor.getString(0));
 		
 		return db.insert(DB_TABLE, null, newRow);
     }
@@ -136,7 +141,6 @@ public class BeerDbService {
     	return favoriteBeer;
     }
     
-    // TODO Why isn't this right?
     public String getFavoriteDrinkingHour() {
     	Cursor q = db.query(DB_TABLE,
     			new String[] {"STRFTIME('%H', stamp) AS hour", "COUNT(*) AS count"},
