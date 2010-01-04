@@ -210,6 +210,7 @@ public class AddBeer extends BaseActivity {
 			public void onTimeSet(TimePicker view, int hourOfDay, int minuteArg) {
 	        	specificTime.set(Calendar.HOUR, hourOfDay);
 	        	specificTime.set(Calendar.MINUTE, minuteArg);
+				specificTime.set(Calendar.SECOND, 0);
 	            
 	            // Add to the drinkWhenSpinner dropdown and select it
 	        	ArrayAdapter<CharSequence> drinkWhenAdapter = (ArrayAdapter<CharSequence>) drinkWhenSpinner.getAdapter();
