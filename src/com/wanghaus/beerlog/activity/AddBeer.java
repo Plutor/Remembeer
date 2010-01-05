@@ -1,6 +1,7 @@
 package com.wanghaus.beerlog.activity;
 
 import java.text.DateFormat;
+import java.text.SimpleDateFormat;
 import java.util.Calendar;
 import java.util.Date;
 
@@ -210,7 +211,6 @@ public class AddBeer extends BaseActivity {
 			public void onTimeSet(TimePicker view, int hourOfDay, int minuteArg) {
 	        	specificTime.set(Calendar.HOUR, hourOfDay);
 	        	specificTime.set(Calendar.MINUTE, minuteArg);
-				specificTime.set(Calendar.SECOND, 0);
 	            
 	            // Add to the drinkWhenSpinner dropdown and select it
 	        	ArrayAdapter<CharSequence> drinkWhenAdapter = (ArrayAdapter<CharSequence>) drinkWhenSpinner.getAdapter();
@@ -235,7 +235,11 @@ public class AddBeer extends BaseActivity {
             Spinner containerSpinner = (Spinner) findViewById(R.id.container);
             String container = containerSpinner.getSelectedItem().toString();
             
-    		dbs.addBeer(beername, container, specificTime.getTime());
+            SimpleDateFormat formatter = new SimpleDateFormat("MMM dd, yyyy hh:mm a");
+            newRow.put("stamp", formatter.format(specificTime.getTime()));
+    		
+            db.insert(DB_TABLE, null, newRow);
+            dbs.addBeer(beername, container, formatter.format(specificTime.getTime()));
     	} else {
     		// TODO - throw an error?
     	}
