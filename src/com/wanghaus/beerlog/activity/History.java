@@ -13,12 +13,13 @@ import android.view.MenuItem;
 import android.view.View;
 import android.view.ViewGroup;
 import android.view.ContextMenu.ContextMenuInfo;
+import android.view.animation.Animation;
+import android.view.animation.TranslateAnimation;
 import android.widget.ListAdapter;
 import android.widget.ListView;
 import android.widget.RatingBar;
 import android.widget.SimpleCursorAdapter;
 import android.widget.TextView;
-import android.widget.AdapterView.AdapterContextMenuInfo;
 
 import com.wanghaus.beerlog.R;
 import com.wanghaus.beerlog.service.BeerDbService;
@@ -31,6 +32,9 @@ public class History extends BaseActivity {
 	private ListView historyList;
 	private Cursor recentBeers;
 	private BeerDbService dbs;
+	
+	private View.OnClickListener clickListener;
+	private View.OnCreateContextMenuListener contextMenuListener;
 	
     @Override
     public void onCreate(Bundle savedInstanceState) {
@@ -51,24 +55,40 @@ public class History extends BaseActivity {
 
         historyList.setAdapter(historyAdapter);
         
+        clickListener = new View.OnClickListener() {
+        	public void onClick(View itemView) {
+        		View smallRatingView = itemView.findViewById(R.id.smallRating);
+        		View metadataView = itemView.findViewById(R.id.metadata);
+        		boolean isVisible = (metadataView.getVisibility() == View.VISIBLE);
+        		metadataView.setVisibility( isVisible ? View.GONE : View.VISIBLE );
+        		smallRatingView.setVisibility( isVisible ? View.VISIBLE : View.GONE );
+			}
+        };
+         
         /* Add Context menu listener to the ListView. */
-        historyList.setOnCreateContextMenuListener(new View.OnCreateContextMenuListener() {
+        contextMenuListener = new View.OnCreateContextMenuListener() {
              public void onCreateContextMenu(ContextMenu menu, View v, ContextMenuInfo menuInfo) {
                  menu.setHeaderTitle("ContextMenu");
 
-                 String beername = getBeerValue(menuInfo, "beername");
-                 if (beername != null)
-                	 menu.add(0, DRINK_ANOTHER, 0, "Drink another " + beername);
-            	 
+                 Integer position = (Integer)v.getTag();
+                 String beername = getBeerValue(position, "beername");
+                 if (beername != null) {
+                	 MenuItem item = menu.add(0, DRINK_ANOTHER, 0, "Drink another " + beername);
+          			 Intent nextIntent = new Intent(getBaseContext(), Main.class);
+          			 nextIntent.putExtra("selectedTab", "addbeer");
+          			 nextIntent.putExtra("beername", beername);
+          			 nextIntent.putExtra("container", getBeerValue(position, "container"));
+           			 item.setIntent(nextIntent);
+                 }
+                 
                  menu.add(0, DELETE, 0, "Delete");
              }
-       });
+       };
     }
     
-    private String getBeerValue(ContextMenuInfo menuInfo, String colName) {
+    private String getBeerValue(Integer position, String colName) {
 		try {
-			AdapterContextMenuInfo info = (AdapterContextMenuInfo) menuInfo;
-			recentBeers.moveToPosition(info.position);
+			recentBeers.moveToPosition(position);
 			int column = recentBeers.getColumnIndexOrThrow(colName);
 			String rv = recentBeers.getString(column);
 			
@@ -81,19 +101,12 @@ public class History extends BaseActivity {
     
     @Override
     public boolean onContextItemSelected(MenuItem aItem) {
-         AdapterContextMenuInfo menuInfo = (AdapterContextMenuInfo) aItem.getMenuInfo();
-         final long beerId = menuInfo.id;
+         //AdapterContextMenuInfo menuInfo = (AdapterContextMenuInfo) aItem.getMenuInfo();
+        //final long beerId = menuInfo.id;
+        final long beerId = 0;
 
          /* Switch on the ID of the item, to get what the user selected. */
          switch (aItem.getItemId()) {
-         case DRINK_ANOTHER:
-			Intent nextIntent = new Intent(this, Main.class);
-			nextIntent.putExtra("selectedTab", "addbeer");
-			nextIntent.putExtra("beername", getBeerValue(menuInfo, "beername"));
-			nextIntent.putExtra("container", getBeerValue(menuInfo, "container"));
-			startActivity(nextIntent);
-
-			return true; /* true means: "we handled the event". */
          case DELETE:
     	     new AlertDialog.Builder(this)
     	       .setTitle("Delete this beer?")
@@ -134,6 +147,7 @@ public class History extends BaseActivity {
 	         
 	         LayoutInflater inflater = LayoutInflater.from(context);
 	         View row = inflater.inflate(R.layout.history_row, null);
+	         row.setTag( cursor.getPosition() );
 				
 	         TextView beername = (TextView) row.findViewById(R.id.beername);
 	         index = cursor.getColumnIndex("beername");
@@ -143,27 +157,35 @@ public class History extends BaseActivity {
 	         index = cursor.getColumnIndex("details");
 	         details.setText(cursor.getString(index));
 
+	         final RatingBar smallRatingBar = (RatingBar) row.findViewById(R.id.smallRating);
 	         RatingBar ratingBar = (RatingBar) row.findViewById(R.id.rating);
-	         index = cursor.getColumnIndex("rating");
-	         ratingBar.setRating( cursor.getFloat(index) );
-	         ratingBar.setTag(position);
+	         if (ratingBar != null && smallRatingBar != null) {
+		         index = cursor.getColumnIndex("rating");
+		         ratingBar.setRating( cursor.getFloat(index) );
+		         smallRatingBar.setRating( cursor.getFloat(index) );
+		         ratingBar.setTag(position);
+		         
+		         ratingBar.setOnRatingBarChangeListener( new RatingBar.OnRatingBarChangeListener() {
+		        	 public void onRatingChanged(RatingBar ratingBar, float rating, boolean fromUser) {
+		        		 Integer position = (Integer) ratingBar.getTag();
+		        		 cursor.moveToPosition(position);
+		        		 int index;
+		        		 
+		        		 index = cursor.getColumnIndex("_id");
+		        		 long id = cursor.getLong(index);
+		        		 
+		        		 Integer intRating = ((Float)rating).intValue();
+		        		 
+		        		 BeerDbService bds = new BeerDbService(context);
+		        		 bds.setBeerRating(id, intRating);
+		        		 
+				         smallRatingBar.setRating( rating );
+					}
+		         });
+	         }
 	         
-	         ratingBar.setOnRatingBarChangeListener( new RatingBar.OnRatingBarChangeListener() {
-	        	 public void onRatingChanged(RatingBar ratingBar, float rating, boolean fromUser) {
-	        		 Integer position = (Integer) ratingBar.getTag();
-	        		 cursor.moveToPosition(position);
-	        		 int index;
-	        		 
-	        		 index = cursor.getColumnIndex("_id");
-	        		 long id = cursor.getLong(index);
-	        		 
-	        		 Integer intRating = ((Float)rating).intValue();
-	        		 
-	        		 BeerDbService bds = new BeerDbService(context);
-	        		 bds.setBeerRating(id, intRating);
-				}
-	         });
-	         
+	         row.setOnClickListener( clickListener );
+	         row.setOnCreateContextMenuListener( contextMenuListener );
 	         return row;
 	     } 
     }
