@@ -80,7 +80,14 @@ public class BeerDbService {
 		return db.insert(DB_TABLE, null, newRow);
     }
     
-    public void deleteBeer(long id) {
+	public void setBeerRating(long id, int rating) {
+		ContentValues newRow = new ContentValues();
+        newRow.put("rating", rating);
+
+        db.update(DB_TABLE, newRow, "ROWID = ?", new String[] { String.valueOf(id) });
+	}
+
+	public void deleteBeer(long id) {
 		db.execSQL("DELETE FROM " + DB_TABLE + " WHERE ROWID = " + String.valueOf(id));
     }
     
@@ -126,13 +133,30 @@ public class BeerDbService {
     }
     
     public String getFavoriteBeer() {
+    	// TODO - There's gotta be a better way to calculate this
+    	Cursor q = db.query(DB_TABLE,
+    			new String[] {"beername", "AVG(rating) AS rating"},
+    			null, null, "beername",
+    			null, "AVG(rating) DESC, COUNT(*) DESC", "1");
+
+    	if (q.getCount() == 0)
+    		return "-";
+    	
+    	q.moveToFirst();
+    	String favoriteBeer = q.getString(0);
+    	q.close();
+    	
+    	return favoriteBeer;
+    }
+    
+    public String getMostDrunkBeer() {
     	Cursor q = db.query(DB_TABLE,
     			new String[] {"beername", "COUNT(*) AS count"},
     			null, null, "beername",
     			null, "COUNT(*) DESC", "1");
     	
     	if (q.getCount() == 0)
-    		return "None yet";
+    		return "-";
     	
     	q.moveToFirst();
     	String favoriteBeer = q.getString(0);
@@ -148,7 +172,7 @@ public class BeerDbService {
     			null, "COUNT(*) DESC", "1");
     	
     	if (q.getCount() == 0)
-    		return "None yet";
+    		return "-";
     	
     	q.moveToFirst();
     	Integer hr = q.getInt(0);
@@ -163,10 +187,4 @@ public class BeerDbService {
     	return favoriteHour;
     }
 
-	public void setBeerRating(long id, int rating) {
-		ContentValues newRow = new ContentValues();
-        newRow.put("rating", rating);
-
-        db.update(DB_TABLE, newRow, "ROWID = ?", new String[] { String.valueOf(id) });
-	}
 }

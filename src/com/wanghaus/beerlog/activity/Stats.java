@@ -27,6 +27,7 @@ public class Stats extends BaseActivity {
         BeerDbService dbs = new BeerDbService(this);
         stats.put("Number of beers drunk", String.valueOf(dbs.getBeerCount()));
         stats.put("Favorite beer", dbs.getFavoriteBeer());
+        stats.put("Most drunk beer", dbs.getMostDrunkBeer());
         stats.put("Favorite drinking hour", dbs.getFavoriteDrinkingHour());
         dbs.close();
         
