@@ -227,19 +227,13 @@ public class AddBeer extends BaseActivity {
 
     	// Save
     	if (dbs != null) {
-    		ContentValues newRow = new ContentValues();
-    		
             TextView beernameView = (TextView) findViewById(R.id.beername);
             String beername = beernameView.getText().toString();
     		
             Spinner containerSpinner = (Spinner) findViewById(R.id.container);
             String container = containerSpinner.getSelectedItem().toString();
             
-            SimpleDateFormat formatter = new SimpleDateFormat("MMM dd, yyyy hh:mm a");
-            newRow.put("stamp", formatter.format(specificTime.getTime()));
-    		
-            db.insert(DB_TABLE, null, newRow);
-            dbs.addBeer(beername, container, formatter.format(specificTime.getTime()));
+            dbs.addBeer(beername, container, specificTime.getTime());
     	} else {
     		// TODO - throw an error?
     	}
