@@ -23,7 +23,7 @@ public class BeerDbService {
 		"CREATE TABLE IF NOT EXISTS " + DB_TABLE + "(" +
 			"beername VARCHAR(255) NOT NULL, " +
 			"container VARCHAR(32) NOT NULL, " +
-			"stamp DATETIME NOT NULL" +
+			"stamp DATETIME NOT NULL, " +
 			"rating INT NOT NULL DEFAULT 0" +
 		")";
 

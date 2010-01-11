@@ -7,7 +7,10 @@ import android.view.Menu;
 import android.view.MenuItem;
 
 public class BaseActivity extends Activity {
-	private final int MENU_SETTINGS = 1;
+	private final int MENU_ADD_BEER = 1;
+	private final int MENU_HISTORY= 2;
+	private final int MENU_STATS = 3;
+	private final int MENU_SETTINGS = 4;
 	
     @Override
 	protected void onCreate(Bundle savedInstanceState) {
@@ -19,17 +22,43 @@ public class BaseActivity extends Activity {
 		if (!super.onCreateOptionsMenu(menu))
 			return false;
 		
-	    menu.add(0, MENU_SETTINGS, 0, "Settings")
-	    	.setIcon(android.R.drawable.ic_menu_preferences);
+	    menu.add(0, MENU_ADD_BEER, 0, "Add Beer")
+    	.setIcon(android.R.drawable.ic_menu_add);
+
+	    menu.add(0, MENU_HISTORY, 0, "History")
+    	.setIcon(android.R.drawable.ic_menu_recent_history);
+
+	    menu.add(0, MENU_STATS, 0, "Statistics")
+    	.setIcon(android.R.drawable.ic_menu_info_details);
+
+		menu.add(0, MENU_SETTINGS, 0, "Settings")
+    	.setIcon(android.R.drawable.ic_menu_preferences);
 
 	    return true;
 	}
 
 	/* Handles item selections */
 	public boolean onOptionsItemSelected(MenuItem item) {
+		Intent nextIntent;
+		
 	    switch (item.getItemId()) {
+	    case MENU_ADD_BEER:
+	    	nextIntent = new Intent(this, AddBeer.class);
+	    	startActivity(nextIntent);
+
+	        return true;
+	    case MENU_HISTORY:
+	    	nextIntent = new Intent(this, History.class);
+	    	startActivity(nextIntent);
+
+	        return true;
+	    case MENU_STATS:
+	    	nextIntent = new Intent(this, Stats.class);
+	    	startActivity(nextIntent);
+
+	        return true;
 	    case MENU_SETTINGS:
-	    	Intent nextIntent = new Intent(this, Config.class);
+	    	nextIntent = new Intent(this, Config.class);
 	    	startActivity(nextIntent);
 
 	        return true;

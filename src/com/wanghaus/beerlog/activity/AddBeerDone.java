@@ -54,15 +54,13 @@ public class AddBeerDone extends BaseActivity {
     }
 
     private void viewMoreStats() {
-    	Intent nextIntent = new Intent(this, Main.class);
-    	nextIntent.putExtra("selectedTab", "stats");
+    	Intent nextIntent = new Intent(this, Stats.class);
     	startActivity(nextIntent);
     	finish();
     }
     
     private void viewAddAnother() {
-    	Intent nextIntent = new Intent(this, Main.class); 	
-    	nextIntent.putExtra("selectedTab", "addbeer");
+    	Intent nextIntent = new Intent(this, AddBeer.class); 	
     	startActivity(nextIntent);
     	finish();
     }

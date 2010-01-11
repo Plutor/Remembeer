@@ -74,8 +74,7 @@ public class History extends BaseActivity {
                  String beername = getBeerValue(position, "beername");
                  if (beername != null) {
                 	 MenuItem item = menu.add(0, DRINK_ANOTHER, 0, "Drink another " + beername);
-          			 Intent nextIntent = new Intent(getBaseContext(), Main.class);
-          			 nextIntent.putExtra("selectedTab", "addbeer");
+          			 Intent nextIntent = new Intent(getBaseContext(), AddBeer.class);
           			 nextIntent.putExtra("beername", beername);
           			 nextIntent.putExtra("container", getBeerValue(position, "container"));
            			 item.setIntent(nextIntent);
