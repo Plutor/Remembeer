@@ -103,7 +103,15 @@ public class History extends BaseActivity {
 					}
             	 });
              }
-       };
+        };
+       
+       	View addBeerButton = findViewById(R.id.history_addbeer);
+		addBeerButton.setOnClickListener(new View.OnClickListener() {
+			public void onClick(View arg0) {
+				Intent nextIntent = new Intent(getBaseContext(), AddBeer.class);
+				startActivity(nextIntent);
+			}
+		});
     }
     
     private String getBeerValue(Integer position, String colName) {

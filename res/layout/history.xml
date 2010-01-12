@@ -1,5 +1,34 @@
 <?xml version="1.0" encoding="utf-8"?>
-<ListView xmlns:android="http://schemas.android.com/apk/res/android"
-    android:layout_width="fill_parent" 
-    android:layout_height="fill_parent" 
-    android:id="@+id/history_list" />
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+	android:layout_width="fill_parent"
+    android:layout_height="fill_parent"
+   	android:orientation="vertical" >
+	<LinearLayout
+        android:layout_width="fill_parent"
+        android:layout_height="wrap_content"
+       	android:orientation="horizontal"
+ 	    android:paddingTop="10dp"
+ 	    android:paddingBottom="10dp" 
+	    android:id="@+id/history_addbeer" >
+ 	    	<ImageView
+ 	    		android:src="@android:drawable/ic_input_add" 
+	            android:layout_width="wrap_content"
+	            android:layout_height="wrap_content" />
+	        <TextView
+	            android:layout_width="wrap_content"
+	            android:layout_height="wrap_content"
+	        	android:layout_marginLeft="6dp"
+	            android:text="@string/addbeer_fromhistory"
+	            android:textAppearance="?android:attr/textAppearanceLarge" />
+	</LinearLayout>
+
+   	<ImageView
+   		android:src="@android:drawable/divider_horizontal_dark" 
+          android:layout_width="fill_parent"
+          android:layout_height="wrap_content" />
+
+	<ListView
+	    android:layout_width="fill_parent" 
+	    android:layout_height="fill_parent" 
+	    android:id="@+id/history_list" />
+</LinearLayout>

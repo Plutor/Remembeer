@@ -19,4 +19,5 @@
 <string name="addanother">Drink another!</string>
 <string name="viewstat_placeholder">This is where the stat name goes</string>
 <string name="your_rating">Your rating:</string>
+<string name="addbeer_fromhistory">Add a beer</string>
 </resources>
