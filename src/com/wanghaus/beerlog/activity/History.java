@@ -1,5 +1,6 @@
 package com.wanghaus.beerlog.activity;
 
+import android.app.Activity;
 import android.app.AlertDialog;
 import android.content.Context;
 import android.content.DialogInterface;
@@ -13,8 +14,6 @@ import android.view.MenuItem;
 import android.view.View;
 import android.view.ViewGroup;
 import android.view.ContextMenu.ContextMenuInfo;
-import android.view.animation.Animation;
-import android.view.animation.TranslateAnimation;
 import android.widget.ListAdapter;
 import android.widget.ListView;
 import android.widget.RatingBar;
@@ -66,10 +65,12 @@ public class History extends BaseActivity {
         };
          
         /* Add Context menu listener to the ListView. */
+        final Activity topThis = this;
         contextMenuListener = new View.OnCreateContextMenuListener() {
              public void onCreateContextMenu(ContextMenu menu, View v, ContextMenuInfo menuInfo) {
                  menu.setHeaderTitle("ContextMenu");
 
+                 // Drink another
                  Integer position = (Integer)v.getTag();
                  String beername = getBeerValue(position, "beername");
                  if (beername != null) {
@@ -80,7 +81,27 @@ public class History extends BaseActivity {
            			 item.setIntent(nextIntent);
                  }
                  
-                 menu.add(0, DELETE, 0, "Delete");
+                 // Delete
+                 final long beerId = Long.valueOf(getBeerValue(position, "_id"));
+            	 MenuItem item = menu.add(0, DELETE, 0, "Delete");
+            	 item.setOnMenuItemClickListener( new MenuItem.OnMenuItemClickListener() {
+					public boolean onMenuItemClick(MenuItem item) {
+						new AlertDialog.Builder(topThis).setTitle("Delete this beer?")
+						.setMessage("This action cannot be undone.")
+						.setPositiveButton((CharSequence) "Delete",
+								new DialogInterface.OnClickListener() {
+									public void onClick(DialogInterface arg0, int arg1) {
+										dbs.deleteBeer(beerId);
+										// Update the view
+										SimpleCursorAdapter listAdapter = (SimpleCursorAdapter) historyList
+												.getAdapter();
+										listAdapter.getCursor().requery();
+									}
+								}).setNegativeButton("Cancel", null).show();
+
+						return true; /* true means: "we handled the event". */
+					}
+            	 });
              }
        };
     }
@@ -97,34 +118,6 @@ public class History extends BaseActivity {
 		}
 		return null;
 	}
-    
-    @Override
-    public boolean onContextItemSelected(MenuItem aItem) {
-         //AdapterContextMenuInfo menuInfo = (AdapterContextMenuInfo) aItem.getMenuInfo();
-        //final long beerId = menuInfo.id;
-        final long beerId = 0;
-
-         /* Switch on the ID of the item, to get what the user selected. */
-         switch (aItem.getItemId()) {
-         case DELETE:
-    	     new AlertDialog.Builder(this)
-    	       .setTitle("Delete this beer?")
-    	       .setMessage("This action cannot be undone.")
-    	       .setPositiveButton((CharSequence)"Delete", new DialogInterface.OnClickListener() {
-					public void onClick(DialogInterface arg0, int arg1) {
-						dbs.deleteBeer(beerId);
-						// Update the view
-						SimpleCursorAdapter listAdapter = (SimpleCursorAdapter) historyList.getAdapter();
-						listAdapter.getCursor().requery();
-					}
-    	        })  
-    	        .setNegativeButton("Cancel", null)
-    	        .show();
-
-             return true; /* true means: "we handled the event". */
-         }
-         return false;
-    }
     
     public class HistoryCursorAdapter extends SimpleCursorAdapter {
     	private Context context;
@@ -185,6 +178,7 @@ public class History extends BaseActivity {
 	         
 	         row.setOnClickListener( clickListener );
 	         row.setOnCreateContextMenuListener( contextMenuListener );
+	         
 	         return row;
 	     } 
     }
