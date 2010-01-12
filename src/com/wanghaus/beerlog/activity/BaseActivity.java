@@ -22,17 +22,25 @@ public class BaseActivity extends Activity {
 		if (!super.onCreateOptionsMenu(menu))
 			return false;
 		
-	    menu.add(0, MENU_ADD_BEER, 0, "Add Beer")
-    	.setIcon(android.R.drawable.ic_menu_add);
+		if (!(this instanceof AddBeer))
+		    menu.add(0, MENU_ADD_BEER, 0, "Add Beer")
+	    	.setIcon(android.R.drawable.ic_menu_add);
 
-	    menu.add(0, MENU_HISTORY, 0, "History")
-    	.setIcon(android.R.drawable.ic_menu_recent_history);
+		if (!(this instanceof History)) {
+		    menu.add(0, MENU_HISTORY, 0, "History")
+	    	.setIcon(android.R.drawable.ic_menu_recent_history);
+		} else {
+		    menu.add(0, MENU_HISTORY, 0, "Export")
+	    	.setIcon(android.R.drawable.ic_menu_share);
+		}
+		
+		if (!(this instanceof Stats))
+		    menu.add(0, MENU_STATS, 0, "Statistics")
+	    	.setIcon(android.R.drawable.ic_menu_info_details);
 
-	    menu.add(0, MENU_STATS, 0, "Statistics")
-    	.setIcon(android.R.drawable.ic_menu_info_details);
-
-		menu.add(0, MENU_SETTINGS, 0, "Settings")
-    	.setIcon(android.R.drawable.ic_menu_preferences);
+		if (!(this instanceof Config))
+			menu.add(0, MENU_SETTINGS, 0, "Settings")
+	    	.setIcon(android.R.drawable.ic_menu_preferences);
 
 	    return true;
 	}
