@@ -60,7 +60,7 @@ public class History extends BaseActivity {
         		View metadataView = itemView.findViewById(R.id.metadata);
         		boolean isVisible = (metadataView.getVisibility() == View.VISIBLE);
         		metadataView.setVisibility( isVisible ? View.GONE : View.VISIBLE );
-        		smallRatingView.setVisibility( isVisible ? View.VISIBLE : View.GONE );
+        		smallRatingView.setVisibility( isVisible ? View.VISIBLE : View.INVISIBLE );
 			}
         };
          
