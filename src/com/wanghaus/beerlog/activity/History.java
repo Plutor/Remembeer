@@ -165,23 +165,27 @@ public class History extends BaseActivity {
 		         smallRatingBar.setRating( cursor.getFloat(index) );
 		         ratingBar.setTag(position);
 		         
-		         ratingBar.setOnRatingBarChangeListener( new RatingBar.OnRatingBarChangeListener() {
-		        	 public void onRatingChanged(RatingBar ratingBar, float rating, boolean fromUser) {
-		        		 Integer position = (Integer) ratingBar.getTag();
-		        		 cursor.moveToPosition(position);
-		        		 int index;
-		        		 
-		        		 index = cursor.getColumnIndex("_id");
-		        		 long id = cursor.getLong(index);
-		        		 
-		        		 Integer intRating = ((Float)rating).intValue();
-		        		 
-		        		 BeerDbService bds = new BeerDbService(context);
-		        		 bds.setBeerRating(id, intRating);
-		        		 
-				         smallRatingBar.setRating( rating );
+		         ratingBar.setOnRatingBarChangeListener(new RatingBar.OnRatingBarChangeListener() {
+					public void onRatingChanged(RatingBar ratingBar,
+							float rating, boolean fromUser) {
+						Integer position = (Integer) ratingBar.getTag();
+						cursor.moveToPosition(position);
+						int index;
+
+						index = cursor.getColumnIndex("_id");
+						long id = cursor.getLong(index);
+
+						Integer intRating = ((Float) rating).intValue();
+
+						BeerDbService bds = new BeerDbService(context);
+						bds.setBeerRating(id, intRating);
+
+						smallRatingBar.setRating(rating);
+						
+						SimpleCursorAdapter listAdapter = (SimpleCursorAdapter) historyList.getAdapter();
+						listAdapter.getCursor().requery();
 					}
-		         });
+				});
 	         }
 	         
 	         row.setOnClickListener( clickListener );
