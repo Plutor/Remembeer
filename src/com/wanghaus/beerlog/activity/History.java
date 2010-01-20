@@ -205,6 +205,11 @@ public class History extends BaseActivity {
 	    	 
 	         return row;
 	     } 
+	     
+	     @Override
+	     public int getCount() {
+	    	 return super.getCount() + 1;
+	     }
     }
 
     public void exportHistory() {
