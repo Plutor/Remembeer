@@ -147,7 +147,6 @@ public class History extends BaseActivity {
 		        		 startActivity(nextIntent);
 		        	 }
 		         });
-
 	    	 } else {
 	    		 // Show a real beer row
 	    		 position--;

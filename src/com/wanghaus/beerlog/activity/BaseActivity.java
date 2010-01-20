@@ -35,7 +35,7 @@ public class BaseActivity extends Activity {
 	    	.setIcon(android.R.drawable.ic_menu_share);
 		}
 		
-		if (!(this instanceof Stats))
+		if (!(this instanceof Stats || this instanceof ChartsList || this instanceof ViewChart))
 		    menu.add(0, MENU_STATS, 0, "Statistics")
 	    	.setIcon(android.R.drawable.ic_menu_info_details);
 

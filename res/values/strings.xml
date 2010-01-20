@@ -20,4 +20,5 @@
 <string name="viewstat_placeholder">This is where the stat name goes</string>
 <string name="your_rating">Your rating:</string>
 <string name="addbeer_fromhistory">Add a beer</string>
+<string name="charts_fromstats">View charts</string>
 </resources>
