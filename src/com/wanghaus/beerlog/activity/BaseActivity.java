@@ -8,9 +8,10 @@ import android.view.MenuItem;
 
 public class BaseActivity extends Activity {
 	private final int MENU_ADD_BEER = 1;
-	private final int MENU_HISTORY= 2;
-	private final int MENU_STATS = 3;
-	private final int MENU_SETTINGS = 4;
+	private final int MENU_HISTORY = 2;
+	private final int MENU_EXPORT = 3;
+	private final int MENU_STATS = 4;
+	private final int MENU_SETTINGS = 5;
 	
     @Override
 	protected void onCreate(Bundle savedInstanceState) {
@@ -30,7 +31,7 @@ public class BaseActivity extends Activity {
 		    menu.add(0, MENU_HISTORY, 0, "History")
 	    	.setIcon(android.R.drawable.ic_menu_recent_history);
 		} else {
-		    menu.add(0, MENU_HISTORY, 0, "Export")
+		    menu.add(0, MENU_EXPORT, 0, "Export")
 	    	.setIcon(android.R.drawable.ic_menu_share);
 		}
 		
@@ -60,6 +61,14 @@ public class BaseActivity extends Activity {
 	    	startActivity(nextIntent);
 
 	        return true;
+	    case MENU_EXPORT:
+	    	if (this instanceof History) {
+	    		History historyAction = (History)this;
+	    		historyAction.exportHistory();
+	    		return true;
+	    	}
+
+	        return false;
 	    case MENU_STATS:
 	    	nextIntent = new Intent(this, Stats.class);
 	    	startActivity(nextIntent);

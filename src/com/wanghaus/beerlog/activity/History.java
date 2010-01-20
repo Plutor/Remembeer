@@ -6,6 +6,7 @@ import android.content.Context;
 import android.content.DialogInterface;
 import android.content.Intent;
 import android.database.Cursor;
+import android.net.Uri;
 import android.os.Bundle;
 import android.util.Log;
 import android.view.ContextMenu;
@@ -204,5 +205,25 @@ public class History extends BaseActivity {
 	    	 
 	         return row;
 	     } 
+    }
+
+    public void exportHistory() {
+    	// Build a csv
+    	Uri csvFile = dbs.exportHistoryToCsvFile();
+    	if (csvFile == null) {
+    		// TODO - Show an error message
+    		return;
+    	}
+    	
+    	// Create an email
+    	final Intent emailIntent = new Intent(android.content.Intent.ACTION_SEND);
+    	emailIntent.putExtra(android.content.Intent.EXTRA_SUBJECT, "Beer Log export");
+    	
+    	// Attach the CSV
+    	emailIntent.setType("plain/csv");
+    	emailIntent.putExtra(android.content.Intent.EXTRA_STREAM, csvFile);
+    	
+    	// Send
+    	startActivity(Intent.createChooser(emailIntent, "Send export..."));
     }
 }

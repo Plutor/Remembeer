@@ -1,5 +1,9 @@
 package com.wanghaus.beerlog.service;
 
+import java.io.File;
+import java.io.FileOutputStream;
+import java.io.IOException;
+import java.io.PrintWriter;
 import java.util.Date;
 
 import android.content.ContentValues;
@@ -7,6 +11,9 @@ import android.content.Context;
 import android.database.Cursor;
 import android.database.sqlite.SQLiteDatabase;
 import android.database.sqlite.SQLiteOpenHelper;
+import android.net.Uri;
+import android.os.Environment;
+import android.util.Log;
 
 public class BeerDbService {
 	private static final String DB_NAME = "BeerLog";
@@ -181,4 +188,70 @@ public class BeerDbService {
     	return favoriteHour;
     }
 
+    public Uri exportHistoryToCsvFile() {
+    	Cursor q = db.query(DB_TABLE,
+    			new String[] {"beername", "container", "stamp", "rating"},
+    			null, null, null,
+    			null, "stamp ASC");
+
+    	StringBuilder csvData = new StringBuilder();
+    	int numCols = q.getColumnCount();
+    	
+    	// Write the headers
+    	for (int col = 0; col < numCols; ++col) {
+    		String colname = q.getColumnName(col);
+			if (colname != null)
+				colname = colname.replaceAll("\"", "\\\""); // escape quotes
+			csvData.append("\"");
+			csvData.append(colname);
+			csvData.append("\"");
+			
+			if (col < numCols - 1)
+				csvData.append(",");
+    	}
+    	csvData.append("\n");
+    	
+    	// Write the data
+    	q.moveToFirst();
+    	do {
+    		for (int col = 0; col < numCols; ++col) {
+    			String val = q.getString(col);
+    			if (val != null)
+    				val = val.replaceAll("\"", "\\\""); // escape quotes
+    			csvData.append("\"");
+    			csvData.append(val);
+    			csvData.append("\"");
+
+    			if (col == numCols - 1)
+        			csvData.append("\n");
+    			else
+        			csvData.append(",");
+    		}
+    	} while (q.moveToNext());
+    	
+    	q.close();
+    	
+    	// Write the csv to a file on the external storage 
+    	File csvFile = new File(Environment.getExternalStorageDirectory(), "BeerLog_export.csv");
+    	try {
+			csvFile.createNewFile();
+		} catch (IOException e) {
+			// If it fails, we probably can't create a file there
+			e.printStackTrace();
+			return null;
+		}
+    	
+    	try {
+			FileOutputStream csvFileStream = new FileOutputStream(csvFile);
+			PrintWriter csvWriter = new PrintWriter(csvFileStream);
+			csvWriter.write(csvData.toString());
+			csvWriter.close();
+			csvFileStream.close();
+		} catch (Exception e) {
+			e.printStackTrace();
+			return null;
+		}
+		
+    	return Uri.parse("file://" + csvFile.getAbsolutePath());
+    }
 }
