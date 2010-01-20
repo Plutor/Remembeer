@@ -104,14 +104,6 @@ public class History extends BaseActivity {
             	 });
              }
         };
-       
-       	View addBeerButton = findViewById(R.id.history_addbeer);
-		addBeerButton.setOnClickListener(new View.OnClickListener() {
-			public void onClick(View arg0) {
-				Intent nextIntent = new Intent(getBaseContext(), AddBeer.class);
-				startActivity(nextIntent);
-			}
-		});
     }
     
     private String getBeerValue(Integer position, String colName) {
@@ -140,57 +132,76 @@ public class History extends BaseActivity {
 		}
 
 	     public View getView(int position, View convertView, ViewGroup parent) {
-	         // Cursor to current item
-	         final Cursor cursor = getCursor();
-	         cursor.moveToPosition(position);
-	         int index;
-	         
-	         LayoutInflater inflater = LayoutInflater.from(context);
-	         View row = inflater.inflate(R.layout.history_row, null);
-	         row.setTag( cursor.getPosition() );
-				
-	         TextView beername = (TextView) row.findViewById(R.id.beername);
-	         index = cursor.getColumnIndex("beername");
-	         beername.setText(cursor.getString(index));
-	         
-	         TextView details = (TextView) row.findViewById(R.id.details);
-	         index = cursor.getColumnIndex("details");
-	         details.setText(cursor.getString(index));
-
-	         final RatingBar smallRatingBar = (RatingBar) row.findViewById(R.id.smallRating);
-	         RatingBar ratingBar = (RatingBar) row.findViewById(R.id.rating);
-	         if (ratingBar != null && smallRatingBar != null) {
-		         index = cursor.getColumnIndex("rating");
-		         ratingBar.setRating( cursor.getFloat(index) );
-		         smallRatingBar.setRating( cursor.getFloat(index) );
-		         ratingBar.setTag(position);
+	    	 View row;
+	    	 
+	    	 if (position == 0) {
+	    		 // Show the add button
+		         LayoutInflater inflater = LayoutInflater.from(context);
+		         row = inflater.inflate(R.layout.history_add, null);
 		         
-		         ratingBar.setOnRatingBarChangeListener(new RatingBar.OnRatingBarChangeListener() {
-					public void onRatingChanged(RatingBar ratingBar,
-							float rating, boolean fromUser) {
-						Integer position = (Integer) ratingBar.getTag();
-						cursor.moveToPosition(position);
-						int index;
+		         View addBeerButton = row.findViewById(R.id.history_addbeer);
+		         addBeerButton.setOnClickListener(new View.OnClickListener() {
+		        	 public void onClick(View arg0) {
+		        		 Intent nextIntent = new Intent(getBaseContext(), AddBeer.class);
+		        		 startActivity(nextIntent);
+		        	 }
+		         });
 
-						index = cursor.getColumnIndex("_id");
-						long id = cursor.getLong(index);
+	    	 } else {
+	    		 // Show a real beer row
+	    		 position--;
 
-						Integer intRating = ((Float) rating).intValue();
-
-						BeerDbService bds = new BeerDbService(context);
-						bds.setBeerRating(id, intRating);
-
-						smallRatingBar.setRating(rating);
-						
-						SimpleCursorAdapter listAdapter = (SimpleCursorAdapter) historyList.getAdapter();
-						listAdapter.getCursor().requery();
-					}
-				});
-	         }
-	         
-	         row.setOnClickListener( clickListener );
-	         row.setOnCreateContextMenuListener( contextMenuListener );
-	         
+		         final Cursor cursor = getCursor();
+		         cursor.moveToPosition(position);
+		         int index;
+		         
+		         LayoutInflater inflater = LayoutInflater.from(context);
+		         row = inflater.inflate(R.layout.history_row, null);
+		         row.setTag( cursor.getPosition() );
+					
+		         TextView beername = (TextView) row.findViewById(R.id.beername);
+		         index = cursor.getColumnIndex("beername");
+		         beername.setText(cursor.getString(index));
+		         
+		         TextView details = (TextView) row.findViewById(R.id.details);
+		         index = cursor.getColumnIndex("details");
+		         details.setText(cursor.getString(index));
+	
+		         final RatingBar smallRatingBar = (RatingBar) row.findViewById(R.id.smallRating);
+		         RatingBar ratingBar = (RatingBar) row.findViewById(R.id.rating);
+		         if (ratingBar != null && smallRatingBar != null) {
+			         index = cursor.getColumnIndex("rating");
+			         ratingBar.setRating( cursor.getFloat(index) );
+			         smallRatingBar.setRating( cursor.getFloat(index) );
+			         ratingBar.setTag(position);
+			         
+			         ratingBar.setOnRatingBarChangeListener(new RatingBar.OnRatingBarChangeListener() {
+						public void onRatingChanged(RatingBar ratingBar,
+								float rating, boolean fromUser) {
+							Integer position = (Integer) ratingBar.getTag();
+							cursor.moveToPosition(position);
+							int index;
+	
+							index = cursor.getColumnIndex("_id");
+							long id = cursor.getLong(index);
+	
+							Integer intRating = ((Float) rating).intValue();
+	
+							BeerDbService bds = new BeerDbService(context);
+							bds.setBeerRating(id, intRating);
+	
+							smallRatingBar.setRating(rating);
+							
+							SimpleCursorAdapter listAdapter = (SimpleCursorAdapter) historyList.getAdapter();
+							listAdapter.getCursor().requery();
+						}
+					});
+		         }
+		         
+		         row.setOnClickListener( clickListener );
+		         row.setOnCreateContextMenuListener( contextMenuListener );
+	    	 }
+	    	 
 	         return row;
 	     } 
     }
