@@ -41,21 +41,10 @@
 		        android:layout_height="wrap_content"
 		        android:drawSelectorOnTop="true"
 		        android:prompt="@string/drink_when_prompt" />
-		</LinearLayout>
-	</ScrollView>
-	<TableLayout
-	    android:layout_width="fill_parent"
-	    android:layout_height="wrap_content"
-	    android:layout_alignParentBottom="true"
-	    android:stretchColumns="0"
-   	    android:background="#666666"
-   	    android:paddingTop="5dp"
-   	    android:paddingBottom="3dp">
-	    <TableRow>
 		    <Button android:id="@+id/save"
 		        android:layout_width="fill_parent"
 		        android:layout_height="wrap_content"
 		        android:text="@string/save" />
-        </TableRow>
-	</TableLayout>
+		</LinearLayout>
+	</ScrollView>
 </RelativeLayout>
