@@ -159,12 +159,11 @@ public class AddBeer extends BaseActivity {
 					int selected, long id) {
 				switch (selected) {
 				case 0: // now
-					specificTime.setTime( new Date() );
+					specificTime.setTime( new Date(0) );
 					removeSpecificTime();
 					break;
 				case 1: // ten minutes ago
-					specificTime.setTime( new Date() );
-					specificTime.add( Calendar.MINUTE, -10 );
+					specificTime.setTime( new Date(1) );
 					removeSpecificTime();
 					break;
 				case 2: // last night (lets say 9pm)
@@ -230,6 +229,16 @@ public class AddBeer extends BaseActivity {
     		
             Spinner containerSpinner = (Spinner) findViewById(R.id.container);
             String container = containerSpinner.getSelectedItem().toString();
+            
+            switch ((int)specificTime.getTimeInMillis()) {
+            case 0:
+            	specificTime.setTime( new Date());
+                break;
+            case 1:
+            	specificTime.setTime( new Date());
+            	specificTime.add( Calendar.MINUTE, -10 );
+            	break;
+            }
             
             dbs.addBeer(beername, container, specificTime.getTime());
     	} else {
