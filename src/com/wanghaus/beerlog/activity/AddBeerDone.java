@@ -60,6 +60,8 @@ public class AddBeerDone extends BaseActivity {
         	} else if (count == 2) {
         		popupParts.set(0, "That was your");
         		popupParts.set(1, "second");
+        		popupParts.set(2, popupParts.get(2).replaceAll("^beers", "beer"));
+        		popupParts.set(2, popupParts.get(2).replaceAll("^types", "type"));
         	} else if (count > 2) {
         		popupParts.set(0, "You have drunk");
         		popupParts.set(1, String.valueOf(count) );
