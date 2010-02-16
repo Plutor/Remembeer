@@ -5,20 +5,24 @@ import java.io.FileOutputStream;
 import java.io.IOException;
 import java.io.PrintWriter;
 import java.util.Date;
+import java.util.LinkedList;
+import java.util.List;
 
 import android.content.ContentValues;
 import android.content.Context;
+import android.content.res.Resources;
 import android.database.Cursor;
 import android.database.sqlite.SQLiteDatabase;
 import android.database.sqlite.SQLiteOpenHelper;
 import android.net.Uri;
 import android.os.Environment;
-import android.util.Log;
+
+import com.wanghaus.beerlog.R;
 
 public class BeerDbService {
 	private static final String DB_NAME = "BeerLog";
 	private static final String DB_TABLE = "beer_log";
-	private static final int DB_VERSION = 2;
+	private static final int DB_VERSION = 3;
 
 	private static final String DB_CREATE = 
 		"CREATE TABLE IF NOT EXISTS " + DB_TABLE + "(" +
@@ -55,7 +59,12 @@ public class BeerDbService {
         				"ADD COLUMN rating INT NOT NULL DEFAULT 0");
         	}
         	
-        	// if (oldVersion < 3) etc..
+        	if (oldVersion < 3) {
+        		db.execSQL("UPDATE " + DB_TABLE + " " +
+        				"SET container='Bottle' WHERE container LIKE 'Bottle%'");
+        	}
+        	
+        	// if (oldVersion < 4) etc..
         }
     }    
     
@@ -126,6 +135,35 @@ public class BeerDbService {
         		new String[] { "%" + substr + "%" },
         		"beername",
         		null, null);
+    }
+    
+    public String[] getContainers() {
+    	LinkedList<String> rv = new LinkedList<String>();
+    	
+    	// First get the list from the xml
+    	Resources res = context.getResources();
+    	CharSequence[] containers = res.getTextArray(R.array.containers);
+    	for (CharSequence b : containers)
+    		rv.add(b.toString());
+    	
+    	// Then get the most-used containers
+    	Cursor containerQuery = db.query(DB_TABLE, new String[] {"container"}, 
+    			null, null, "container", null, "COUNT(*) ASC");
+    	
+    	// Resort as needed
+    	while (containerQuery.moveToNext()) {
+    		int id;
+    		for (id = 0; id < rv.size(); ++id) {
+    			if (rv.get(id).equals(containerQuery.getString(0))) {
+    				String val = rv.remove(id);
+    				rv.addFirst(val);
+    				break;
+    			}
+    		}
+    	}
+    	containerQuery.close();
+    	
+    	return rv.toArray(new String[0]);
     }
     
     public long getBeerCount() {

@@ -116,8 +116,8 @@ public class AddBeer extends BaseActivity {
     private void initContainerSpinner() {
         // Containers dropdown
         Spinner containerSpinner = (Spinner) findViewById(R.id.container);
-        ArrayAdapter<CharSequence> containerAdapter = ArrayAdapter.createFromResource(this,
-                R.array.containers, android.R.layout.simple_spinner_item);
+        ArrayAdapter<CharSequence> containerAdapter = new ArrayAdapter<CharSequence>(this,
+                android.R.layout.simple_spinner_item, dbs.getContainers());
         containerAdapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
         containerSpinner.setAdapter(containerAdapter);
         
