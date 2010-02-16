@@ -23,6 +23,9 @@ public class BaseActivity extends Activity {
 		if (!super.onCreateOptionsMenu(menu))
 			return false;
 		
+		if (this instanceof AddBeerDone)
+			return false;
+		
 		if (!(this instanceof AddBeer))
 		    menu.add(0, MENU_ADD_BEER, 0, "Add Beer")
 	    	.setIcon(android.R.drawable.ic_menu_add);
