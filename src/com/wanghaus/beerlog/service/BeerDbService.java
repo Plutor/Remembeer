@@ -133,6 +133,34 @@ public class BeerDbService {
     	return beercountQuery.getCount();
     }
     
+    public long getBeerCountThisYear() {
+    	Cursor beercountQuery = db.query(DB_TABLE, new String[] {"ROWID"},
+    			"STRFTIME('%Y', stamp) = STRFTIME('%Y', current_date)",
+    			null, null, null, null);
+    	return beercountQuery.getCount();
+    }
+    
+    public long getBeerCountThisMonth() {
+    	Cursor beercountQuery = db.query(DB_TABLE, new String[] {"ROWID"},
+    			"STRFTIME('%Y%m', stamp) = STRFTIME('%Y%m', current_date)",
+    			null, null, null, null);
+    	return beercountQuery.getCount();
+    }
+
+    public long getBeerCountLastDays(Integer count) {
+    	Cursor beercountQuery = db.query(DB_TABLE, new String[] {"ROWID"},
+    			"JULIANDAY(stamp) > JULIANDAY(current_date) - ? AND JULIANDAY(stamp) < JULIANDAY(current_date)", // I'm looking at you, DST
+    			new String[] {count.toString()},
+    			null, null, null);
+    	return beercountQuery.getCount();
+    }
+    
+    public long getBeerTypesCount() {
+    	Cursor beercountQuery = db.query(DB_TABLE, new String[] {"DISTINCT beername"},
+    			null, null, null, null, null);
+    	return beercountQuery.getCount();
+    }
+    
     public String getFavoriteBeer() {
     	// TODO - There's gotta be a better way to calculate this
     	Cursor q = db.query(DB_TABLE,
