@@ -4,6 +4,10 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Random;
 
+import android.app.Notification;
+import android.app.NotificationManager;
+import android.app.PendingIntent;
+import android.content.Context;
 import android.content.Intent;
 import android.os.Bundle;
 import android.util.Log;
@@ -15,6 +19,8 @@ import com.wanghaus.beerlog.R;
 import com.wanghaus.beerlog.service.BeerDbService;
 
 public class AddBeerDone extends BaseActivity {
+	public final static int BEER_HISTORY_ID = 1;
+	
     @Override
     public void onCreate(Bundle savedInstanceState) {
     	super.onCreate(savedInstanceState);
@@ -96,6 +102,26 @@ public class AddBeerDone extends BaseActivity {
             	viewAddAnother();
             }
         });
+        
+        String ns = Context.NOTIFICATION_SERVICE;
+        NotificationManager mNotificationManager = (NotificationManager) getSystemService(ns);
+        
+        int icon = R.drawable.beer_half_full;
+        CharSequence tickerText = "How's that beer you're drinking?";
+        long when = System.currentTimeMillis();
+        when += 300000l; // 5 minutes later
+
+        Notification notification = new Notification(icon, tickerText, when);
+
+        Context context = getApplicationContext();
+        CharSequence contentTitle = "Rate your beer";
+        CharSequence contentText = "Why not take a second and rate that beer";
+        Intent notificationIntent = new Intent(this, History.class);
+        PendingIntent contentIntent = PendingIntent.getActivity(this, 0, notificationIntent, 0);
+
+        notification.setLatestEventInfo(context, contentTitle, contentText, contentIntent);
+
+        mNotificationManager.notify(BEER_HISTORY_ID, notification);
     }
 
     private void viewMoreStats() {
