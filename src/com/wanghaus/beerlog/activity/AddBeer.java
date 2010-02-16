@@ -8,6 +8,7 @@ import android.app.DatePickerDialog;
 import android.app.Dialog;
 import android.app.TimePickerDialog;
 import android.content.Context;
+import android.content.DialogInterface;
 import android.content.Intent;
 import android.database.Cursor;
 import android.os.Bundle;
@@ -218,6 +219,13 @@ public class AddBeer extends BaseActivity {
 	        	drinkWhenSpinner.setSelection( drinkWhenAdapter.getCount() - 1 );
 	        }
 	    };
+	    
+	private DialogInterface.OnDismissListener dialogDismissListener =
+		new DialogInterface.OnDismissListener() {
+			public void onDismiss(DialogInterface arg0) {
+				drinkWhenSpinner.setSelection(0);
+			}
+		};
 	
     private void saveBeer() {
     	Intent nextIntent = new Intent(this, AddBeerDone.class);
@@ -250,22 +258,30 @@ public class AddBeer extends BaseActivity {
     
     @Override
     protected Dialog onCreateDialog(int id) {
+    	Dialog dialog = null;
+    	
         switch (id) {
 	        case DATE_DIALOG_ID:
-	            return new DatePickerDialog(this,
+	            dialog = new DatePickerDialog(this,
                     dateSetListener,
                     specificTime.get(Calendar.YEAR),
                     specificTime.get(Calendar.MONTH),
                     specificTime.get(Calendar.DAY_OF_MONTH)
                 );
 	        case TIME_DIALOG_ID:
-	            return new TimePickerDialog(this,
+	        	dialog = new TimePickerDialog(this,
                     timeSetListener,
                     specificTime.get(Calendar.HOUR),
                     specificTime.get(Calendar.MINUTE),
                     false
                 );
+	        }
+        
+        if (dialog != null) {
+        	dialog.setOnDismissListener(dialogDismissListener);
+        	return dialog;
         }
+        
         return null;
     }
 }
