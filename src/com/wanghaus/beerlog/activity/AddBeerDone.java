@@ -10,6 +10,7 @@ import android.app.PendingIntent;
 import android.content.Context;
 import android.content.Intent;
 import android.os.Bundle;
+import android.os.Handler;
 import android.util.Log;
 import android.view.View;
 import android.widget.Button;
@@ -103,6 +104,32 @@ public class AddBeerDone extends BaseActivity {
             }
         });
         
+        final Handler handler = new Handler();
+        final Runnable rater = new Runnable()
+        {
+            public void run()
+            {
+            	ratingsCallback();
+            }
+        };
+
+        handler.postDelayed(rater, 300000);
+        
+    }
+    
+    private void viewMoreStats() {
+    	Intent nextIntent = new Intent(this, Stats.class);
+    	startActivity(nextIntent);
+    	finish();
+    }
+    
+    private void viewAddAnother() {
+    	Intent nextIntent = new Intent(this, AddBeer.class); 	
+    	startActivity(nextIntent);
+    	finish();
+    }
+
+    private void ratingsCallback() {
         String ns = Context.NOTIFICATION_SERVICE;
         NotificationManager mNotificationManager = (NotificationManager) getSystemService(ns);
         
@@ -123,16 +150,5 @@ public class AddBeerDone extends BaseActivity {
 
         mNotificationManager.notify(BEER_HISTORY_ID, ratingsreminder);
     }
-
-    private void viewMoreStats() {
-    	Intent nextIntent = new Intent(this, Stats.class);
-    	startActivity(nextIntent);
-    	finish();
-    }
     
-    private void viewAddAnother() {
-    	Intent nextIntent = new Intent(this, AddBeer.class); 	
-    	startActivity(nextIntent);
-    	finish();
-    }
 }
