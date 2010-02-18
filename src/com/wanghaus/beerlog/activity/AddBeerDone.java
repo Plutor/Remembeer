@@ -109,19 +109,19 @@ public class AddBeerDone extends BaseActivity {
         int icon = R.drawable.beer_half_full;
         CharSequence tickerText = "How's that beer you're drinking?";
         long when = System.currentTimeMillis();
-        when += 300000l; // 5 minutes later
-
-        Notification notification = new Notification(icon, tickerText, when);
+        
+        Notification ratingsreminder = new Notification(icon, tickerText, when);
+        ratingsreminder.flags = ratingsreminder.FLAG_AUTO_CANCEL;
 
         Context context = getApplicationContext();
-        CharSequence contentTitle = "Rate your beer";
-        CharSequence contentText = "Why not take a second and rate that beer";
+        CharSequence contentTitle = "How's that beer?";
+        CharSequence contentText = "Take a moment and rate your beer";
         Intent notificationIntent = new Intent(this, History.class);
         PendingIntent contentIntent = PendingIntent.getActivity(this, 0, notificationIntent, 0);
 
-        notification.setLatestEventInfo(context, contentTitle, contentText, contentIntent);
+        ratingsreminder.setLatestEventInfo(context, contentTitle, contentText, contentIntent);
 
-        mNotificationManager.notify(BEER_HISTORY_ID, notification);
+        mNotificationManager.notify(BEER_HISTORY_ID, ratingsreminder);
     }
 
     private void viewMoreStats() {
