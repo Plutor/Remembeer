@@ -138,7 +138,8 @@ public class AddBeerDone extends BaseActivity {
         long when = System.currentTimeMillis();
         
         Notification ratingsreminder = new Notification(icon, tickerText, when);
-        ratingsreminder.flags = ratingsreminder.FLAG_AUTO_CANCEL;
+        ratingsreminder.flags |= Notification.FLAG_AUTO_CANCEL;
+        ratingsreminder.defaults |= Notification.DEFAULT_VIBRATE;
 
         Context context = getApplicationContext();
         CharSequence contentTitle = "How's that beer?";
