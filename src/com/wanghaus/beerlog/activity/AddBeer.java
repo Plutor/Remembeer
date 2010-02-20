@@ -220,9 +220,9 @@ public class AddBeer extends BaseActivity {
 	        }
 	    };
 	    
-	private DialogInterface.OnDismissListener dialogDismissListener =
-		new DialogInterface.OnDismissListener() {
-			public void onDismiss(DialogInterface arg0) {
+	private DialogInterface.OnCancelListener dialogCancelListener =
+		new DialogInterface.OnCancelListener() {
+			public void onCancel(DialogInterface arg0) {
 				drinkWhenSpinner.setSelection(0);
 			}
 		};
@@ -268,6 +268,7 @@ public class AddBeer extends BaseActivity {
                     specificTime.get(Calendar.MONTH),
                     specificTime.get(Calendar.DAY_OF_MONTH)
                 );
+	            break;
 	        case TIME_DIALOG_ID:
 	        	dialog = new TimePickerDialog(this,
                     timeSetListener,
@@ -278,7 +279,7 @@ public class AddBeer extends BaseActivity {
 	        }
         
         if (dialog != null) {
-        	dialog.setOnDismissListener(dialogDismissListener);
+        	dialog.setOnCancelListener(dialogCancelListener);
         	return dialog;
         }
         
