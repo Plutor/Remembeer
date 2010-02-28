@@ -3,14 +3,17 @@ package com.wanghaus.beerlog.activity;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Random;
+import java.lang.Float;
 
 import android.app.Notification;
 import android.app.NotificationManager;
 import android.app.PendingIntent;
 import android.content.Context;
 import android.content.Intent;
+import android.content.SharedPreferences;
 import android.os.Bundle;
 import android.os.Handler;
+import android.preference.PreferenceManager;
 import android.util.Log;
 import android.view.View;
 import android.widget.Button;
@@ -113,7 +116,19 @@ public class AddBeerDone extends BaseActivity {
             }
         };
 
-        handler.postDelayed(rater, 300000);
+        SharedPreferences settings = PreferenceManager.getDefaultSharedPreferences(this);
+                
+        if (settings.getBoolean("remindersEnabled", true)) {
+        	try {
+        		Float fTimeout = new Float(settings.getString("remindersDelay", "5"));
+        		fTimeout *= 60000;
+        		int mTimeout = fTimeout.intValue();
+        		
+        		handler.postDelayed(rater, mTimeout);
+         	} catch (Exception e) {
+         		Log.w("remindersDelay", e);
+         	}
+        }
         
     }
     
@@ -139,8 +154,13 @@ public class AddBeerDone extends BaseActivity {
         
         Notification ratingsreminder = new Notification(icon, tickerText, when);
         ratingsreminder.flags |= Notification.FLAG_AUTO_CANCEL;
-        ratingsreminder.defaults |= Notification.DEFAULT_VIBRATE;
-
+        
+        SharedPreferences settings = PreferenceManager.getDefaultSharedPreferences(this);
+        
+        if (settings.getBoolean("remindersVibrate", true)) {
+        	ratingsreminder.defaults |= Notification.DEFAULT_VIBRATE;
+        }
+        
         Context context = getApplicationContext();
         CharSequence contentTitle = "How's that beer?";
         CharSequence contentText = "Take a moment and rate your beer";
