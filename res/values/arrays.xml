@@ -14,9 +14,29 @@
     
 	<string-array name="bgcolorOptions">
 		<item>Black</item>
+		<item>Wheat</item>
+		<item>Pilsner</item>
+		<item>Amber</item>
+		<item>Saison</item>
+		<item>E.S.B.</item>
+		<item>I.P.A.</item>
+		<item>Dopplebock</item>
+		<item>Brown</item>
+		<item>Porter</item>
+		<item>Stout</item>
 	</string-array>
 	<string-array name="bgcolorValues">
 		<item>#000000</item>
+		<item>#da9337</item>
+		<item>#db9e34</item>
+		<item>#be530f</item>
+		<item>#cb3f0a</item>
+		<item>#b83a07</item>
+		<item>#9e3000</item>
+		<item>#7b1000</item>
+		<item>#3b250e</item>
+		<item>#0d0302</item>
+		<item>#130505</item>
 	</string-array>
 	
 	<string-array name="afterAddBeerDoneOptions">
