@@ -29,6 +29,7 @@ import android.widget.AdapterView.OnItemSelectedListener;
 
 import com.wanghaus.beerlog.R;
 import com.wanghaus.beerlog.service.BeerDbService;
+import com.wanghaus.beerlog.service.TwitterService;
 
 public class AddBeer extends BaseActivity {
 	private static final int DATE_DIALOG_ID = 0;
@@ -249,6 +250,8 @@ public class AddBeer extends BaseActivity {
             }
             
             dbs.addBeer(beername, container, specificTime.getTime());
+            
+            TwitterService.sendToTwitter(this, beername);
     	} else {
     		// TODO - throw an error?
     	}
