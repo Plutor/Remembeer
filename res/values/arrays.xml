@@ -11,4 +11,18 @@
     	<item>Last night</item>
     	<item>Specify date and time...</item>
     </string-array>
+    
+	<string-array name="bgcolorOptions">
+		<item>Black</item>
+	</string-array>
+	<string-array name="bgcolorValues">
+		<item>#000000</item>
+	</string-array>
+	
+	<string-array name="afterAddBeerDoneOptions">
+		<item>History</item>
+	</string-array>
+	<string-array name="afterAddBeerDoneValues">
+		<item>History</item>
+	</string-array>
 </resources>

@@ -42,7 +42,7 @@ public class BaseActivity extends Activity {
 		    menu.add(0, MENU_STATS, 0, "Statistics")
 	    	.setIcon(android.R.drawable.ic_menu_info_details);
 
-		if (!(this instanceof Config))
+		//if (!(this instanceof Config))
 			menu.add(0, MENU_SETTINGS, 0, "Settings")
 	    	.setIcon(android.R.drawable.ic_menu_preferences);
 
