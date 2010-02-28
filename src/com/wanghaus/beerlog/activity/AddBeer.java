@@ -245,13 +245,15 @@ public class AddBeer extends BaseActivity {
             	specificTime.setTime( new Date());
             	final Context ctx = this;
             	final Handler handler = new Handler();
-                final Runnable rater = new Runnable()
+                final Runnable tweet = new Runnable()
                 {
                     public void run()
                     {
                         TwitterService.sendToTwitter(ctx, beername);
                     }
                 };
+                handler.postDelayed(tweet, 1000);
+                Log.d("AddBeer", "Scheduled the twitter thread for a second from now");
                 break;
             case 1:
             	specificTime.setTime( new Date());
