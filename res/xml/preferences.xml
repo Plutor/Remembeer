@@ -1,0 +1,63 @@
+<?xml version="1.0" encoding="utf-8"?>
+<PreferenceScreen
+	xmlns:android="http://schemas.android.com/apk/res/android">
+	
+	<PreferenceCategory
+		android:title="Basic settings">
+		<ListPreference
+			android:title="Background color"
+			android:key="bgcolor"
+			android:defaultValue="#000000"
+			android:entries="@array/bgcolorOptions"
+			android:entryValues="@array/bgcolorValues" />
+		<ListPreference
+			android:title="Add beer next step"
+			android:summary="Where to go after entering a beer"
+			android:key="afterAddBeerDone"
+			android:defaultValue="History"
+			android:entries="@array/afterAddBeerDoneOptions"
+			android:entryValues="@array/afterAddBeerDoneValues" />
+	</PreferenceCategory>
+	<PreferenceCategory
+		android:title="Reminder settings">
+		<CheckBoxPreference
+			android:title="Show rating reminders"
+			android:defaultValue="true"
+			android:key="remindersEnabled" />
+		<CheckBoxPreference
+			android:title="Vibrate"
+			android:defaultValue="true"
+			android:dependency="remindersEnabled"
+			android:key="remindersVibrate" />
+		<EditTextPreference
+			android:title="Rating reminders delay"
+			android:summary="In minutes"
+			android:defaultValue="5"
+			android:dependency="remindersEnabled"
+			android:key="remindersDelay" />
+	</PreferenceCategory>
+	<PreferenceCategory
+		android:title="Twitter settings">
+		<CheckBoxPreference
+			android:title="Post to Twitter"
+			android:summary="Automatically post new beers to Twitter"
+			android:defaultValue="false"
+			android:key="twitterEnabled" />
+		<EditTextPreference
+			android:title="Twitter username"
+			android:defaultValue=""
+			android:dependency="twitterEnabled"
+			android:key="twitterUsername" />
+		<EditTextPreference
+			android:title="Twitter password"
+			android:defaultValue=""
+			android:dependency="twitterEnabled"
+			android:key="twitterPassword"
+			android:password="true" />
+		<EditTextPreference
+			android:title="Twitter template"
+			android:defaultValue=""
+			android:dependency="twitterEnabled"
+			android:key="twitterTemplate" />
+	</PreferenceCategory>
+</PreferenceScreen>
