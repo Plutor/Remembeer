@@ -1,6 +1,7 @@
 package com.wanghaus.beerlog.service;
 
 import twitter4j.Twitter;
+import twitter4j.TwitterException;
 import twitter4j.TwitterFactory;
 import android.content.Context;
 import android.content.SharedPreferences;
@@ -17,29 +18,33 @@ public class TwitterService {
 		if (!prefs.getBoolean("twitterEnabled", false))
 			return;
 		
-		String username = prefs.getString("twitterUsername", null);
-		String password = prefs.getString("twitterPassword", null);
+		final String username = prefs.getString("twitterUsername", null);
+		final String password = prefs.getString("twitterPassword", null);
 		String template = prefs.getString("twitterTemplate", null);
-		
-		Log.d("twitter", "username = " + username);
-		Log.d("twitter", "password = " + password);
-		Log.d("twitter", "template = " + template);
 		
 		if (username == null || password == null || template == null)
 			return;
 		
 		// DO IT
-		String status = template.replace("BEERNAME", beername);
+		final String status = template.replace("BEERNAME", beername);
 		
-		Log.d("twitter", "Sending '" + status + "' to twitter");
+		Log.d("TwitterService", "Sending '" + status + "' to twitter");
 
-		try {
-			TwitterFactory factory = new TwitterFactory();
-			Twitter twitter = factory.getInstance(username, password);
-			
-			twitter.updateStatus(status);
-		} catch (Throwable e) {
-			Log.e("twitter", "Failure to tweet", e);
-		}
+	    // Create runnable for posting
+	    Thread updateStatus = new Thread() {
+	        public void run() {
+				TwitterFactory factory = new TwitterFactory();
+				Twitter twitter = factory.getInstance(username, password);
+
+				try {
+					twitter.updateStatus(status);
+				} catch (TwitterException e) {
+					Log.e("TwitterService", "Failure to tweet", e);
+				}
+
+				Log.d("TwitterService", "Twitter thread ending");
+	        }
+	    };
+	    updateStatus.start();
 	}
 }
