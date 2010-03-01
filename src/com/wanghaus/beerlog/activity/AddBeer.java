@@ -240,20 +240,13 @@ public class AddBeer extends BaseActivity {
             Spinner containerSpinner = (Spinner) findViewById(R.id.container);
             String container = containerSpinner.getSelectedItem().toString();
             
+            // XXX - this is an odd way to do this check
+            // Why not drinkWhenSpinner.getSelectedItemPosition()?
+            
             switch ((int)specificTime.getTimeInMillis()) {
             case 0:
             	specificTime.setTime( new Date());
-            	final Context ctx = this;
-            	final Handler handler = new Handler();
-                final Runnable tweet = new Runnable()
-                {
-                    public void run()
-                    {
-                        TwitterService.sendToTwitter(ctx, beername);
-                    }
-                };
-                handler.postDelayed(tweet, 1000);
-                Log.d("AddBeer", "Scheduled the twitter thread for a second from now");
+                TwitterService.sendToTwitter(this, beername);
                 break;
             case 1:
             	specificTime.setTime( new Date());
