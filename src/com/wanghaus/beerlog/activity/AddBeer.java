@@ -12,6 +12,7 @@ import android.content.DialogInterface;
 import android.content.Intent;
 import android.database.Cursor;
 import android.os.Bundle;
+import android.os.Handler;
 import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -234,7 +235,7 @@ public class AddBeer extends BaseActivity {
     	// Save
     	if (dbs != null) {
             TextView beernameView = (TextView) findViewById(R.id.beername);
-            String beername = beernameView.getText().toString();
+            final String beername = beernameView.getText().toString();
     		
             Spinner containerSpinner = (Spinner) findViewById(R.id.container);
             String container = containerSpinner.getSelectedItem().toString();
@@ -242,6 +243,17 @@ public class AddBeer extends BaseActivity {
             switch ((int)specificTime.getTimeInMillis()) {
             case 0:
             	specificTime.setTime( new Date());
+            	final Context ctx = this;
+            	final Handler handler = new Handler();
+                final Runnable tweet = new Runnable()
+                {
+                    public void run()
+                    {
+                        TwitterService.sendToTwitter(ctx, beername);
+                    }
+                };
+                handler.postDelayed(tweet, 1000);
+                Log.d("AddBeer", "Scheduled the twitter thread for a second from now");
                 break;
             case 1:
             	specificTime.setTime( new Date());
@@ -249,9 +261,9 @@ public class AddBeer extends BaseActivity {
             	break;
             }
             
-            dbs.addBeer(beername, container, specificTime.getTime());
+            nextIntent.putExtra("BeerID",
+            		dbs.addBeer(beername, container, specificTime.getTime()));
             
-            TwitterService.sendToTwitter(this, beername);
     	} else {
     		// TODO - throw an error?
     	}
