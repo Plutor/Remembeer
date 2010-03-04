@@ -162,11 +162,9 @@ public class AddBeer extends BaseActivity {
 					int selected, long id) {
 				switch (selected) {
 				case 0: // now
-					specificTime.setTime( new Date(0) );
 					removeSpecificTime();
 					break;
 				case 1: // ten minutes ago
-					specificTime.setTime( new Date(1) );
 					removeSpecificTime();
 					break;
 				case 2: // last night (lets say 9pm)
@@ -209,7 +207,9 @@ public class AddBeer extends BaseActivity {
 	    new TimePickerDialog.OnTimeSetListener() {
 			@SuppressWarnings("unchecked")
 			public void onTimeSet(TimePicker view, int hourOfDay, int minuteArg) {
-	        	specificTime.set(Calendar.HOUR, hourOfDay);
+				DateFormat beerOclock = DateFormat.getDateTimeInstance(DateFormat.MEDIUM, DateFormat.SHORT);
+				
+	        	specificTime.set(Calendar.HOUR_OF_DAY, hourOfDay);
 	        	specificTime.set(Calendar.MINUTE, minuteArg);
 	            
 	            // Add to the drinkWhenSpinner dropdown and select it
@@ -217,7 +217,7 @@ public class AddBeer extends BaseActivity {
 	        	while (drinkWhenAdapter.getCount() > 4)
 	        		drinkWhenAdapter.remove( drinkWhenAdapter.getItem(4) );
 	        	
-	        	drinkWhenAdapter.add( DateFormat.getDateTimeInstance().format(specificTime.getTime()) );
+	        	drinkWhenAdapter.add( beerOclock.format(specificTime.getTime()) );
 	        	drinkWhenSpinner.setSelection( drinkWhenAdapter.getCount() - 1 );
 	        }
 	    };
@@ -239,11 +239,8 @@ public class AddBeer extends BaseActivity {
     		
             Spinner containerSpinner = (Spinner) findViewById(R.id.container);
             String container = containerSpinner.getSelectedItem().toString();
-            
-            // XXX - this is an odd way to do this check
-            // Why not drinkWhenSpinner.getSelectedItemPosition()?
-            
-            switch ((int)specificTime.getTimeInMillis()) {
+                        
+            switch ((int)drinkWhenSpinner.getSelectedItemPosition()) {
             case 0:
             	specificTime.setTime( new Date());
                 TwitterService.sendToTwitter(this, beername);
@@ -280,7 +277,7 @@ public class AddBeer extends BaseActivity {
 	        case TIME_DIALOG_ID:
 	        	dialog = new TimePickerDialog(this,
                     timeSetListener,
-                    specificTime.get(Calendar.HOUR),
+                    specificTime.get(Calendar.HOUR_OF_DAY),
                     specificTime.get(Calendar.MINUTE),
                     false
                 );
