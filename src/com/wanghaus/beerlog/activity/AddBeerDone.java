@@ -3,7 +3,6 @@ package com.wanghaus.beerlog.activity;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Random;
-import java.lang.Float;
 
 import android.app.Notification;
 import android.app.NotificationManager;
@@ -24,11 +23,14 @@ import com.wanghaus.beerlog.service.BeerDbService;
 
 public class AddBeerDone extends BaseActivity {
 	public final static int BEER_HISTORY_ID = 1;
+	private BeerDbService dbs;
+	
 	
     @Override
     public void onCreate(Bundle savedInstanceState) {
     	super.onCreate(savedInstanceState);
         setContentView(R.layout.addbeerdone);
+        final long DrankBeer = getIntent().getLongExtra("BeerID", 0);
         
         // Change title bar
         setTitle("Beer added");
@@ -112,7 +114,7 @@ public class AddBeerDone extends BaseActivity {
         {
             public void run()
             {
-            	ratingsCallback();
+            	ratingsCallback(DrankBeer);
             }
         };
 
@@ -144,32 +146,35 @@ public class AddBeerDone extends BaseActivity {
     	finish();
     }
 
-    private void ratingsCallback() {
-        String ns = Context.NOTIFICATION_SERVICE;
-        NotificationManager mNotificationManager = (NotificationManager) getSystemService(ns);
+    private void ratingsCallback(long BeerID) {
+    	BeerDbService dbs = new BeerDbService(this);
+    	
+    	if (!dbs.isBeerRated(BeerID)) {
+    		String ns = Context.NOTIFICATION_SERVICE;
+    		NotificationManager mNotificationManager = (NotificationManager) getSystemService(ns);
         
-        int icon = R.drawable.beer_half_full;
-        CharSequence tickerText = "How's that beer you're drinking?";
-        long when = System.currentTimeMillis();
+    		int icon = R.drawable.beer_half_full;
+    		CharSequence tickerText = "How's that beer you're drinking?";
+    		long when = System.currentTimeMillis();
         
-        Notification ratingsreminder = new Notification(icon, tickerText, when);
-        ratingsreminder.flags |= Notification.FLAG_AUTO_CANCEL;
+    		Notification ratingsreminder = new Notification(icon, tickerText, when);
+    		ratingsreminder.flags |= Notification.FLAG_AUTO_CANCEL;
         
-        SharedPreferences settings = PreferenceManager.getDefaultSharedPreferences(this);
+    		SharedPreferences settings = PreferenceManager.getDefaultSharedPreferences(this);
         
-        if (settings.getBoolean("remindersVibrate", true)) {
-        	ratingsreminder.defaults |= Notification.DEFAULT_VIBRATE;
-        }
+    		if (settings.getBoolean("remindersVibrate", true)) {
+    			ratingsreminder.defaults |= Notification.DEFAULT_VIBRATE;
+    		}
         
-        Context context = getApplicationContext();
-        CharSequence contentTitle = "How's that beer?";
-        CharSequence contentText = "Take a moment and rate your beer";
-        Intent notificationIntent = new Intent(this, History.class);
-        PendingIntent contentIntent = PendingIntent.getActivity(this, 0, notificationIntent, 0);
+    		Context context = getApplicationContext();
+    		CharSequence contentTitle = "How's that beer?";
+    		CharSequence contentText = "Take a moment and rate your beer";
+    		Intent notificationIntent = new Intent(this, History.class);
+    		PendingIntent contentIntent = PendingIntent.getActivity(this, 0, notificationIntent, 0);
 
-        ratingsreminder.setLatestEventInfo(context, contentTitle, contentText, contentIntent);
+    		ratingsreminder.setLatestEventInfo(context, contentTitle, contentText, contentIntent);
 
-        mNotificationManager.notify(BEER_HISTORY_ID, ratingsreminder);
-    }
-    
+    		mNotificationManager.notify(BEER_HISTORY_ID, ratingsreminder);
+    	}
+    }   
 }

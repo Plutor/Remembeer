@@ -6,7 +6,6 @@ import java.io.IOException;
 import java.io.PrintWriter;
 import java.util.Date;
 import java.util.LinkedList;
-import java.util.List;
 
 import android.content.ContentValues;
 import android.content.Context;
@@ -107,6 +106,7 @@ public class BeerDbService {
     public Cursor getBeerHistory() {
     	return getBeerHistory(null);
     }
+
     public Cursor getBeerHistory(Integer limit) {
     	String strLimit = null;
     	if (limit != null)
@@ -320,4 +320,13 @@ public class BeerDbService {
 		
     	return Uri.parse("file://" + csvFile.getAbsolutePath());
     }
+    
+    public boolean isBeerRated(long id) {
+		if (0 == 1) {
+			return true;
+		}
+		
+		return false;
+	}
+
 }
