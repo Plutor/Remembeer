@@ -40,7 +40,7 @@
 		android:title="Twitter settings">
 		<CheckBoxPreference
 			android:title="Post to Twitter"
-			android:summary="Automatically post new beers to Twitter"
+			android:summary="Automatically post Drink Now beers to Twitter"
 			android:defaultValue="false"
 			android:key="twitterEnabled" />
 		<EditTextPreference
@@ -56,9 +56,19 @@
 			android:password="true" />
 		<EditTextPreference
 			android:title="Twitter template"
-			android:defaultValue=""
+			android:defaultValue="I just had a BEERNAME #beer"
 			android:dependency="twitterEnabled"
 			android:key="twitterTemplate" />
+		<EditTextPreference
+			android:title="Twitter OAUTH key"
+			android:summary="Do Not Edit"
+			android:dependency="twitterEnabled"
+			android:key="twitterSecret" />
+		<EditTextPreference
+			android:title="Twitter OAUTH key"
+			android:summary="Do Not Edit"
+			android:dependency="twitterEnabled"
+			android:key="twitterToken" />
 	</PreferenceCategory>
 </PreferenceScreen>
 
