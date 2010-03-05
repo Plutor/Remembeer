@@ -3,6 +3,7 @@
         <item>Draught</item>
         <item>Bottle</item>
         <item>Can</item>
+        <item>Growler</item>
     </string-array>
     
     <string-array name="drinkwhens">
