@@ -3,22 +3,6 @@
 	xmlns:android="http://schemas.android.com/apk/res/android">
 	
 	<PreferenceCategory
-		android:title="Basic settings">
-		<ListPreference
-			android:title="Background color"
-			android:key="bgcolor"
-			android:defaultValue="#000000"
-			android:entries="@array/bgcolorOptions"
-			android:entryValues="@array/bgcolorValues" />
-		<ListPreference
-			android:title="Add beer next step"
-			android:summary="Where to go after entering a beer"
-			android:key="afterAddBeerDone"
-			android:defaultValue="History"
-			android:entries="@array/afterAddBeerDoneOptions"
-			android:entryValues="@array/afterAddBeerDoneValues" />
-	</PreferenceCategory>
-	<PreferenceCategory
 		android:title="Reminder settings">
 		<CheckBoxPreference
 			android:title="Show rating reminders"
@@ -59,16 +43,6 @@
 			android:defaultValue="I just had a BEERNAME #beer"
 			android:dependency="twitterEnabled"
 			android:key="twitterTemplate" />
-		<EditTextPreference
-			android:title="Twitter OAUTH key"
-			android:summary="Do Not Edit"
-			android:dependency="twitterEnabled"
-			android:key="twitterSecret" />
-		<EditTextPreference
-			android:title="Twitter OAUTH key"
-			android:summary="Do Not Edit"
-			android:dependency="twitterEnabled"
-			android:key="twitterToken" />
 	</PreferenceCategory>
 </PreferenceScreen>
 
