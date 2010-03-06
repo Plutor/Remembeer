@@ -230,6 +230,7 @@ public class AddBeer extends BaseActivity {
 		};
 	
     private void saveBeer() {
+    	int beerID;
     	Intent nextIntent = new Intent(this, AddBeerDone.class);
 
     	// Save
@@ -243,17 +244,20 @@ public class AddBeer extends BaseActivity {
             switch ((int)drinkWhenSpinner.getSelectedItemPosition()) {
             case 0:
             	specificTime.setTime( new Date());
-                TwitterService.sendToTwitter(this, beername);
                 break;
             case 1:
             	specificTime.setTime( new Date());
             	specificTime.add( Calendar.MINUTE, -10 );
             	break;
             }
+
+            beerID = (int)dbs.addBeer(beername, container, specificTime.getTime());
             
-            nextIntent.putExtra("BeerID",
-            		dbs.addBeer(beername, container, specificTime.getTime()));
-            
+            if ((int)drinkWhenSpinner.getSelectedItemPosition() == 0) {
+            	nextIntent.putExtra("BeerID", beerID);
+            	TwitterService.sendToTwitter(this, beername);
+            }
+
     	} else {
     		// TODO - throw an error?
     	}
