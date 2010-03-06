@@ -322,11 +322,14 @@ public class BeerDbService {
     }
     
     public boolean isBeerRated(long id) {
-		if (0 == 1) {
-			return true;
-		}
-		
-		return false;
+    	Cursor q = db.query(DB_TABLE,
+    			new String[] {"ROWID"},
+    			"ROWID = ? and rating != 0", new String[] {String.valueOf(id)},
+    			null, null, null);
+    	int isRated = q.getCount();
+    	q.close();
+    	
+    	return (isRated > 0);
 	}
 
 }
