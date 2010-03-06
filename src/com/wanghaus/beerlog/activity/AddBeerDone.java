@@ -4,15 +4,8 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Random;
 
-import android.app.Notification;
-import android.app.NotificationManager;
-import android.app.PendingIntent;
-import android.content.Context;
 import android.content.Intent;
-import android.content.SharedPreferences;
 import android.os.Bundle;
-import android.os.Handler;
-import android.preference.PreferenceManager;
 import android.util.Log;
 import android.view.View;
 import android.widget.Button;
@@ -22,7 +15,6 @@ import com.wanghaus.beerlog.R;
 import com.wanghaus.beerlog.service.BeerDbService;
 
 public class AddBeerDone extends BaseActivity {
-	public final static int BEER_HISTORY_ID = 1;
 	private BeerDbService dbs;
 	
 	
@@ -30,7 +22,6 @@ public class AddBeerDone extends BaseActivity {
     public void onCreate(Bundle savedInstanceState) {
     	super.onCreate(savedInstanceState);
         setContentView(R.layout.addbeerdone);
-        final long DrankBeer = getIntent().getLongExtra("BeerID", 0);
         
         // Change title bar
         setTitle("Beer added");
@@ -108,30 +99,7 @@ public class AddBeerDone extends BaseActivity {
             	viewAddAnother();
             }
         });
-        
-        final Handler handler = new Handler();
-        final Runnable rater = new Runnable()
-        {
-            public void run()
-            {
-            	ratingsCallback(DrankBeer);
-            }
-        };
-
-        SharedPreferences settings = PreferenceManager.getDefaultSharedPreferences(this);
                 
-        if (settings.getBoolean("remindersEnabled", true)) {
-        	try {
-        		Float fTimeout = new Float(settings.getString("remindersDelay", "5"));
-        		fTimeout *= 60000;
-        		int mTimeout = fTimeout.intValue();
-        		
-        		handler.postDelayed(rater, mTimeout);
-         	} catch (Exception e) {
-         		Log.w("remindersDelay", e);
-         	}
-        }
-        
     }
     
     private void viewMoreStats() {
@@ -146,35 +114,4 @@ public class AddBeerDone extends BaseActivity {
     	finish();
     }
 
-    private void ratingsCallback(long BeerID) {
-    	BeerDbService dbs = new BeerDbService(this);
-    	
-    	if (!dbs.isBeerRated(BeerID)) {
-    		String ns = Context.NOTIFICATION_SERVICE;
-    		NotificationManager mNotificationManager = (NotificationManager) getSystemService(ns);
-        
-    		int icon = R.drawable.beer_half_full;
-    		CharSequence tickerText = "How's that beer you're drinking?";
-    		long when = System.currentTimeMillis();
-        
-    		Notification ratingsreminder = new Notification(icon, tickerText, when);
-    		ratingsreminder.flags |= Notification.FLAG_AUTO_CANCEL;
-        
-    		SharedPreferences settings = PreferenceManager.getDefaultSharedPreferences(this);
-        
-    		if (settings.getBoolean("remindersVibrate", true)) {
-    			ratingsreminder.defaults |= Notification.DEFAULT_VIBRATE;
-    		}
-        
-    		Context context = getApplicationContext();
-    		CharSequence contentTitle = "How's that beer?";
-    		CharSequence contentText = "Take a moment and rate your beer";
-    		Intent notificationIntent = new Intent(this, History.class);
-    		PendingIntent contentIntent = PendingIntent.getActivity(this, 0, notificationIntent, 0);
-
-    		ratingsreminder.setLatestEventInfo(context, contentTitle, contentText, contentIntent);
-
-    		mNotificationManager.notify(BEER_HISTORY_ID, ratingsreminder);
-    	}
-    }   
 }

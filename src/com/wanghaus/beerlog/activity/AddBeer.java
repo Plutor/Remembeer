@@ -6,13 +6,18 @@ import java.util.Date;
 
 import android.app.DatePickerDialog;
 import android.app.Dialog;
+import android.app.Notification;
+import android.app.NotificationManager;
+import android.app.PendingIntent;
 import android.app.TimePickerDialog;
 import android.content.Context;
 import android.content.DialogInterface;
 import android.content.Intent;
+import android.content.SharedPreferences;
 import android.database.Cursor;
 import android.os.Bundle;
 import android.os.Handler;
+import android.preference.PreferenceManager;
 import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -35,6 +40,8 @@ import com.wanghaus.beerlog.service.TwitterService;
 public class AddBeer extends BaseActivity {
 	private static final int DATE_DIALOG_ID = 0;
 	private static final int TIME_DIALOG_ID = 1;
+	public final static int BEER_HISTORY_ID = 2;
+
 	
 	private Spinner drinkWhenSpinner;
 	private Calendar specificTime = Calendar.getInstance();
@@ -230,7 +237,7 @@ public class AddBeer extends BaseActivity {
 		};
 	
     private void saveBeer() {
-    	int beerID;
+    	final int beerID;
     	Intent nextIntent = new Intent(this, AddBeerDone.class);
 
     	// Save
@@ -254,8 +261,30 @@ public class AddBeer extends BaseActivity {
             beerID = (int)dbs.addBeer(beername, container, specificTime.getTime());
             
             if ((int)drinkWhenSpinner.getSelectedItemPosition() == 0) {
-            	nextIntent.putExtra("BeerID", beerID);
-            	TwitterService.sendToTwitter(this, beername);
+                final Handler handler = new Handler();
+                final Runnable rater = new Runnable()
+                {
+                    public void run()
+                    {
+                    	ratingsCallback(beerID);
+                    }
+                };
+
+                SharedPreferences settings = PreferenceManager.getDefaultSharedPreferences(this);
+                        
+                if (settings.getBoolean("remindersEnabled", true)) {
+                	try {
+                		Float fTimeout = new Float(settings.getString("remindersDelay", "5"));
+                		fTimeout *= 60000;
+                		int mTimeout = fTimeout.intValue();
+                		
+                		handler.postDelayed(rater, mTimeout);
+                 	} catch (Exception e) {
+                 		Log.w("remindersDelay", e);
+                 	}
+                }
+
+                TwitterService.sendToTwitter(this, beername);
             }
 
     	} else {
@@ -294,4 +323,37 @@ public class AddBeer extends BaseActivity {
         
         return null;
     }
+    
+    private void ratingsCallback(long BeerID) {
+    	BeerDbService dbs = new BeerDbService(this);
+    	
+    	if (!dbs.isBeerRated(BeerID)) {
+    		String ns = Context.NOTIFICATION_SERVICE;
+    		NotificationManager mNotificationManager = (NotificationManager) getSystemService(ns);
+        
+    		int icon = R.drawable.beer_half_full;
+    		CharSequence tickerText = "How's that beer you're drinking?";
+    		long when = System.currentTimeMillis();
+        
+    		Notification ratingsreminder = new Notification(icon, tickerText, when);
+    		ratingsreminder.flags |= Notification.FLAG_AUTO_CANCEL;
+        
+    		SharedPreferences settings = PreferenceManager.getDefaultSharedPreferences(this);
+        
+    		if (settings.getBoolean("remindersVibrate", true)) {
+    			ratingsreminder.defaults |= Notification.DEFAULT_VIBRATE;
+    		}
+        
+    		Context context = getApplicationContext();
+    		CharSequence contentTitle = "How's that beer?";
+    		CharSequence contentText = "Take a moment and rate your beer";
+    		Intent notificationIntent = new Intent(this, History.class);
+    		PendingIntent contentIntent = PendingIntent.getActivity(this, 0, notificationIntent, 0);
+
+    		ratingsreminder.setLatestEventInfo(context, contentTitle, contentText, contentIntent);
+
+    		mNotificationManager.notify(BEER_HISTORY_ID, ratingsreminder);
+    	}
+    }   
+
 }
