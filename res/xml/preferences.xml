@@ -40,7 +40,7 @@
 			android:password="true" />
 		<EditTextPreference
 			android:title="Twitter template"
-			android:defaultValue="I just had a BEERNAME #beer"
+			android:defaultValue="I just drank a BEERNAME #beer"
 			android:dependency="twitterEnabled"
 			android:key="twitterTemplate" />
 	</PreferenceCategory>
