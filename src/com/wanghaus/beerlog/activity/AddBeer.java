@@ -237,14 +237,18 @@ public class AddBeer extends BaseActivity {
 		};
 	
     private void saveBeer() {
-    	final int beerID;
+        TextView beernameView = (TextView) findViewById(R.id.beername);
+        final String beername = beernameView.getText().toString();
+        final int beerID;
+        
+        if (beernameView.getText().length() == 0) {
+        	return ;
+        }
+        
     	Intent nextIntent = new Intent(this, AddBeerDone.class);
 
     	// Save
-    	if (dbs != null) {
-            TextView beernameView = (TextView) findViewById(R.id.beername);
-            final String beername = beernameView.getText().toString();
-    		
+    	if (dbs != null) {    		
             Spinner containerSpinner = (Spinner) findViewById(R.id.container);
             String container = containerSpinner.getSelectedItem().toString();
                         
