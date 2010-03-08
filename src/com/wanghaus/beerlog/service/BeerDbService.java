@@ -64,6 +64,10 @@ public class BeerDbService {
         	}
         	
         	// if (oldVersion < 4) etc..
+        	// ABV (float)
+        	// Brewery (varchar255)
+        	// Location (varchar 255)
+        	// Notes (uhh... varchar1024? pointer to some other file?)
         }
     }    
     
@@ -168,6 +172,14 @@ public class BeerDbService {
     
     public long getBeerCount() {
     	Cursor beercountQuery = db.query(DB_TABLE, new String[] {"ROWID"}, null, null, null, null, null);
+    	return beercountQuery.getCount();
+    }
+    
+    public long getBeerCount(String querybeer) {
+    	if (querybeer == null)
+    		return getBeerCount();
+
+    	Cursor beercountQuery = getBeerNames(querybeer);
     	return beercountQuery.getCount();
     }
     
@@ -330,6 +342,26 @@ public class BeerDbService {
     	q.close();
     	
     	return (isRated > 0);
+	}
+
+	public double getBeerABV(String beername) {
+		// TODO Auto-generated method stub
+		return 0.0;
+	}
+
+	public String getBeerBrewer(String beername) {
+		// TODO Auto-generated method stub
+		return null;
+	}
+
+	public String getBeerBrewerLocation(String beername) {
+		// TODO Auto-generated method stub
+		return null;
+	}
+
+	public String getBeerNotes(String beername) {
+		// TODO Auto-generated method stub
+		return null;
 	}
 
 }
