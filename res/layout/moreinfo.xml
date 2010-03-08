@@ -1,0 +1,140 @@
+<?xml version="1.0" encoding="utf-8"?>
+<RelativeLayout
+	android:id="@+id/moreinfo"
+	android:layout_width="fill_parent"
+	android:layout_height="fill_parent"
+	xmlns:android="http://schemas.android.com/apk/res/android" >
+
+<TextView
+android:id="@+id/beerTitle"
+android:layout_width="wrap_content"
+android:layout_height="wrap_content"
+android:layout_marginTop="3px"
+android:layout_marginLeft="3px"
+android:textSize="20sp"
+android:gravity="center"
+android:layout_alignParentTop="true"
+android:layout_alignParentLeft="true" > </TextView>
+
+<TextView
+android:id="@+id/Countlabel"
+android:layout_width="wrap_content"
+android:layout_height="wrap_content"
+android:text="@string/count"
+android:textSize="12sp"
+android:layout_alignParentTop="true"
+android:layout_alignParentRight="true" > </TextView>
+<TextView
+android:id="@+id/beerCount"
+android:layout_width="wrap_content"
+android:layout_height="38px"
+android:layout_marginTop="3px"
+android:layout_marginRight="6px"
+android:textSize="26sp"
+android:layout_alignTop="@+id/Countlabel"
+android:layout_alignParentRight="true" > </TextView>
+
+<TextView
+android:id="@+id/ABVTitle"
+android:layout_width="wrap_content"
+android:layout_height="wrap_content"
+android:layout_marginLeft="3px"
+android:text="@string/abvtitle"
+android:textSize="12sp"
+android:layout_below="@+id/beerTitle"
+android:layout_alignParentLeft="true" > </TextView>
+
+<EditText
+android:id="@+id/ABVContent"
+android:layout_width="wrap_content"
+android:layout_height="wrap_content"
+android:layout_marginLeft="3px"
+android:textSize="18sp"
+android:numeric="signed"
+android:layout_below="@+id/ABVTitle"
+android:layout_alignParentLeft="true" > </EditText>
+
+<TextView
+android:id="@+id/avgRatingTitle"
+android:layout_width="wrap_content"
+android:layout_height="wrap_content"
+android:text="@string/avg_rating"
+android:textSize="12sp"
+android:layout_above="@+id/ABVContent"
+android:layout_toRightOf="@+id/ABVTitle" > </TextView>
+
+<TextView
+android:id="@+id/avgRatingContent"
+android:layout_width="wrap_content"
+android:layout_height="wrap_content"
+android:textSize="18sp"
+android:gravity="center"
+android:layout_below="@+id/avgRatingTitle"
+android:layout_toRightOf="@+id/ABVContent" > </TextView>
+
+<TextView
+android:id="@+id/brewerTitle"
+android:layout_width="wrap_content"
+android:layout_height="wrap_content"
+android:layout_marginLeft="3px"
+android:text="@string/brewery"
+android:textSize="12sp"
+android:gravity="left"
+android:layout_below="@+id/ABVContent"
+android:layout_alignParentLeft="true"> </TextView>	
+<EditText
+android:id="@+id/brewerContent"
+android:layout_width="fill_parent"
+android:layout_height="wrap_content"
+android:layout_marginLeft="5px"
+android:layout_marginRight="5px"
+android:textSize="18sp"
+android:gravity="left"
+android:capitalize="words"
+android:layout_below="@+id/brewerTitle"
+android:layout_alignParentLeft="true"
+> </EditText>
+
+
+<TextView
+android:id="@+id/locationTitle"
+android:layout_width="wrap_content"
+android:layout_height="wrap_content"
+android:layout_marginLeft="3px"
+android:text="@string/location"
+android:textSize="12sp"
+android:layout_centerVertical="true"
+android:layout_alignParentLeft="true" > </TextView>
+
+<AutoCompleteTextView
+android:id="@+id/locationContent"
+android:layout_width="fill_parent"
+android:layout_height="wrap_content"
+android:layout_marginLeft="5px"
+android:layout_marginRight="5px"
+android:textSize="18sp"
+android:gravity="left"
+android:autoText="true"
+android:capitalize="words"
+android:layout_below="@+id/locationTitle" > </AutoCompleteTextView>
+
+<TextView
+android:id="@+id/notesTitle"
+android:layout_width="wrap_content"
+android:layout_height="wrap_content"
+android:layout_marginLeft="3px"
+android:text="@string/notes"
+android:textSize="12sp"
+android:layout_below="@+id/locationContent"
+android:layout_alignParentLeft="true" > </TextView>
+<EditText
+android:id="@+id/notesContent"
+android:layout_width="fill_parent"
+android:layout_height="wrap_content"
+android:padding="5px"
+android:textSize="18sp"
+android:gravity="left"
+android:layout_below="@+id/notesTitle"
+android:layout_centerHorizontal="true" > </EditText>
+
+</RelativeLayout>
