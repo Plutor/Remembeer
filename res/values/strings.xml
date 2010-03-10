@@ -4,21 +4,25 @@
 
     <string name="beername">Beer name:</string>
     <string name="container">Container:</string>
-<string name="container_prompt">Choose the container</string>
+	<string name="container_prompt">Choose the container</string>
+	<string name="drink_when">Drink when:</string>
+	<string name="drink_when_prompt">Choose a time</string>
 
+	<string name="save">Save beer!</string>
+	<string name="skip">Cancel</string>
 
+	<string name="morestats">See more stats</string>
+	<string name="addanother">Drink another!</string>
+	<string name="your_rating">Your rating:</string>
+	<string name="addbeer_fromhistory">Add a beer</string>
+	<string name="charts_fromstats">View charts</string>
+	
+	<string name="abvtitle">abvtitle</string>
+	<string name="avg_rating">avg_rating</string>
+	<string name="brewery">brewery</string>
+	<string name="count">count</string>
+	<string name="location">location</string>
+	<string name="notes">notes</string>
 
-<string name="drink_when">Drink when:</string>
-<string name="drink_when_prompt">Choose a time</string>
-<string name="save">Save beer!</string>
-<string name="skip">Cancel</string>
-<string name="stats_placeholder">This is where the stats tab goes</string>
-<string name="config_placeholder">This is where the config tab goes</string>
-<string name="addbeerdone_placeholder">You've drunk 999 beers!</string>
-<string name="morestats">See more stats</string>
-<string name="addanother">Drink another!</string>
-<string name="viewstat_placeholder">This is where the stat name goes</string>
-<string name="your_rating">Your rating:</string>
-<string name="addbeer_fromhistory">Add a beer</string>
-<string name="charts_fromstats">View charts</string>
+	<string name="viewstat_placeholder">This is where the stat name goes</string>
 </resources>
