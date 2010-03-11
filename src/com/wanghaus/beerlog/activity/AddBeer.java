@@ -234,7 +234,6 @@ public class AddBeer extends BaseActivity {
 	    
 	private OnClickListener dialogCancelListener =
 		new OnClickListener() {
-			@Override
 			public void onClick(DialogInterface arg0, int arg1) {
 				drinkWhenSpinner.setSelection(0);
 			}
