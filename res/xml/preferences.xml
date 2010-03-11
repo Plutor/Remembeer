@@ -5,17 +5,17 @@
 	<PreferenceCategory
 		android:title="Reminder settings">
 		<CheckBoxPreference
-			android:title="Show rating reminders"
+			android:title="@string/pref_remindersEnabled"
 			android:defaultValue="true"
 			android:key="remindersEnabled" />
 		<CheckBoxPreference
-			android:title="Vibrate"
+			android:title="@string/pref_remindersVibrate"
 			android:defaultValue="true"
 			android:dependency="remindersEnabled"
 			android:key="remindersVibrate" />
 		<EditTextPreference
-			android:title="Rating reminders delay"
-			android:summary="In minutes"
+			android:title="@string/pref_remindersDelay"
+			android:summary="@string/pref_remindersDelay_summary"
 			android:defaultValue="5"
 			android:dependency="remindersEnabled"
 			android:key="remindersDelay" />
@@ -23,24 +23,24 @@
 	<PreferenceCategory
 		android:title="Twitter settings">
 		<CheckBoxPreference
-			android:title="Post to Twitter"
-			android:summary="Automatically post Drink Now beers to Twitter"
+			android:title="@string/pref_twitterEnabled"
+			android:summary="@string/pref_twitterEnabled_summary"
 			android:defaultValue="false"
 			android:key="twitterEnabled" />
 		<EditTextPreference
-			android:title="Twitter username"
+			android:title="@string/pref_twitterUsername"
 			android:defaultValue=""
 			android:dependency="twitterEnabled"
 			android:key="twitterUsername" />
 		<EditTextPreference
-			android:title="Twitter password"
+			android:title="@string/pref_twitterPassword"
 			android:defaultValue=""
 			android:dependency="twitterEnabled"
 			android:key="twitterPassword"
 			android:password="true" />
 		<EditTextPreference
-			android:title="Twitter template"
-			android:defaultValue="I just drank a BEERNAME #beer"
+			android:title="@string/pref_twitterTemplate"
+			android:defaultValue="@string/pref_twitterTemplate_default"
 			android:dependency="twitterEnabled"
 			android:key="twitterTemplate" />
 	</PreferenceCategory>
