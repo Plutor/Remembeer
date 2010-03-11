@@ -14,6 +14,7 @@ import android.content.Context;
 import android.content.DialogInterface;
 import android.content.Intent;
 import android.content.SharedPreferences;
+import android.content.DialogInterface.OnClickListener;
 import android.database.Cursor;
 import android.os.Bundle;
 import android.os.Handler;
@@ -34,6 +35,8 @@ import android.widget.TimePicker;
 import android.widget.AdapterView.OnItemSelectedListener;
 
 import com.wanghaus.beerlog.R;
+import com.wanghaus.beerlog.app.DatePickerCancellableDialog;
+import com.wanghaus.beerlog.app.TimePickerCancellableDialog;
 import com.wanghaus.beerlog.service.BeerDbService;
 import com.wanghaus.beerlog.service.TwitterService;
 
@@ -229,9 +232,10 @@ public class AddBeer extends BaseActivity {
 	        }
 	    };
 	    
-	private DialogInterface.OnCancelListener dialogCancelListener =
-		new DialogInterface.OnCancelListener() {
-			public void onCancel(DialogInterface arg0) {
+	private OnClickListener dialogCancelListener =
+		new OnClickListener() {
+			@Override
+			public void onClick(DialogInterface arg0, int arg1) {
 				drinkWhenSpinner.setSelection(0);
 			}
 		};
@@ -304,26 +308,28 @@ public class AddBeer extends BaseActivity {
     	
         switch (id) {
 	        case DATE_DIALOG_ID:
-	            dialog = new DatePickerDialog(this,
+	        	DatePickerCancellableDialog d = new DatePickerCancellableDialog(this,
                     dateSetListener,
                     specificTime.get(Calendar.YEAR),
                     specificTime.get(Calendar.MONTH),
                     specificTime.get(Calendar.DAY_OF_MONTH)
                 );
+	        	d.setOnCancelListener(dialogCancelListener);
+	        	dialog = (Dialog)d;
 	            break;
 	        case TIME_DIALOG_ID:
-	        	dialog = new TimePickerDialog(this,
+	        	TimePickerCancellableDialog t = new TimePickerCancellableDialog(this,
                     timeSetListener,
                     specificTime.get(Calendar.HOUR_OF_DAY),
                     specificTime.get(Calendar.MINUTE),
                     false
                 );
+	        	t.setOnCancelListener(dialogCancelListener);
+	        	dialog = (Dialog)t;
 	        }
         
-        if (dialog != null) {
-        	dialog.setOnCancelListener(dialogCancelListener);
+        if (dialog != null)
         	return dialog;
-        }
         
         return null;
     }
