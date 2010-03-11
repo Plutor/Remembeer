@@ -15,16 +15,13 @@ import com.wanghaus.beerlog.R;
 import com.wanghaus.beerlog.service.BeerDbService;
 
 public class AddBeerDone extends BaseActivity {
-	private BeerDbService dbs;
-	
-	
     @Override
     public void onCreate(Bundle savedInstanceState) {
     	super.onCreate(savedInstanceState);
         setContentView(R.layout.addbeerdone);
         
         // Change title bar
-        setTitle("Beer added");
+        setTitle( getText(R.string.addbeerdone_title) );
         
         // Put in stats
     	List<String> popupParts = new ArrayList<String>();

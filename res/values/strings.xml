@@ -7,12 +7,13 @@
 	<string name="container_prompt">Choose the container</string>
 	<string name="drink_when">Drink when:</string>
 	<string name="drink_when_prompt">Choose a time</string>
-
 	<string name="save">Save beer!</string>
 	<string name="skip">Cancel</string>
-
+	
+	<string name="addbeerdone_title">Beer added</string>
 	<string name="morestats">See more stats</string>
 	<string name="addanother">Drink another!</string>
+	
 	<string name="your_rating">Your rating:</string>
 	<string name="addbeer_fromhistory">Add a beer</string>
 	<string name="charts_fromstats">View charts</string>
