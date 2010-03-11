@@ -6,6 +6,8 @@ import android.os.Bundle;
 import android.view.Menu;
 import android.view.MenuItem;
 
+import com.wanghaus.beerlog.R;
+
 public class BaseActivity extends Activity {
 	private final int MENU_ADD_BEER = 1;
 	private final int MENU_HISTORY = 2;
@@ -27,23 +29,23 @@ public class BaseActivity extends Activity {
 			return false;
 		
 		if (!(this instanceof AddBeer))
-		    menu.add(0, MENU_ADD_BEER, 0, "Add Beer")
+		    menu.add(0, MENU_ADD_BEER, 0, getText(R.string.optionsmenu_addbeer))
 	    	.setIcon(android.R.drawable.ic_menu_add);
 
 		if (!(this instanceof History)) {
-		    menu.add(0, MENU_HISTORY, 0, "History")
+		    menu.add(0, MENU_HISTORY, 0, getText(R.string.optionsmenu_history))
 	    	.setIcon(android.R.drawable.ic_menu_recent_history);
 		} else {
-		    menu.add(0, MENU_EXPORT, 0, "Export")
+		    menu.add(0, MENU_EXPORT, 0, getText(R.string.optionsmenu_export))
 	    	.setIcon(android.R.drawable.ic_menu_share);
 		}
 		
 		if (!(this instanceof Stats || this instanceof ChartsList || this instanceof ViewChart))
-		    menu.add(0, MENU_STATS, 0, "Statistics")
+		    menu.add(0, MENU_STATS, 0, getText(R.string.optionsmenu_statistics))
 	    	.setIcon(android.R.drawable.ic_menu_info_details);
 
 		//if (!(this instanceof Config))
-			menu.add(0, MENU_SETTINGS, 0, "Settings")
+			menu.add(0, MENU_SETTINGS, 0, getText(R.string.optionsmenu_settings))
 	    	.setIcon(android.R.drawable.ic_menu_preferences);
 
 	    return true;
