@@ -41,11 +41,15 @@
 	<string name="reminder_tickerText">How\'s that beer you\'re drinking?</string>
 	<string name="reminder_title">How\'s that beer?</string>
 	<string name="reminder_text">Take a moment and rate your beer.</string>
+
+	<string name="stat_beerCount">Number of beers drunk</string>
+	<string name="stat_favoriteBeer">Favorite beer</string>
+	<string name="stat_mostDrunkBeer">Most drunk beer</string>
+	<string name="stat_favoriteDrinkingHour">Favorite drinking hour</string>
 	
 	<string name="optionsmenu_addbeer">Add Beer</string>
 	<string name="optionsmenu_history">History</string>
 	<string name="optionsmenu_export">Export</string>
 	<string name="optionsmenu_statistics">Statistics</string>
 	<string name="optionsmenu_settings">Settings</string>
-	
 </resources>

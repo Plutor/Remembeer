@@ -4,7 +4,6 @@ import java.util.ArrayList;
 import java.util.List;
 
 import android.app.Activity;
-import android.content.Intent;
 import android.os.Bundle;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -25,10 +24,10 @@ public class Stats extends BaseActivity {
         setContentView(R.layout.stats);
         
         BeerDbService dbs = new BeerDbService(this);
-        stats.add( new BeerStat("Number of beers drunk", String.valueOf(dbs.getBeerCount())) );
-        stats.add( new BeerStat("Favorite beer", dbs.getFavoriteBeer()) );
-        stats.add( new BeerStat("Most drunk beer", dbs.getMostDrunkBeer()) );
-        stats.add( new BeerStat("Favorite drinking hour", dbs.getFavoriteDrinkingHour()) );
+        stats.add( new BeerStat( getText(R.string.stat_beerCount), String.valueOf(dbs.getBeerCount())) );
+        stats.add( new BeerStat( getText(R.string.stat_favoriteBeer), dbs.getFavoriteBeer()) );
+        stats.add( new BeerStat( getText(R.string.stat_mostDrunkBeer), dbs.getMostDrunkBeer()) );
+        stats.add( new BeerStat( getText(R.string.stat_favoriteDrinkingHour), dbs.getFavoriteDrinkingHour()) );
         dbs.close();
         
         ListView statList = (ListView) findViewById(R.id.stats_list);
@@ -37,12 +36,12 @@ public class Stats extends BaseActivity {
     }
     
     private class BeerStat {
-    	public String name;
+    	public CharSequence name;
     	public String value;
     	public BeerStat() {
     		super();
     	}
-    	public BeerStat(String name, String value) {
+    	public BeerStat(CharSequence name, String value) {
     		this.name = name;
     		this.value = value;
     	}
