@@ -333,15 +333,15 @@ public class BeerDbService {
     	return Uri.parse("file://" + csvFile.getAbsolutePath());
     }
     
-    public boolean isBeerRated(long id) {
+    public boolean isBeerUnrated(long id) {
     	Cursor q = db.query(DB_TABLE,
     			new String[] {"ROWID"},
-    			"ROWID = ? and rating != 0", new String[] {String.valueOf(id)},
+    			"ROWID = ? and rating = 0", new String[] {String.valueOf(id)},
     			null, null, null);
-    	int isRated = q.getCount();
+    	int isUnrated = q.getCount();
     	q.close();
     	
-    	return (isRated > 0);
+    	return (isUnrated > 0);
 	}
 
 	public double getBeerABV(String beername) {

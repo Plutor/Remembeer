@@ -337,7 +337,7 @@ public class AddBeer extends BaseActivity {
     private void ratingsCallback(long BeerID) {
     	BeerDbService dbs = new BeerDbService(this);
     	
-    	if (!dbs.isBeerRated(BeerID)) {
+    	if (dbs.isBeerUnrated(BeerID)) {
     		String ns = Context.NOTIFICATION_SERVICE;
     		NotificationManager mNotificationManager = (NotificationManager) getSystemService(ns);
         
