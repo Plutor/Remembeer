@@ -341,7 +341,7 @@ public class AddBeer extends BaseActivity {
     		NotificationManager mNotificationManager = (NotificationManager) getSystemService(ns);
         
     		int icon = R.drawable.beer_half_full;
-    		CharSequence tickerText = "How's that beer you're drinking?";
+    		CharSequence tickerText = getText(R.string.reminder_tickerText);
     		long when = System.currentTimeMillis();
         
     		Notification ratingsreminder = new Notification(icon, tickerText, when);
@@ -354,8 +354,8 @@ public class AddBeer extends BaseActivity {
     		}
         
     		Context context = getApplicationContext();
-    		CharSequence contentTitle = "How's that beer?";
-    		CharSequence contentText = "Take a moment and rate your beer";
+    		CharSequence contentTitle = getText(R.string.reminder_title);
+    		CharSequence contentText = getText(R.string.reminder_text);
     		Intent notificationIntent = new Intent(this, History.class);
     		PendingIntent contentIntent = PendingIntent.getActivity(this, 0, notificationIntent, 0);
 

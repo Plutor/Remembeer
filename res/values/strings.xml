@@ -36,4 +36,8 @@
 	<string name="pref_twitterPassword">Twitter password</string>
 	<string name="pref_twitterTemplate">Twitter template</string>
 	<string name="pref_twitterTemplate_default">I just drank a BEERNAME #remembeer</string>
+	
+	<string name="reminder_tickerText">How\'s that beer you\'re drinking?</string>
+	<string name="reminder_title">How\'s that beer?</string>
+	<string name="reminder_text">Take a moment and rate your beer.</string>
 </resources>
