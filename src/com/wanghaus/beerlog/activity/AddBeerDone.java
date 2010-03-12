@@ -24,49 +24,59 @@ public class AddBeerDone extends BaseActivity {
         setTitle( getText(R.string.addbeerdone_title) );
         
         // Put in stats
-    	List<String> popupParts = new ArrayList<String>();
+    	List<CharSequence> popupParts = new ArrayList<CharSequence>();
     	popupParts.add(null); popupParts.add(null); popupParts.add(null); // XXX - Because constructor(int) isn't working
     	
         try {
         	BeerDbService dbs = new BeerDbService(this);
         	Random prng = new Random();
+        	int statType = prng.nextInt(4);
         	long count = 0;
         	
-        	switch (prng.nextInt(4)) {
+        	switch (statType) {
         	case 0:
         		count = dbs.getBeerCountThisMonth();
-        		popupParts.set(2, "beers so far this month");
+        		if (count <= 2)
+        			popupParts.set(2, getText(R.string.addbeerdone_suffix_thisMonth_small));
+        		else
+        			popupParts.set(2, getText(R.string.addbeerdone_suffix_thisMonth_large));
         		break;
         	case 1:
         		count = dbs.getBeerCountLastDays(7);
-        		popupParts.set(2, "beers in the last 7 days");
+        		if (count <= 2)
+        			popupParts.set(2, getText(R.string.addbeerdone_suffix_last7days_small));
+        		else
+        			popupParts.set(2, getText(R.string.addbeerdone_suffix_last7days_large));
         		break;
         	case 2:
         		count = dbs.getBeerTypesCount();
-        		popupParts.set(2, "different types of beer");
+        		if (count <= 2)
+        			popupParts.set(2, getText(R.string.addbeerdone_suffix_beerTypes_small));
+        		else
+        			popupParts.set(2, getText(R.string.addbeerdone_suffix_beerTypes_large));
         		break;
         	case 3:
         	default:
 	    		count = dbs.getBeerCountThisYear();
-	    		popupParts.set(2, "beers so far this year");
+        		if (count <= 2)
+        			popupParts.set(2, getText(R.string.addbeerdone_suffix_thisYear_small));
+        		else
+        			popupParts.set(2, getText(R.string.addbeerdone_suffix_thisYear_large));
 	    		break;
         	}
         	
         	if (count == 1) {
-        		popupParts.set(0, "That was your");
-        		popupParts.set(1, "first");
-        		popupParts.set(2, popupParts.get(2).replaceAll("^beers", "beer"));
-        		popupParts.set(2, popupParts.get(2).replaceAll("^types", "type"));
+        		popupParts.set(0, getText(R.string.addbeerdone_prefix_small));
+        		popupParts.set(1, getText(R.string.addbeerdone_num_eq1));
         	} else if (count == 2) {
-        		popupParts.set(0, "That was your");
-        		popupParts.set(1, "second");
-        		popupParts.set(2, popupParts.get(2).replaceAll("^beers", "beer"));
-        		popupParts.set(2, popupParts.get(2).replaceAll("^types", "type"));
+        		popupParts.set(0, getText(R.string.addbeerdone_prefix_small));
+        		popupParts.set(1, getText(R.string.addbeerdone_num_eq2));
         	} else if (count > 2) {
-        		popupParts.set(0, "You have drunk");
+        		popupParts.set(0, getText(R.string.addbeerdone_prefix_large));
         		popupParts.set(1, String.valueOf(count) );
         	} else {
         		 // TODO - Hm
+            	Log.e("AddBeerDone", "The count is zero for some reason");
         	}
         } catch (Exception e) {
         	Log.e("AddBeerDone", "Threw exception trying to calculate a stat", e);

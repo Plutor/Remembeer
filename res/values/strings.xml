@@ -47,6 +47,20 @@
 	<string name="stat_mostDrunkBeer">Most drunk beer</string>
 	<string name="stat_favoriteDrinkingHour">Favorite drinking hour</string>
 	
+	<string name="addbeerdone_prefix_small">That was your</string>
+	<string name="addbeerdone_num_eq1">first</string>
+	<string name="addbeerdone_num_eq2">second</string>
+	<string name="addbeerdone_suffix_thisMonth_small">beer so far this month</string>
+	<string name="addbeerdone_suffix_last7days_small">beer in the last 7 days</string>
+	<string name="addbeerdone_suffix_beerTypes_small">different type of beer</string>
+	<string name="addbeerdone_suffix_thisYear_small">beer so far this year</string>
+
+	<string name="addbeerdone_prefix_large">You have drunk</string>
+	<string name="addbeerdone_suffix_thisMonth_large">beers so far this month</string>
+	<string name="addbeerdone_suffix_last7days_large">beers in the last 7 days</string>
+	<string name="addbeerdone_suffix_beerTypes_large">different types of beer</string>
+	<string name="addbeerdone_suffix_thisYear_large">beers so far this year</string>
+	
 	<string name="optionsmenu_addbeer">Add Beer</string>
 	<string name="optionsmenu_history">History</string>
 	<string name="optionsmenu_export">Export</string>
