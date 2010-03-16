@@ -1,4 +1,4 @@
-package com.wanghaus.beerlog.service;
+package com.wanghaus.remembeer.service;
 
 import java.io.File;
 import java.io.FileOutputStream;
@@ -16,7 +16,7 @@ import android.database.sqlite.SQLiteOpenHelper;
 import android.net.Uri;
 import android.os.Environment;
 
-import com.wanghaus.beerlog.R;
+import com.wanghaus.remembeer.R;
 
 public class BeerDbService {
 	private static final String DB_NAME = "BeerLog";

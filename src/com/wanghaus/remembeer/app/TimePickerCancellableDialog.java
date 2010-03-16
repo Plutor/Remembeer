@@ -1,4 +1,4 @@
-package com.wanghaus.beerlog.app;
+package com.wanghaus.remembeer.app;
 
 import android.app.TimePickerDialog;
 import android.content.Context;

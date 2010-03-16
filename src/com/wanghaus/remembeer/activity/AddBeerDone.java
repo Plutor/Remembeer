@@ -1,4 +1,4 @@
-package com.wanghaus.beerlog.activity;
+package com.wanghaus.remembeer.activity;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -11,8 +11,8 @@ import android.view.View;
 import android.widget.Button;
 import android.widget.TextView;
 
-import com.wanghaus.beerlog.R;
-import com.wanghaus.beerlog.service.BeerDbService;
+import com.wanghaus.remembeer.R;
+import com.wanghaus.remembeer.service.BeerDbService;
 
 public class AddBeerDone extends BaseActivity {
     @Override

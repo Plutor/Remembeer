@@ -1,4 +1,4 @@
-package com.wanghaus.beerlog.charts;
+package com.wanghaus.remembeer.charts;
 
 public class BeerTypes extends PieChart {
 	public BeerTypes() {

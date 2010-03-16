@@ -1,4 +1,4 @@
-package com.wanghaus.beerlog.activity;
+package com.wanghaus.remembeer.activity;
 
 import android.app.Activity;
 import android.content.Intent;
@@ -12,12 +12,12 @@ import android.widget.ImageView;
 import android.widget.ListView;
 import android.widget.TextView;
 
-import com.wanghaus.beerlog.R;
-import com.wanghaus.beerlog.charts.BaseChart;
-import com.wanghaus.beerlog.charts.BeerTypes;
-import com.wanghaus.beerlog.charts.BeersPerMonth;
-import com.wanghaus.beerlog.charts.Containers;
-import com.wanghaus.beerlog.charts.FavoriteBrands;
+import com.wanghaus.remembeer.R;
+import com.wanghaus.remembeer.charts.BaseChart;
+import com.wanghaus.remembeer.charts.BeerTypes;
+import com.wanghaus.remembeer.charts.BeersPerMonth;
+import com.wanghaus.remembeer.charts.Containers;
+import com.wanghaus.remembeer.charts.FavoriteBrands;
 
 public class ChartsList extends BaseActivity {
 	private BaseChart[] stats = new BaseChart[]{

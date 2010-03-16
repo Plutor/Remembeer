@@ -1,4 +1,4 @@
-package com.wanghaus.beerlog.service;
+package com.wanghaus.remembeer.service;
 
 import twitter4j.Twitter;
 import twitter4j.TwitterException;

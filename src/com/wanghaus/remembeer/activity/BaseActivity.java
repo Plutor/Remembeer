@@ -1,4 +1,4 @@
-package com.wanghaus.beerlog.activity;
+package com.wanghaus.remembeer.activity;
 
 import android.app.Activity;
 import android.content.Intent;
@@ -6,7 +6,7 @@ import android.os.Bundle;
 import android.view.Menu;
 import android.view.MenuItem;
 
-import com.wanghaus.beerlog.R;
+import com.wanghaus.remembeer.R;
 
 public class BaseActivity extends Activity {
 	private final int MENU_ADD_BEER = 1;

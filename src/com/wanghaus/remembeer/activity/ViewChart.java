@@ -1,11 +1,11 @@
-package com.wanghaus.beerlog.activity;
+package com.wanghaus.remembeer.activity;
 
 import android.os.Bundle;
 import android.widget.ImageView;
 
-import com.wanghaus.beerlog.R;
-import com.wanghaus.beerlog.charts.BaseChart;
-import com.wanghaus.beerlog.charts.BeersPerMonth;
+import com.wanghaus.remembeer.R;
+import com.wanghaus.remembeer.charts.BaseChart;
+import com.wanghaus.remembeer.charts.BeersPerMonth;
 
 public class ViewChart extends BaseActivity {
     @Override

@@ -1,4 +1,4 @@
-package com.wanghaus.beerlog.activity;
+package com.wanghaus.remembeer.activity;
 
 import android.app.Activity;
 import android.app.AlertDialog;
@@ -21,8 +21,8 @@ import android.widget.RatingBar;
 import android.widget.SimpleCursorAdapter;
 import android.widget.TextView;
 
-import com.wanghaus.beerlog.R;
-import com.wanghaus.beerlog.service.BeerDbService;
+import com.wanghaus.remembeer.R;
+import com.wanghaus.remembeer.service.BeerDbService;
 
 public class History extends BaseActivity {
 	static final int DRINK_ANOTHER = 1;

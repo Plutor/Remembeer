@@ -1,9 +1,9 @@
-package com.wanghaus.beerlog.activity;
+package com.wanghaus.remembeer.activity;
 
 import android.os.Bundle;
 import android.preference.PreferenceActivity;
 
-import com.wanghaus.beerlog.R;
+import com.wanghaus.remembeer.R;
 
 public class Config extends PreferenceActivity {
     @Override

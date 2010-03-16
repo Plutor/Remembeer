@@ -1,4 +1,4 @@
-package com.wanghaus.beerlog.activity;
+package com.wanghaus.remembeer.activity;
 
 import java.text.DateFormat;
 import java.util.Calendar;
@@ -34,11 +34,11 @@ import android.widget.TextView;
 import android.widget.TimePicker;
 import android.widget.AdapterView.OnItemSelectedListener;
 
-import com.wanghaus.beerlog.R;
-import com.wanghaus.beerlog.app.DatePickerCancellableDialog;
-import com.wanghaus.beerlog.app.TimePickerCancellableDialog;
-import com.wanghaus.beerlog.service.BeerDbService;
-import com.wanghaus.beerlog.service.TwitterService;
+import com.wanghaus.remembeer.R;
+import com.wanghaus.remembeer.app.DatePickerCancellableDialog;
+import com.wanghaus.remembeer.app.TimePickerCancellableDialog;
+import com.wanghaus.remembeer.service.BeerDbService;
+import com.wanghaus.remembeer.service.TwitterService;
 
 public class AddBeer extends BaseActivity {
 	private static final int DATE_DIALOG_ID = 0;

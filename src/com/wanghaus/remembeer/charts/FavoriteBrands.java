@@ -1,4 +1,4 @@
-package com.wanghaus.beerlog.charts;
+package com.wanghaus.remembeer.charts;
 
 public class FavoriteBrands extends BarChart {
 	public FavoriteBrands() {

@@ -1,8 +1,8 @@
-package com.wanghaus.beerlog.charts;
+package com.wanghaus.remembeer.charts;
 
 import android.graphics.drawable.Drawable;
 
-import com.wanghaus.beerlog.R;
+import com.wanghaus.remembeer.R;
 
 public abstract class BaseChart {
 	private String name;
