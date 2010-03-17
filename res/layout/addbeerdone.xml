@@ -1,39 +1,33 @@
 <?xml version="1.0" encoding="utf-8"?>
-<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+<LinearLayout
+	xmlns:android="http://schemas.android.com/apk/res/android"
 	android:orientation="vertical"
-    android:layout_width="fill_parent"
-    android:layout_height="fill_parent">
+	android:layout_width="fill_parent"
+	android:layout_height="fill_parent"
+	android:paddingLeft="6dp"
+	android:paddingRight="6dp">
 
 	<TextView
-	    android:layout_width="fill_parent" 
-	    android:layout_height="wrap_content" 
-	    android:id="@+id/addbeerdone_before"
-   	    style="@style/AddBeerDoneStat" />
-    
+		android:layout_width="fill_parent"
+		android:layout_height="wrap_content"
+		android:id="@+id/addbeerdone_before"
+		style="@style/AddBeerDoneStat" />
+
 	<TextView
-	    android:layout_width="fill_parent" 
-	    android:layout_height="wrap_content" 
-	    android:id="@+id/addbeerdone_number"
-   	    style="@style/AddBeerDoneStatNumber" />
-    
+		android:layout_width="fill_parent"
+		android:layout_height="wrap_content"
+		android:id="@+id/addbeerdone_number"
+		style="@style/AddBeerDoneStatNumber" />
+
 	<TextView
-	    android:layout_width="fill_parent" 
-	    android:layout_height="wrap_content" 
-	    android:id="@+id/addbeerdone_after"
-	    style="@style/AddBeerDoneStat" />
-    
-	<TableLayout
-	    android:layout_width="fill_parent"
-	    android:layout_height="wrap_content">
-	    <TableRow>
-		    <Button android:id="@+id/morestats"
-		        android:layout_width="fill_parent"
-		        android:layout_height="wrap_content"
-		        android:text="@string/morestats" />
-		    <Button android:id="@+id/addanother"
-		        android:layout_width="fill_parent"
-		        android:layout_height="wrap_content"
-		        android:text="@string/addanother" />
-        </TableRow>
-	</TableLayout>
+		android:layout_width="fill_parent"
+		android:layout_height="wrap_content"
+		android:id="@+id/addbeerdone_after"
+		style="@style/AddBeerDoneStat" />
+
+	<Button
+		android:id="@+id/okbutton"
+		android:layout_width="fill_parent"
+		android:layout_height="wrap_content"
+		android:text="@android:string/ok" />
 </LinearLayout>

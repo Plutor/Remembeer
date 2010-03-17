@@ -89,36 +89,17 @@ public class AddBeerDone extends BaseActivity {
         TextView after = (TextView) findViewById(R.id.addbeerdone_after);
         after.setText(popupParts.get(2));
         
-        // Save button
-        Button moreStatsButton = (Button) findViewById(R.id.morestats);
+        // Close button
+        Button okButton = (Button) findViewById(R.id.okbutton);
         
-        moreStatsButton.setOnClickListener(new View.OnClickListener() {
+        okButton.setOnClickListener(new View.OnClickListener() {
             public void onClick(View view) {
-            	viewMoreStats();
+            	closeAddBeerDone();
             }
         });
-        
-        // Save button
-        Button addAnotherButton = (Button) findViewById(R.id.addanother);
-        
-        addAnotherButton.setOnClickListener(new View.OnClickListener() {
-            public void onClick(View view) {
-            	viewAddAnother();
-            }
-        });
-                
     }
     
-    private void viewMoreStats() {
-    	Intent nextIntent = new Intent(this, Stats.class);
-    	startActivity(nextIntent);
+    private void closeAddBeerDone() {
     	finish();
     }
-    
-    private void viewAddAnother() {
-    	Intent nextIntent = new Intent(this, AddBeer.class); 	
-    	startActivity(nextIntent);
-    	finish();
-    }
-
 }

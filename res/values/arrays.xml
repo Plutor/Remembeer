@@ -40,10 +40,14 @@
 		<item>#130505</item>
 	</string-array>
 	
-	<string-array name="afterAddBeerDoneOptions">
+	<string-array name="pref_addBeerDoneActivityChoices">
 		<item>History</item>
+		<item>Statistics</item>
+		<item>Add Beer</item>
 	</string-array>
-	<string-array name="afterAddBeerDoneValues">
+	<string-array name="pref_addBeerDoneActivityValues">
 		<item>History</item>
+		<item>Stats</item>
+		<item>AddBeer</item>
 	</string-array>
 </resources>

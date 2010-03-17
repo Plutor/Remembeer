@@ -3,6 +3,16 @@
 	xmlns:android="http://schemas.android.com/apk/res/android">
 	
 	<PreferenceCategory
+		android:title="Basic settings">
+		<ListPreference
+			android:title="@string/pref_addBeerDoneActivity"
+			android:defaultValue="@string/pref_addBeerDoneActivity_default"
+			android:key="addBeerDoneActivity"
+			android:entries="@array/pref_addBeerDoneActivityChoices"
+			android:entryValues="@array/pref_addBeerDoneActivityValues" />
+	</PreferenceCategory>
+	
+	<PreferenceCategory
 		android:title="Reminder settings">
 		<CheckBoxPreference
 			android:title="@string/pref_remindersEnabled"
