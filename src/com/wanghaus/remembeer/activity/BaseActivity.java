@@ -9,18 +9,13 @@ import android.view.MenuItem;
 import com.wanghaus.remembeer.R;
 
 public class BaseActivity extends Activity {
-	private final int MENU_ADD_BEER = 1;
-	private final int MENU_HISTORY = 2;
-	private final int MENU_EXPORT = 3;
-	private final int MENU_STATS = 4;
-	private final int MENU_SETTINGS = 5;
-	
     @Override
 	protected void onCreate(Bundle savedInstanceState) {
 		super.onCreate(savedInstanceState);
 	}
 
 	/* Creates the menu items */
+    @Override
 	public boolean onCreateOptionsMenu(Menu menu) {
 		if (!super.onCreateOptionsMenu(menu))
 			return false;
@@ -28,45 +23,51 @@ public class BaseActivity extends Activity {
 		if (this instanceof AddBeerDone)
 			return false;
 		
-		if (!(this instanceof AddBeer))
-		    menu.add(0, MENU_ADD_BEER, 0, getText(R.string.optionsmenu_addbeer))
-	    	.setIcon(android.R.drawable.ic_menu_add);
+		getMenuInflater().inflate(R.layout.optionsmenu, menu);
+		return true;  
+	}
+	
+	@Override
+	public boolean onPrepareOptionsMenu(Menu menu) {
+		super.onPrepareOptionsMenu(menu);
+		
+		if (this instanceof AddBeer)
+			menu.findItem(R.id.optionsmenu_addbeer)
+				.setVisible(false);
 
-		if (!(this instanceof History)) {
-		    menu.add(0, MENU_HISTORY, 0, getText(R.string.optionsmenu_history))
-	    	.setIcon(android.R.drawable.ic_menu_recent_history);
+		if (this instanceof History) {
+			menu.findItem(R.id.optionsmenu_history)
+				.setVisible(false);
+			// History.onPrepareOptionsMenu() will make sure the sort button does the right thing
 		} else {
-		    menu.add(0, MENU_EXPORT, 0, getText(R.string.optionsmenu_export))
-	    	.setIcon(android.R.drawable.ic_menu_share);
+			menu.findItem(R.id.optionsmenu_history_sort)
+				.setVisible(false);
 		}
 		
-		if (!(this instanceof Stats || this instanceof ChartsList || this instanceof ViewChart))
-		    menu.add(0, MENU_STATS, 0, getText(R.string.optionsmenu_statistics))
-	    	.setIcon(android.R.drawable.ic_menu_info_details);
-
-		//if (!(this instanceof Config))
-			menu.add(0, MENU_SETTINGS, 0, getText(R.string.optionsmenu_settings))
-	    	.setIcon(android.R.drawable.ic_menu_preferences);
+		if (this instanceof Stats || this instanceof ChartsList || this instanceof ViewChart)
+			menu.findItem(R.id.optionsmenu_statistics)
+				.setVisible(false);
 
 	    return true;
 	}
 
 	/* Handles item selections */
+	@Override
 	public boolean onOptionsItemSelected(MenuItem item) {
 		Intent nextIntent;
 		
 	    switch (item.getItemId()) {
-	    case MENU_ADD_BEER:
+	    case R.id.optionsmenu_addbeer:
 	    	nextIntent = new Intent(this, AddBeer.class);
 	    	startActivity(nextIntent);
 
 	        return true;
-	    case MENU_HISTORY:
+	    case R.id.optionsmenu_history:
 	    	nextIntent = new Intent(this, History.class);
 	    	startActivity(nextIntent);
 
 	        return true;
-	    case MENU_EXPORT:
+	    case R.id.optionsmenu_export:
 	    	if (this instanceof History) {
 	    		History historyAction = (History)this;
 	    		historyAction.exportHistory();
@@ -74,12 +75,12 @@ public class BaseActivity extends Activity {
 	    	}
 
 	        return false;
-	    case MENU_STATS:
+	    case R.id.optionsmenu_statistics:
 	    	nextIntent = new Intent(this, Stats.class);
 	    	startActivity(nextIntent);
 
 	        return true;
-	    case MENU_SETTINGS:
+	    case R.id.optionsmenu_settings:
 	    	nextIntent = new Intent(this, Config.class);
 	    	startActivity(nextIntent);
 

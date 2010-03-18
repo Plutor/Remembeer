@@ -108,17 +108,27 @@ public class BeerDbService {
      * Read methods 
      */
     public Cursor getBeerHistory() {
-    	return getBeerHistory(null);
+    	return getBeerHistory(null, "stamp DESC");
+    }
+    public Cursor getBeerHistory(Integer limit) {
+    	return getBeerHistory(limit, "stamp DESC");
+    }
+    
+    public Cursor getBeerHistoryAlphabetically() {
+    	return getBeerHistory(null, "beername ASC");
+    }
+    public Cursor getBeerHistoryAlphabetically(Integer limit) {
+    	return getBeerHistory(limit, "beername ASC");
     }
 
-    public Cursor getBeerHistory(Integer limit) {
+    public Cursor getBeerHistory(Integer limit, String sortBy) {
     	String strLimit = null;
     	if (limit != null)
     		strLimit = limit.toString();
     	
         return db.query(DB_TABLE,
         		new String[] {"ROWID AS _id", "beername", "container || ' at ' || stamp AS details", "rating", "container"},
-        		null, null, null, null, "stamp DESC", strLimit);
+        		null, null, null, null, sortBy, strLimit);
     }
     
     public Cursor getBeerNames() {

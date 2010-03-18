@@ -65,6 +65,8 @@
 	
 	<string name="optionsmenu_addbeer">Add Beer</string>
 	<string name="optionsmenu_history">History</string>
+	<string name="optionsmenu_history_sort_alpha">Sort by beer name</string>
+	<string name="optionsmenu_history_sort_date">Sort by date</string>
 	<string name="optionsmenu_export">Export</string>
 	<string name="optionsmenu_statistics">Statistics</string>
 	<string name="optionsmenu_settings">Settings</string>

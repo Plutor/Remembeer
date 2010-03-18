@@ -5,12 +5,16 @@ import android.app.AlertDialog;
 import android.content.Context;
 import android.content.DialogInterface;
 import android.content.Intent;
+import android.content.SharedPreferences;
+import android.content.SharedPreferences.Editor;
 import android.database.Cursor;
 import android.net.Uri;
 import android.os.Bundle;
+import android.preference.PreferenceManager;
 import android.util.Log;
 import android.view.ContextMenu;
 import android.view.LayoutInflater;
+import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
 import android.view.ViewGroup;
@@ -32,6 +36,7 @@ public class History extends BaseActivity {
 	private ListView historyList;
 	private Cursor recentBeers;
 	private BeerDbService dbs;
+	private ListAdapter historyAdapter;
 	
 	private View.OnClickListener clickListener;
 	private View.OnCreateContextMenuListener contextMenuListener;
@@ -41,19 +46,7 @@ public class History extends BaseActivity {
     	super.onCreate(savedInstanceState);
         setContentView(R.layout.history);
         
-        historyList = (ListView)findViewById(R.id.history_list);
-        
-        // Get the last ten beers
-        dbs = new BeerDbService(this);
-        recentBeers = dbs.getBeerHistory();
-        
-        // Map Cursor columns to views defined in simple_list_item_2.xml
-        ListAdapter historyAdapter = new HistoryCursorAdapter(this,
-                R.layout.history_row, recentBeers, 
-                new String[] { "beername", "details" }, 
-                new int[] { R.id.beername, R.id.details });
-
-        historyList.setAdapter(historyAdapter);
+        initBeerList();
         
         clickListener = new View.OnClickListener() {
         	public void onClick(View itemView) {
@@ -105,6 +98,31 @@ public class History extends BaseActivity {
             	 });
              }
         };
+    }
+    
+    private void initBeerList() {
+    	if (historyList == null)
+    		historyList = (ListView)findViewById(R.id.history_list);
+        
+        // Get the last ten beers
+    	if (dbs == null)
+    		dbs = new BeerDbService(this);
+    	
+    	// First check what the sort setting is
+        SharedPreferences settings = PreferenceManager.getDefaultSharedPreferences(this);
+        if (settings.getString("sortBy", "date").equals("alpha")) {
+        	recentBeers = dbs.getBeerHistoryAlphabetically();
+        } else {
+        	recentBeers = dbs.getBeerHistory();
+        }
+        
+        // Map Cursor columns to views defined in simple_list_item_2.xml
+        historyAdapter = new HistoryCursorAdapter(this,
+                R.layout.history_row, recentBeers, 
+                new String[] { "beername", "details" }, 
+                new int[] { R.id.beername, R.id.details });
+
+        historyList.setAdapter(historyAdapter);
     }
     
     private String getBeerValue(Integer position, String colName) {
@@ -230,4 +248,45 @@ public class History extends BaseActivity {
     	// Send
     	startActivity(Intent.createChooser(emailIntent, "Send export..."));
     }
+
+    @Override
+    public boolean onPrepareOptionsMenu(Menu menu) {
+    	MenuItem sortItem = menu.findItem(R.id.optionsmenu_history_sort);
+    	
+        SharedPreferences settings = PreferenceManager.getDefaultSharedPreferences(this);
+        if (settings.getString("sortBy", "date").equals("alpha")) {
+        	sortItem.setTitle(R.string.optionsmenu_history_sort_date);
+        } else {
+        	sortItem.setTitle(R.string.optionsmenu_history_sort_alpha);
+        }
+        
+		return super.onPrepareOptionsMenu(menu);
+	}
+    
+	@Override
+	public boolean onOptionsItemSelected(MenuItem item) {
+	    switch (item.getItemId()) {
+	    case R.id.optionsmenu_export:
+	    	exportHistory();
+		    return true;
+	    case R.id.optionsmenu_history_sort:
+	        SharedPreferences settings = PreferenceManager.getDefaultSharedPreferences(this);
+        	Editor prefsEditor = settings.edit();
+	        if (settings.getString("sortBy", "date").equals("alpha")) {
+	        	prefsEditor.putString("sortBy", "date");
+	        	prefsEditor.commit();
+	        } else {
+	        	prefsEditor.putString("sortBy", "alpha");
+	        	prefsEditor.commit();
+	        }
+
+	        // Resort
+	    	initBeerList();
+	    	
+	    	return true;
+	    }
+
+		return super.onOptionsItemSelected(item);
+	}
+
 }
