@@ -37,17 +37,11 @@
 			android:summary="@string/pref_twitterEnabled_summary"
 			android:defaultValue="false"
 			android:key="twitterEnabled" />
-		<EditTextPreference
-			android:title="@string/pref_twitterUsername"
-			android:defaultValue=""
-			android:dependency="twitterEnabled"
-			android:key="twitterUsername" />
-		<EditTextPreference
-			android:title="@string/pref_twitterPassword"
-			android:defaultValue=""
-			android:dependency="twitterEnabled"
-			android:key="twitterPassword"
-			android:password="true" />
+		<CheckBoxPreference
+			android:title="@string/pref_twitterClear"
+			android:summary="@string/pref_twitterClear_summary"
+			android:defaultValue="false"
+			android:key="twitterClear" />
 		<EditTextPreference
 			android:title="@string/pref_twitterTemplate"
 			android:defaultValue="@string/pref_twitterTemplate_default"

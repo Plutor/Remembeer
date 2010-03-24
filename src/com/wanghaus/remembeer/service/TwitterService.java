@@ -3,13 +3,46 @@ package com.wanghaus.remembeer.service;
 import twitter4j.Twitter;
 import twitter4j.TwitterException;
 import twitter4j.TwitterFactory;
+import twitter4j.http.AccessToken;
 import android.content.Context;
 import android.content.SharedPreferences;
+import android.content.SharedPreferences.Editor;
 import android.preference.PreferenceManager;
 import android.util.Log;
 
 public class TwitterService {
+	private static boolean twitterConfigured;
+	
 	public TwitterService() {
+	}
+	
+	public static boolean isConfigured() {
+		return twitterConfigured;
+	}
+	
+	public static void clearTokens(Context context) {
+		SharedPreferences prefs = PreferenceManager.getDefaultSharedPreferences(context);
+		Editor editor = prefs.edit();
+		
+		editor.remove("twitterUsername");
+		editor.remove("twitterToken");
+		editor.remove("twitterSecret");
+		editor.putBoolean("twitterEnabled", false);
+		editor.commit();
+		
+		twitterConfigured = false;
+	}
+	
+	public static void setupTwitter(Context context, AccessToken AT) {
+		SharedPreferences prefs = PreferenceManager.getDefaultSharedPreferences(context);
+		Editor editor = prefs.edit();
+		
+		editor.putString("twitterUsername", AT.getScreenName());
+		editor.putString("twitterToken", AT.getToken());
+		editor.putString("twitterSecret", AT.getTokenSecret());
+		editor.commit();
+		
+		twitterConfigured = true;
 	}
 	
 	public static void sendToTwitter(Context context, String beername) {
@@ -18,14 +51,15 @@ public class TwitterService {
 		if (!prefs.getBoolean("twitterEnabled", false))
 			return;
 		
-		final String username = prefs.getString("twitterUsername", null);
-		final String password = prefs.getString("twitterPassword", null);
+		final String token = prefs.getString("twitterToken", null);
+		final String secret = prefs.getString("twitterSecret", null);
 		String template = prefs.getString("twitterTemplate", null);
 		
-		if (username == null || password == null || template == null)
+		if (token == null || secret == null || template == null)
 			return;
 		
 		// DO IT
+		final AccessToken accessToken = new AccessToken(token, secret);
 		final String status = template.replace("BEERNAME", beername);
 		
 		Log.d("TwitterService", "Sending '" + status + "' to twitter");
@@ -34,7 +68,7 @@ public class TwitterService {
 	    Thread updateStatus = new Thread() {
 	        public void run() {
 				TwitterFactory factory = new TwitterFactory();
-				Twitter twitter = factory.getInstance(username, password);
+				Twitter twitter = factory.getOAuthAuthorizedInstance(accessToken);
 
 				try {
 					twitter.updateStatus(status);

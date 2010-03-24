@@ -16,6 +16,8 @@
 		<activity android:name=".activity.Stats"></activity>  
 		<activity android:name=".activity.History"></activity>  
 		<activity android:name=".activity.Config"></activity> 
+		<activity android:name=".activity.ConfigureTwitter"
+			android:theme="@android:style/Theme.Dialog"></activity>
 
 		<!-- Eventually -->		
 		<!-- <activity android:name=".activity.ChartsList"></activity>
