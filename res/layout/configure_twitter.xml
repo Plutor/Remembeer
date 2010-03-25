@@ -8,6 +8,7 @@
 		android:id="@+id/UserTitle"
 		android:layout_width="wrap_content"
 		android:layout_height="wrap_content"
+		android:paddingLeft="3px"
 		android:text="@string/twitter_setup_username"
 		android:textSize="16sp"></TextView>
 	<EditText
@@ -20,6 +21,7 @@
 		android:id="@+id/PassTitle"
 		android:layout_width="wrap_content"
 		android:layout_height="wrap_content"
+		android:paddingLeft="3px"
 		android:layout_below="@+id/Username"
 		android:text="@string/twitter_setup_password"
 		android:textSize="16sp"></TextView>
