@@ -45,6 +45,7 @@ public class ConfigureTwitter extends Activity {
                 try {
 					accessToken = twitter.getOAuthAccessToken();
 	                TwitterService.setupTwitter(context, accessToken);
+					Log.d("ConfigureTwitter", "Got access token: " + accessToken.toString());
 	                finish();
 				} catch (TwitterException e) {
 					Toast.makeText(context, getText(R.string.twitter_whoops), Toast.LENGTH_LONG);

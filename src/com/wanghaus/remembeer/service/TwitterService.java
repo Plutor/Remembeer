@@ -40,6 +40,7 @@ public class TwitterService {
 		editor.putString("twitterUsername", AT.getScreenName());
 		editor.putString("twitterToken", AT.getToken());
 		editor.putString("twitterSecret", AT.getTokenSecret());
+		editor.putBoolean("twitterEnabled", true);
 		editor.commit();
 		
 		twitterConfigured = true;
