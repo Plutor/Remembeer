@@ -11,13 +11,16 @@ import android.preference.PreferenceManager;
 import android.util.Log;
 
 public class TwitterService {
-	private static boolean twitterConfigured;
-	
 	public TwitterService() {
 	}
 	
-	public static boolean isConfigured() {
-		return twitterConfigured;
+	public static boolean isConfigured(Context context) {
+		SharedPreferences prefs = PreferenceManager.getDefaultSharedPreferences(context);
+
+		return prefs.getBoolean("twitterEnabled", false) &&
+			prefs.getString("twitterUsername", null) != null &&
+			prefs.getString("twitterToken", null) != null &&
+			prefs.getString("twitterSecret", null) != null;
 	}
 	
 	public static void clearTokens(Context context) {
@@ -29,8 +32,6 @@ public class TwitterService {
 		editor.remove("twitterSecret");
 		editor.putBoolean("twitterEnabled", false);
 		editor.commit();
-		
-		twitterConfigured = false;
 	}
 	
 	public static void setupTwitter(Context context, AccessToken AT) {
@@ -42,8 +43,6 @@ public class TwitterService {
 		editor.putString("twitterSecret", AT.getTokenSecret());
 		editor.putBoolean("twitterEnabled", true);
 		editor.commit();
-		
-		twitterConfigured = true;
 	}
 	
 	public static void sendToTwitter(Context context, String beername) {

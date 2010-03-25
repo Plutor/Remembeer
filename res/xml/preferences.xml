@@ -30,6 +30,7 @@
 			android:dependency="remindersEnabled"
 			android:key="remindersDelay" />
 	</PreferenceCategory>
+	
 	<PreferenceCategory
 		android:title="Twitter settings">
 		<CheckBoxPreference
@@ -37,11 +38,6 @@
 			android:summary="@string/pref_twitterEnabled_summary"
 			android:defaultValue="false"
 			android:key="twitterEnabled" />
-		<CheckBoxPreference
-			android:title="@string/pref_twitterClear"
-			android:summary="@string/pref_twitterClear_summary"
-			android:defaultValue="false"
-			android:key="twitterClear" />
 		<EditTextPreference
 			android:title="@string/pref_twitterTemplate"
 			android:defaultValue="@string/pref_twitterTemplate_default"
