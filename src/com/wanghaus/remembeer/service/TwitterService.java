@@ -1,5 +1,7 @@
 package com.wanghaus.remembeer.service;
 
+import com.wanghaus.remembeer.R;
+
 import twitter4j.Twitter;
 import twitter4j.TwitterException;
 import twitter4j.TwitterFactory;
@@ -9,6 +11,7 @@ import android.content.SharedPreferences;
 import android.content.SharedPreferences.Editor;
 import android.preference.PreferenceManager;
 import android.util.Log;
+import android.widget.Toast;
 
 public class TwitterService {
 	public TwitterService() {

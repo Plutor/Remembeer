@@ -39,7 +39,7 @@ public class Config extends PreferenceActivity {
 		        	AlertDialog.Builder builder = new AlertDialog.Builder(cContext);
 		    		builder.setMessage(getText(R.string.twitter_teardown_title))
 		    		       .setCancelable(true)
-		    		       .setPositiveButton(getText(R.string.twitter_okay), new DialogInterface.OnClickListener() {
+		    		       .setPositiveButton(getText(android.R.string.ok), new DialogInterface.OnClickListener() {
 		    		           public void onClick(DialogInterface dialog, int id) {
 		    		                // clear the stored tokens
 		    		        	   TwitterService.clearTokens(cContext);
@@ -47,7 +47,7 @@ public class Config extends PreferenceActivity {
 		    		        	   Log.d("Teardown", "Cleared stored Twitter tokens");
 		    		           }
 		    		       })
-		    		       .setNegativeButton(getText(R.string.twitter_cancel), new DialogInterface.OnClickListener() {
+		    		       .setNegativeButton(getText(android.R.string.cancel), new DialogInterface.OnClickListener() {
 		    		           public void onClick(DialogInterface dialog, int id) {
 		    		                dialog.cancel();
 		    		                Log.d("Teardown", "Cancelled");

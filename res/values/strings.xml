@@ -35,19 +35,16 @@
 	<string name="pref_remindersDelay_summary">In minutes</string>
 	<string name="pref_twitterEnabled">Post to Twitter</string>
 	<string name="pref_twitterEnabled_summary">Automatically post Drink Now beers to Twitter</string>
-	<string name="pref_twitterClear">Clear Stored User</string>
-	<string name="pref_twitterClear_summary"></string>
 	<string name="pref_twitterTemplate">Twitter template</string>
 	<string name="pref_twitterTemplate_default">I just drank a BEERNAME #beer</string>
 	
 	<string name="twitter_signin">Setup your Twitter account</string>
 	<string name="twitter_setup_username">Username</string>
 	<string name="twitter_setup_password">Password</string>
-	<string name="twitter_teardown_title">Really Clear your stored Twitter\nUsername and Password?</string>
+	<string name="twitter_teardown_title">Really clear your stored Twitter\nusername and password?</string>
 	<string name="twitter_login">Login</string>
-	<string name="twitter_okay">Okay</string>
-	<string name="twitter_cancel">Cancel</string>
-	<string name="twitter_spinner">Logging into Twitter</string>
+	<string name="twitter_progress_title">Authorizing</string>
+	<string name="twitter_progress_message">Authorizing Twitter account</string>
 	<string name="twitter_whoops">Whoops, unable to login with that password.</string>
 	
 	<string name="reminder_tickerText">How\'s that beer you\'re drinking?</string>
