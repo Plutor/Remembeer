@@ -5,6 +5,7 @@ import twitter4j.TwitterException;
 import twitter4j.TwitterFactory;
 import twitter4j.http.AccessToken;
 import android.app.Activity;
+import android.app.ProgressDialog;
 import android.content.Context;
 import android.os.Bundle;
 import android.util.Log;
@@ -38,20 +39,32 @@ public class ConfigureTwitter extends Activity {
             		passwdView.getText().length() == 0 )
             		return;
             	
-            	// TODO throw a spinner up while we're doing this
+            	// Throw a spinner up while we're doing this
+            	final ProgressDialog throbber = ProgressDialog.show(context,
+            			getText(R.string.twitter_progress_title),
+            			getText(R.string.twitter_progress_message), true);
 
-            	Twitter twitter = new TwitterFactory().getInstance(username, password); 
-                AccessToken accessToken;
-                try {
-					accessToken = twitter.getOAuthAccessToken();
-	                TwitterService.setupTwitter(context, accessToken);
-	                finish();
-				} catch (TwitterException e) {
-					Toast.makeText(context, getText(R.string.twitter_whoops), Toast.LENGTH_LONG);
-					Log.d("ConfigureTwitter", e.getMessage());
-					return;
-				}
-				
+            	// Authorize out-of-thread so spinner can actually run
+        	    Thread authorizeThread = new Thread() {
+        	        public void run() {
+                        try {
+                        	Twitter twitter = new TwitterFactory().getInstance(username, password); 
+                            AccessToken accessToken = twitter.getOAuthAccessToken();
+        	                TwitterService.setupTwitter(context, accessToken);
+        					Log.d("ConfigureTwitter", "Got access token: " + accessToken.toString());
+        					throbber.dismiss();
+        	                finish();
+        				} catch (TwitterException e) {
+        					Toast.makeText(context, getText(R.string.twitter_whoops), Toast.LENGTH_LONG);
+        					Log.d("ConfigureTwitter", e.getMessage());
+        					throbber.dismiss();
+        					return;
+        				}
+
+        				Log.d("ConfigureTwitter", "ConfigureTwitter thread ending");
+        	        }
+        	    };
+        	    authorizeThread.start();
             }
             
         });

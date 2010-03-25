@@ -1,5 +1,7 @@
 package com.wanghaus.remembeer.service;
 
+import com.wanghaus.remembeer.R;
+
 import twitter4j.Twitter;
 import twitter4j.TwitterException;
 import twitter4j.TwitterFactory;
@@ -9,15 +11,19 @@ import android.content.SharedPreferences;
 import android.content.SharedPreferences.Editor;
 import android.preference.PreferenceManager;
 import android.util.Log;
+import android.widget.Toast;
 
 public class TwitterService {
-	private static boolean twitterConfigured;
-	
 	public TwitterService() {
 	}
 	
-	public static boolean isConfigured() {
-		return twitterConfigured;
+	public static boolean isConfigured(Context context) {
+		SharedPreferences prefs = PreferenceManager.getDefaultSharedPreferences(context);
+
+		return prefs.getBoolean("twitterEnabled", false) &&
+			prefs.getString("twitterUsername", null) != null &&
+			prefs.getString("twitterToken", null) != null &&
+			prefs.getString("twitterSecret", null) != null;
 	}
 	
 	public static void clearTokens(Context context) {
@@ -29,8 +35,6 @@ public class TwitterService {
 		editor.remove("twitterSecret");
 		editor.putBoolean("twitterEnabled", false);
 		editor.commit();
-		
-		twitterConfigured = false;
 	}
 	
 	public static void setupTwitter(Context context, AccessToken AT) {
@@ -40,9 +44,8 @@ public class TwitterService {
 		editor.putString("twitterUsername", AT.getScreenName());
 		editor.putString("twitterToken", AT.getToken());
 		editor.putString("twitterSecret", AT.getTokenSecret());
+		editor.putBoolean("twitterEnabled", true);
 		editor.commit();
-		
-		twitterConfigured = true;
 	}
 	
 	public static void sendToTwitter(Context context, String beername) {

@@ -47,6 +47,6 @@
 		android:layout_height="wrap_content"
 		android:layout_below="@+id/Password"
 		android:layout_alignParentRight="true"
-		android:text="@string/twitter_cancel"
+		android:text="@android:string/cancel"
 		android:textSize="16sp"></Button>
 </RelativeLayout>
