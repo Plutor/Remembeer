@@ -110,8 +110,10 @@ public class BeerDbService {
     			inputvalues.put("container", elements[1].substring(1, elements[1].length() -1));
     			inputvalues.put("stamp", elements[2].substring(1, elements[2].length() -1));
     			inputvalues.put("rating", elements[3].substring(1, elements[3].length() -1));
-    			db.insert(DB_TABLE, null, inputvalues);
-    			count++;
+    			if (getBeerCountWhen(elements[2].substring(1, elements[2].length() -1)) == 0) {
+    				db.insert(DB_TABLE, null, inputvalues);
+    				count++;
+    			}
     			iLine = inFile.readLine();
     		}
     		inFile.close();
@@ -425,6 +427,18 @@ public class BeerDbService {
 	public String getBeerNotes(String beername) {
 		// TODO Auto-generated method stub
 		return null;
+	}
+	
+	public int getBeerCountWhen(String whenStamp) {
+		int count;
+		
+		Cursor q = db.query(DB_TABLE, new String[] {"beername"},
+				"stamp = ?", new String[] {whenStamp}, null, null, null);
+ 	
+		count = q.getCount();
+    	q.close();
+		
+		return count;
 	}
 	
 	public long localCsvModifiedDate() {
