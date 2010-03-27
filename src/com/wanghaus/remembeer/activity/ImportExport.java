@@ -9,7 +9,6 @@ import android.content.Context;
 import android.content.Intent;
 import android.net.Uri;
 import android.os.Bundle;
-import android.util.Log;
 import android.view.View;
 import android.widget.Button;
 import android.widget.TextView;
@@ -40,7 +39,7 @@ public class ImportExport extends Activity {
             	Uri csvFile = dbs.exportHistoryToCsvFile();
             	if (csvFile == null) {
             		// TODO - Show an error message
-            		Toast.makeText(context, getString(R.string.export_whoops), Toast.LENGTH_LONG);
+            		Toast.makeText(context, getString(R.string.export_whoops), Toast.LENGTH_LONG).show();
             		return;
             	}
             	
@@ -66,12 +65,13 @@ public class ImportExport extends Activity {
             	
             	//Store it
             	destination = dbs.exportHistoryToCsvFile();
-            	if (destination == null)
-            		Toast.makeText(context, getString(R.string.export_whoops), Toast.LENGTH_LONG);
+            	if (destination == null) {
+            		Toast.makeText(context, getString(R.string.export_whoops), Toast.LENGTH_LONG).show();
+            		return;
+            	}
             	
-            	success = getString(R.string.export_success);
-            	success.concat(destination.toString());
-            	Toast.makeText(context, success, Toast.LENGTH_LONG);
+            	success = new String(getString(R.string.export_success) + destination.toString());
+            	Toast.makeText(context, success, Toast.LENGTH_LONG).show();
             	UpdateLastExported();
             }
         });
@@ -85,13 +85,17 @@ public class ImportExport extends Activity {
             	// Authorize out-of-thread so spinner can actually run
         	    Thread importThread = new Thread() {
         	        public void run() {
-        	        	dbs.importHistoryFromCsvFile();
-        				Log.d("Import", "importThread ending");
+        	        	Integer count;
+        	        	String doneMsg;
+        	        	count = BeerDbService.importHistoryFromCsvFile();
+        				doneMsg = new String(getString(R.string.import_title_before) +
+        						count.toString() + getString(R.string.import_title_after));
         				throbber.dismiss();
+        				//the way Toast fails, we probably need a message handler
+        				//Toast.makeText(context, doneMsg, Toast.LENGTH_LONG).show();
         	        }
         	    };
         	    importThread.start();
-
             }
         });
         Button exportDone = (Button) findViewById(R.id.ExportDone);
@@ -105,7 +109,7 @@ public class ImportExport extends Activity {
 	protected void UpdateLastExported() {
 		long when;
 		
-		when = dbs.localCsvModifiedDate();
+		when = BeerDbService.localCsvModifiedDate();
 		if (when > 0) {
 			Date date = new Date(when);
 			

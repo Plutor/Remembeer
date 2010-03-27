@@ -85,7 +85,9 @@
 	<string name="export_local">Export Locally</string>
 	<string name="import_local">Import Beers\nfrom local file</string>
 	<string name="export_whoops">Whoops, unable to export your beers</string>
-	<string name="export_success">Successfully exported database to </string>
+	<string name="export_success">Successfully exported database to \n</string>
 	<string name="export_done">Done</string>
 	<string name="import_throbber">Loading Beers from local file</string>
+	<string name="import_title_before">Imported </string>
+	<string name="import_title_after"> Beers</string>
 </resources>
