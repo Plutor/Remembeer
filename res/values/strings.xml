@@ -77,4 +77,15 @@
 	<string name="optionsmenu_export">Export</string>
 	<string name="optionsmenu_statistics">Statistics</string>
 	<string name="optionsmenu_settings">Settings</string>
+	
+	<string name="import_title">Export / Import</string>
+	<string name="export_title">Last Export: </string>
+	<string name="export_date">Never</string>
+	<string name="export_email">Export to Email</string>
+	<string name="export_local">Export Locally</string>
+	<string name="import_local">Import Beers\nfrom local file</string>
+	<string name="export_whoops">Whoops, unable to export your beers</string>
+	<string name="export_success">Successfully exported database to </string>
+	<string name="export_done">Done</string>
+	<string name="import_throbber">Loading Beers from local file</string>
 </resources>

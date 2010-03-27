@@ -42,6 +42,8 @@ public class BaseActivity extends Activity {
 		} else {
 			menu.findItem(R.id.optionsmenu_history_sort)
 				.setVisible(false);
+			menu.findItem(R.id.optionsmenu_export)
+				.setVisible(false);
 		}
 		
 		if (this instanceof Stats || this instanceof ChartsList || this instanceof ViewChart)
@@ -68,13 +70,10 @@ public class BaseActivity extends Activity {
 
 	        return true;
 	    case R.id.optionsmenu_export:
-	    	if (this instanceof History) {
-	    		History historyAction = (History)this;
-	    		historyAction.exportHistory();
-	    		return true;
-	    	}
-
-	        return false;
+	    	nextIntent = new Intent(this, ImportExport.class);
+		    startActivity(nextIntent);
+	    	
+	        return true;
 	    case R.id.optionsmenu_statistics:
 	    	nextIntent = new Intent(this, Stats.class);
 	    	startActivity(nextIntent);

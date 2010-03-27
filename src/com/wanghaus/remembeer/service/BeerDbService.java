@@ -1,7 +1,10 @@
 package com.wanghaus.remembeer.service;
 
+import java.io.BufferedReader;
 import java.io.File;
+import java.io.FileNotFoundException;
 import java.io.FileOutputStream;
+import java.io.FileReader;
 import java.io.IOException;
 import java.io.PrintWriter;
 import java.util.Date;
@@ -15,6 +18,7 @@ import android.database.sqlite.SQLiteDatabase;
 import android.database.sqlite.SQLiteOpenHelper;
 import android.net.Uri;
 import android.os.Environment;
+import android.util.Log;
 
 import com.wanghaus.remembeer.R;
 
@@ -22,6 +26,7 @@ public class BeerDbService {
 	private static final String DB_NAME = "BeerLog";
 	private static final String DB_TABLE = "beer_log";
 	private static final int DB_VERSION = 3;
+	private static final String DB_CSV = new String(Environment.getExternalStorageDirectory() +  File.separator + "BeerLog_export.csv");
 
 	private static final String DB_CREATE = 
 		"CREATE TABLE IF NOT EXISTS " + DB_TABLE + "(" +
@@ -32,7 +37,7 @@ public class BeerDbService {
 		")";
 
     private final Context context; 
-	private SQLiteDatabase db;
+	private static SQLiteDatabase db;
     private DatabaseHelper DBHelper;
 
     public BeerDbService(Context ctx) {
@@ -69,13 +74,56 @@ public class BeerDbService {
         	// Location (varchar 255)
         	// Notes (uhh... varchar1024? pointer to some other file?)
         }
-    }    
+    }
     
     public void close() {
         DBHelper.close();
     }
     
-    /*
+    public int importHistoryFromCsvFile() {
+    	BufferedReader inFile;
+    	String iLine;
+    	Integer count = new Integer(0);
+    	
+    	try {
+    		inFile = new BufferedReader(new FileReader(DB_CSV));
+    	} catch(FileNotFoundException e) {
+    		return -1;
+    	}
+    	
+    	try {
+			if (!inFile.readLine().equalsIgnoreCase("\"beername\",\"container\",\"stamp\",\"rating\""))
+				// The header in the file wasn't right, so we're out of here
+				return -1;
+		} catch (IOException e) {
+			Log.e("importHistory", e.toString());
+		}
+
+    	try {
+    		
+    		ContentValues inputvalues = new ContentValues();
+    		iLine = inFile.readLine(); // read line from file
+    		while(iLine != null){
+    			Log.v("importLine", iLine);
+    			String[] elements = iLine.split(",");
+    			inputvalues.put("beername", elements[0].substring(1, elements[0].length() -1));
+    			inputvalues.put("container", elements[1].substring(1, elements[1].length() -1));
+    			inputvalues.put("stamp", elements[2].substring(1, elements[2].length() -1));
+    			inputvalues.put("rating", elements[3].substring(1, elements[3].length() -1));
+    			db.insert(DB_TABLE, null, inputvalues);
+    			count++;
+    			iLine = inFile.readLine();
+    		}
+    		inFile.close();
+    	} catch(Exception e){
+    		Log.e("importHistory", e.getMessage());
+    	}
+    	Log.d("ImportHistory", "Imported " + count.toString() + " Beers");
+    	
+		return count; 
+	}
+
+	/*
      * Write methods
      */
     public long addBeer(String beername, String container, Date stamp) {
@@ -281,6 +329,11 @@ public class BeerDbService {
     			new String[] {"beername", "container", "stamp", "rating"},
     			null, null, null,
     			null, "stamp ASC");
+    	
+    	if (q.getCount() == 0) {
+    		q.close();
+    		return null;
+    	}
 
     	StringBuilder csvData = new StringBuilder();
     	int numCols = q.getColumnCount();
@@ -320,7 +373,7 @@ public class BeerDbService {
     	q.close();
     	
     	// Write the csv to a file on the external storage 
-    	File csvFile = new File(Environment.getExternalStorageDirectory(), "BeerLog_export.csv");
+    	File csvFile = new File(DB_CSV);
     	try {
 			csvFile.createNewFile();
 		} catch (IOException e) {
@@ -372,6 +425,14 @@ public class BeerDbService {
 	public String getBeerNotes(String beername) {
 		// TODO Auto-generated method stub
 		return null;
+	}
+	
+	public long localCsvModifiedDate() {
+		File localCsv = new File(DB_CSV);
+		if (localCsv.exists())
+			return localCsv.lastModified();
+		
+		return 0;
 	}
 
 }

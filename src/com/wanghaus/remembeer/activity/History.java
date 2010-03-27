@@ -8,7 +8,6 @@ import android.content.Intent;
 import android.content.SharedPreferences;
 import android.content.SharedPreferences.Editor;
 import android.database.Cursor;
-import android.net.Uri;
 import android.os.Bundle;
 import android.preference.PreferenceManager;
 import android.util.Log;
@@ -229,26 +228,6 @@ public class History extends BaseActivity {
 	     }
     }
 
-    public void exportHistory() {
-    	// Build a csv
-    	Uri csvFile = dbs.exportHistoryToCsvFile();
-    	if (csvFile == null) {
-    		// TODO - Show an error message
-    		return;
-    	}
-    	
-    	// Create an email
-    	final Intent emailIntent = new Intent(android.content.Intent.ACTION_SEND);
-    	emailIntent.putExtra(android.content.Intent.EXTRA_SUBJECT, "Beer Log export");
-    	
-    	// Attach the CSV
-    	emailIntent.setType("plain/csv");
-    	emailIntent.putExtra(android.content.Intent.EXTRA_STREAM, csvFile);
-    	
-    	// Send
-    	startActivity(Intent.createChooser(emailIntent, "Send export..."));
-    }
-
     @Override
     public boolean onPrepareOptionsMenu(Menu menu) {
     	MenuItem sortItem = menu.findItem(R.id.optionsmenu_history_sort);
@@ -267,7 +246,8 @@ public class History extends BaseActivity {
 	public boolean onOptionsItemSelected(MenuItem item) {
 	    switch (item.getItemId()) {
 	    case R.id.optionsmenu_export:
-	    	exportHistory();
+	    	final Intent next = new Intent(this, ImportExport.class);
+	    	startActivity(next);
 		    return true;
 	    case R.id.optionsmenu_history_sort:
 	        SharedPreferences settings = PreferenceManager.getDefaultSharedPreferences(this);
