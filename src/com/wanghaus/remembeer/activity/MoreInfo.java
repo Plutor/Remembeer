@@ -44,6 +44,7 @@ public class MoreInfo extends BaseActivity {
 	    private class BeerInfo {
 	    	public String name;
 	    	public String value;
+			@SuppressWarnings("unused")
 			public BeerInfo() {
 	    		super();
 	    	}

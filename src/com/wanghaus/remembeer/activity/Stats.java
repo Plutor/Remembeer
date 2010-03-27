@@ -38,7 +38,8 @@ public class Stats extends BaseActivity {
     private class BeerStat {
     	public CharSequence name;
     	public String value;
-    	public BeerStat() {
+    	@SuppressWarnings("unused")
+		public BeerStat() {
     		super();
     	}
     	public BeerStat(CharSequence name, String value) {
