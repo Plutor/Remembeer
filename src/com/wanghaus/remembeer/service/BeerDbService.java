@@ -54,6 +54,10 @@ public class BeerDbService {
         @Override
         public void onCreate(SQLiteDatabase db) {
             db.execSQL(DB_CREATE);
+            
+            if (localCsvModifiedDate() > 0) {
+            	importHistoryFromCsvFile();
+            }
         }
 
         @Override
@@ -80,7 +84,7 @@ public class BeerDbService {
         DBHelper.close();
     }
     
-    public int importHistoryFromCsvFile() {
+    public static int importHistoryFromCsvFile() {
     	BufferedReader inFile;
     	String iLine;
     	Integer count = new Integer(0);
@@ -429,7 +433,7 @@ public class BeerDbService {
 		return null;
 	}
 	
-	public int getBeerCountWhen(String whenStamp) {
+	public static int getBeerCountWhen(String whenStamp) {
 		int count;
 		
 		Cursor q = db.query(DB_TABLE, new String[] {"beername"},
@@ -441,7 +445,7 @@ public class BeerDbService {
 		return count;
 	}
 	
-	public long localCsvModifiedDate() {
+	public static long localCsvModifiedDate() {
 		File localCsv = new File(DB_CSV);
 		if (localCsv.exists())
 			return localCsv.lastModified();
