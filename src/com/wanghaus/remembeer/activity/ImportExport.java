@@ -87,7 +87,7 @@ public class ImportExport extends Activity {
         	        public void run() {
         	        	Integer count;
         	        	String doneMsg;
-        	        	count = BeerDbService.importHistoryFromCsvFile();
+        	        	count = dbs.importHistoryFromCsvFile();
         				doneMsg = new String(getString(R.string.import_title_before) +
         						count.toString() + getString(R.string.import_title_after));
         				throbber.dismiss();

@@ -44,6 +44,11 @@ public class BeerDbService {
         this.context = ctx;
         DBHelper = new DatabaseHelper(context);
         db = DBHelper.getWritableDatabase();
+
+        if (localCsvModifiedDate() > 0 && getBeerCount() == 0) {
+        	importHistoryFromCsvFile();
+        	// TODO - Remove csv?
+        }
     }
         
     private static class DatabaseHelper extends SQLiteOpenHelper {
@@ -54,10 +59,6 @@ public class BeerDbService {
         @Override
         public void onCreate(SQLiteDatabase db) {
             db.execSQL(DB_CREATE);
-            
-            if (localCsvModifiedDate() > 0) {
-            	importHistoryFromCsvFile();
-            }
         }
 
         @Override
@@ -84,7 +85,7 @@ public class BeerDbService {
         DBHelper.close();
     }
     
-    public static int importHistoryFromCsvFile() {
+    public int importHistoryFromCsvFile() {
     	BufferedReader inFile;
     	String iLine;
     	Integer count = new Integer(0);
@@ -114,15 +115,15 @@ public class BeerDbService {
     			inputvalues.put("container", elements[1].substring(1, elements[1].length() -1));
     			inputvalues.put("stamp", elements[2].substring(1, elements[2].length() -1));
     			inputvalues.put("rating", elements[3].substring(1, elements[3].length() -1));
-    			if (getBeerCountWhen(elements[2].substring(1, elements[2].length() -1)) == 0) {
+    			//if (getBeerCountWhen(elements[2].substring(1, elements[2].length() -1)) == 0) {
     				db.insert(DB_TABLE, null, inputvalues);
     				count++;
-    			}
+    			//}
     			iLine = inFile.readLine();
     		}
     		inFile.close();
     	} catch(Exception e){
-    		Log.e("importHistory", e.getMessage());
+    		Log.e("importHistory", "Failed to import history csv", e);
     	}
     	Log.d("ImportHistory", "Imported " + count.toString() + " Beers");
     	
@@ -433,7 +434,7 @@ public class BeerDbService {
 		return null;
 	}
 	
-	public static int getBeerCountWhen(String whenStamp) {
+	public int getBeerCountWhen(String whenStamp) {
 		int count;
 		
 		Cursor q = db.query(DB_TABLE, new String[] {"beername"},
