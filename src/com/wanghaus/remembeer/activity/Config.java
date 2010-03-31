@@ -30,7 +30,6 @@ public class Config extends PreferenceActivity {
     	// Setup a listener for twitter Enabled to popup ConfigureTwitter
         twitEnabled = (CheckBoxPreference) getPreferenceScreen().findPreference("twitterEnabled");
 		twitEnabled.setOnPreferenceChangeListener(new OnPreferenceChangeListener() {
-			@Override
 			public boolean onPreferenceChange(Preference preference,
 					Object newValue) {
 				if (newValue.equals(false)) {
