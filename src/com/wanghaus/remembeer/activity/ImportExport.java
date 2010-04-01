@@ -85,11 +85,7 @@ public class ImportExport extends Activity {
             	// Authorize out-of-thread so spinner can actually run
         	    Thread importThread = new Thread() {
         	        public void run() {
-        	        	Integer count;
-        	        	String doneMsg;
-        	        	count = dbs.importHistoryFromCsvFile();
-        				doneMsg = new String(getString(R.string.import_title_before) +
-        						count.toString() + getString(R.string.import_title_after));
+        	        	dbs.importHistoryFromCsvFile();
         				throbber.dismiss();
         				//the way Toast fails, we probably need a message handler
         				//Toast.makeText(context, doneMsg, Toast.LENGTH_LONG).show();
