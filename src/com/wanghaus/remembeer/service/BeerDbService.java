@@ -23,8 +23,8 @@ import android.util.Log;
 import com.wanghaus.remembeer.R;
 
 public class BeerDbService {
-	private static final String DB_NAME = "BeerLog";
-	private static final String DB_TABLE = "beer_log";
+	private static final String DB_NAME = "Remembeer";
+	private static final String DB_TABLE = "drinks";
 	private static final int DB_VERSION = 3;
 	private static final String DB_CSV = new String(Environment.getExternalStorageDirectory() +  File.separator + "BeerLog_export.csv");
 
@@ -115,10 +115,10 @@ public class BeerDbService {
     			inputvalues.put("container", elements[1].substring(1, elements[1].length() -1));
     			inputvalues.put("stamp", elements[2].substring(1, elements[2].length() -1));
     			inputvalues.put("rating", elements[3].substring(1, elements[3].length() -1));
-    			//if (getBeerCountWhen(elements[2].substring(1, elements[2].length() -1)) == 0) {
+    			if (getBeerCountWhen(elements[2].substring(1, elements[2].length() -1)) == 0) {
     				db.insert(DB_TABLE, null, inputvalues);
     				count++;
-    			//}
+    			}
     			iLine = inFile.readLine();
     		}
     		inFile.close();
