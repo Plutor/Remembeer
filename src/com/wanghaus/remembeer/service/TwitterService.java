@@ -38,6 +38,7 @@ public class TwitterService {
 		SharedPreferences prefs = PreferenceManager.getDefaultSharedPreferences(context);
 		Editor editor = prefs.edit();
 		
+		// We don't *need* the Username, but we'll store it anyway
 		editor.putString("twitterUsername", AT.getScreenName());
 		editor.putString("twitterToken", AT.getToken());
 		editor.putString("twitterSecret", AT.getTokenSecret());
@@ -48,21 +49,25 @@ public class TwitterService {
 	public static void sendToTwitter(Context context, String beername) {
 		SharedPreferences prefs = PreferenceManager.getDefaultSharedPreferences(context);
 		
-		if (!prefs.getBoolean("twitterEnabled", false))
-			return;
+		if (!prefs.getBoolean("twitterEnabled", false)) {
+			Log.v("sendToTwitter", "Twitter not enabled, exiting");
+			return;	
+		}
 		
 		final String token = prefs.getString("twitterToken", null);
 		final String secret = prefs.getString("twitterSecret", null);
 		String template = prefs.getString("twitterTemplate", null);
 		
-		if (token == null || secret == null || template == null)
-			return;
+		if (token == null || secret == null || template == null) {
+			Log.e("sendToTwitter", "Couldn't get the token or the template from prefs");
+			return ;
+		}
 		
 		// DO IT
 		final AccessToken accessToken = new AccessToken(token, secret);
 		final String status = template.replace("BEERNAME", beername);
 		
-		Log.d("TwitterService", "Sending '" + status + "' to twitter");
+		Log.v("TwitterService", "Sending '" + status + "' to twitter");
 
 	    // Create runnable for posting
 	    Thread updateStatus = new Thread() {
