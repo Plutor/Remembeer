@@ -264,7 +264,7 @@ public class BeerDbService {
 
     public long getBeerCountLastDays(Integer count) {
     	Cursor beercountQuery = db.query(DB_TABLE, new String[] {"ROWID"},
-    			"JULIANDAY(stamp) > JULIANDAY(current_date) - ? AND JULIANDAY(stamp) < JULIANDAY(current_date)", // I'm looking at you, DST
+    			"JULIANDAY(stamp) > JULIANDAY(current_date) - ? AND JULIANDAY(stamp) <= JULIANDAY(current_date) + 1", // I'm looking at you, DST
     			new String[] {count.toString()},
     			null, null, null);
     	return beercountQuery.getCount();
