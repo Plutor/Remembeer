@@ -12,7 +12,7 @@ import android.preference.Preference.OnPreferenceChangeListener;
 import android.util.Log;
 
 import com.wanghaus.remembeer.R;
-import com.wanghaus.remembeer.service.TwitterService;
+import com.wanghaus.remembeer.helper.TwitterHelper;
 
 public class Config extends PreferenceActivity {
 	private int TWITTER_CONFIG_DIALOG = 1;
@@ -41,7 +41,7 @@ public class Config extends PreferenceActivity {
 		    		       .setPositiveButton(getText(android.R.string.ok), new DialogInterface.OnClickListener() {
 		    		           public void onClick(DialogInterface dialog, int id) {
 		    		                // clear the stored tokens
-		    		        	   TwitterService.clearTokens(cContext);
+		    		        	   TwitterHelper.clearTokens(cContext);
 		    		        	   twitEnabled.setChecked(false);
 		    		        	   Log.d("Teardown", "Cleared stored Twitter tokens");
 		    		           }
@@ -75,9 +75,9 @@ public class Config extends PreferenceActivity {
 	@Override
 	protected void onActivityResult(int requestCode, int resultCode, Intent data) {
 		if (requestCode == TWITTER_CONFIG_DIALOG) {
-			Log.d("twitter", "isConfigured = " + TwitterService.isConfigured(cContext));
+			Log.d("twitter", "isConfigured = " + TwitterHelper.isConfigured(cContext));
 			 
-			if (TwitterService.isConfigured(cContext))
+			if (TwitterHelper.isConfigured(cContext))
 				twitEnabled.setChecked(true);
 		} else {
 			super.onActivityResult(requestCode, resultCode, data);

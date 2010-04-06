@@ -15,7 +15,7 @@ import android.widget.TextView;
 import android.widget.Toast;
 
 import com.wanghaus.remembeer.R;
-import com.wanghaus.remembeer.service.TwitterService;
+import com.wanghaus.remembeer.helper.TwitterHelper;
 
 public class ConfigureTwitter extends Activity {
 	
@@ -50,7 +50,7 @@ public class ConfigureTwitter extends Activity {
                         try {
                         	Twitter twitter = new TwitterFactory().getInstance(username, password); 
                             AccessToken accessToken = twitter.getOAuthAccessToken();
-        	                TwitterService.setupTwitter(context, accessToken);
+        	                TwitterHelper.setupTwitter(context, accessToken);
         					Log.d("ConfigureTwitter", "Got access token: " + accessToken.toString());
         					throbber.dismiss();
         	                finish();

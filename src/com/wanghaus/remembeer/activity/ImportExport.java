@@ -15,10 +15,10 @@ import android.widget.TextView;
 import android.widget.Toast;
 
 import com.wanghaus.remembeer.R;
-import com.wanghaus.remembeer.service.BeerDbService;
+import com.wanghaus.remembeer.helper.BeerDbHelper;
 
 public class ImportExport extends Activity {
-	private BeerDbService dbs;
+	private BeerDbHelper dbs;
 	private Context context;
 	
 	public void onCreate(Bundle savedInstanceState) {
@@ -26,7 +26,7 @@ public class ImportExport extends Activity {
         setContentView(R.layout.importexport);
         
         if (dbs == null)
-    		dbs = new BeerDbService(this);
+    		dbs = new BeerDbHelper(this);
 
         context = this;
         UpdateLastExported();
@@ -105,7 +105,7 @@ public class ImportExport extends Activity {
 	protected void UpdateLastExported() {
 		long when;
 		
-		when = BeerDbService.localCsvModifiedDate();
+		when = BeerDbHelper.localCsvModifiedDate();
 		if (when > 0) {
 			Date date = new Date(when);
 			

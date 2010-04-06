@@ -25,7 +25,7 @@ import android.widget.SimpleCursorAdapter;
 import android.widget.TextView;
 
 import com.wanghaus.remembeer.R;
-import com.wanghaus.remembeer.service.BeerDbService;
+import com.wanghaus.remembeer.helper.BeerDbHelper;
 
 public class History extends BaseActivity {
 	static final int DRINK_ANOTHER = 1;
@@ -34,7 +34,7 @@ public class History extends BaseActivity {
 	
 	private ListView historyList;
 	private Cursor recentBeers;
-	private BeerDbService dbs;
+	private BeerDbHelper dbs;
 	private ListAdapter historyAdapter;
 	
 	private View.OnClickListener clickListener;
@@ -105,7 +105,7 @@ public class History extends BaseActivity {
         
         // Get the last ten beers
     	if (dbs == null)
-    		dbs = new BeerDbService(this);
+    		dbs = new BeerDbHelper(this);
     	
     	// First check what the sort setting is
         SharedPreferences settings = PreferenceManager.getDefaultSharedPreferences(this);
@@ -204,7 +204,7 @@ public class History extends BaseActivity {
 	
 							Integer intRating = ((Float) rating).intValue();
 	
-							BeerDbService bds = new BeerDbService(context);
+							BeerDbHelper bds = new BeerDbHelper(context);
 							bds.setBeerRating(id, intRating);
 	
 							smallRatingBar.setRating(rating);

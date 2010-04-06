@@ -1,4 +1,4 @@
-package com.wanghaus.remembeer.service;
+package com.wanghaus.remembeer.helper;
 
 import java.io.BufferedReader;
 import java.io.File;
@@ -22,7 +22,7 @@ import android.util.Log;
 
 import com.wanghaus.remembeer.R;
 
-public class BeerDbService {
+public class BeerDbHelper {
 	private static final String DB_NAME = "Remembeer";
 	private static final String DB_TABLE = "drinks";
 	private static final int DB_VERSION = 3;
@@ -40,7 +40,7 @@ public class BeerDbService {
 	private static SQLiteDatabase db;
     private DatabaseHelper DBHelper;
 
-    public BeerDbService(Context ctx) {
+    public BeerDbHelper(Context ctx) {
         this.context = ctx;
         DBHelper = new DatabaseHelper(context);
         db = DBHelper.getWritableDatabase();

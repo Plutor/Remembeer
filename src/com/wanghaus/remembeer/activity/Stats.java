@@ -13,7 +13,7 @@ import android.widget.ListView;
 import android.widget.TextView;
 
 import com.wanghaus.remembeer.R;
-import com.wanghaus.remembeer.service.BeerDbService;
+import com.wanghaus.remembeer.helper.BeerDbHelper;
 
 public class Stats extends BaseActivity {
 	private List<BeerStat> stats = new ArrayList<BeerStat>();
@@ -23,7 +23,7 @@ public class Stats extends BaseActivity {
     	super.onCreate(savedInstanceState);
         setContentView(R.layout.stats);
         
-        BeerDbService dbs = new BeerDbService(this);
+        BeerDbHelper dbs = new BeerDbHelper(this);
         stats.add( new BeerStat( getText(R.string.stat_beerCount), String.valueOf(dbs.getBeerCount())) );
         stats.add( new BeerStat( getText(R.string.stat_favoriteBeer), dbs.getFavoriteBeer()) );
         stats.add( new BeerStat( getText(R.string.stat_mostDrunkBeer), dbs.getMostDrunkBeer()) );

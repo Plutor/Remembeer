@@ -13,7 +13,7 @@ import android.widget.ListView;
 import android.widget.TextView;
 
 import com.wanghaus.remembeer.R;
-import com.wanghaus.remembeer.service.BeerDbService;
+import com.wanghaus.remembeer.helper.BeerDbHelper;
 
 public class MoreInfo extends BaseActivity {
 		private List<BeerInfo> infos = new ArrayList<BeerInfo>();
@@ -23,7 +23,7 @@ public class MoreInfo extends BaseActivity {
 	    	super.onCreate(savedInstanceState);
 	        setContentView(R.layout.moreinfo);
 	        
-	        BeerDbService dbs = new BeerDbService(this);
+	        BeerDbHelper dbs = new BeerDbHelper(this);
 	        // See if we were passed a beer name
         	String beername = getIntent().getStringExtra("beername");
         	// TODO: add a menu option to search for a new beername to display the info on

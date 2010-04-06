@@ -11,7 +11,7 @@ import android.widget.Button;
 import android.widget.TextView;
 
 import com.wanghaus.remembeer.R;
-import com.wanghaus.remembeer.service.BeerDbService;
+import com.wanghaus.remembeer.helper.BeerDbHelper;
 
 public class AddBeerDone extends BaseActivity {
     @Override
@@ -27,7 +27,7 @@ public class AddBeerDone extends BaseActivity {
     	popupParts.add(null); popupParts.add(null); popupParts.add(null); // XXX - Because constructor(int) isn't working
     	
         try {
-        	BeerDbService dbs = new BeerDbService(this);
+        	BeerDbHelper dbs = new BeerDbHelper(this);
         	Random prng = new Random();
         	int statType = prng.nextInt(4);
         	long count = 0;

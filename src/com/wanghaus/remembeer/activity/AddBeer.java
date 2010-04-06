@@ -37,8 +37,8 @@ import android.widget.AdapterView.OnItemSelectedListener;
 import com.wanghaus.remembeer.R;
 import com.wanghaus.remembeer.app.DatePickerCancellableDialog;
 import com.wanghaus.remembeer.app.TimePickerCancellableDialog;
-import com.wanghaus.remembeer.service.BeerDbService;
-import com.wanghaus.remembeer.service.TwitterService;
+import com.wanghaus.remembeer.helper.BeerDbHelper;
+import com.wanghaus.remembeer.helper.TwitterHelper;
 
 public class AddBeer extends BaseActivity {
 	private static final int DATE_DIALOG_ID = 0;
@@ -48,7 +48,7 @@ public class AddBeer extends BaseActivity {
 	
 	private Spinner drinkWhenSpinner;
 	private Calendar specificTime = Calendar.getInstance();
-	private BeerDbService dbs;
+	private BeerDbHelper dbs;
 	
     /** Called when the activity is first created. */
     @Override
@@ -56,7 +56,7 @@ public class AddBeer extends BaseActivity {
     	super.onCreate(savedInstanceState);
         setContentView(R.layout.addbeer);
         
-        dbs = new BeerDbService(this);
+        dbs = new BeerDbHelper(this);
 
         initBeernameAutoComplete();
         initContainerSpinner();
@@ -289,7 +289,7 @@ public class AddBeer extends BaseActivity {
                  	}
                 }
 
-                TwitterService.sendToTwitter(this, beername);
+                TwitterHelper.sendToTwitter(this, beername);
             }
 
     	} else {
@@ -350,7 +350,7 @@ public class AddBeer extends BaseActivity {
     }
     
     private void ratingsCallback(long BeerID) {
-    	BeerDbService dbs = new BeerDbService(this);
+    	BeerDbHelper dbs = new BeerDbHelper(this);
     	
     	if (dbs.isBeerUnrated(BeerID)) {
     		String ns = Context.NOTIFICATION_SERVICE;

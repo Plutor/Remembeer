@@ -1,4 +1,4 @@
-package com.wanghaus.remembeer.service;
+package com.wanghaus.remembeer.helper;
 
 import twitter4j.Twitter;
 import twitter4j.TwitterException;
@@ -10,8 +10,8 @@ import android.content.SharedPreferences.Editor;
 import android.preference.PreferenceManager;
 import android.util.Log;
 
-public class TwitterService {
-	public TwitterService() {
+public class TwitterHelper {
+	public TwitterHelper() {
 	}
 	
 	public static boolean isConfigured(Context context) {
