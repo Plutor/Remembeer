@@ -294,7 +294,7 @@ public class BeerDbService {
     	Cursor q = db.query(DB_TABLE,
     			new String[] {"beername", "AVG(rating) AS rating"},
     			null, null, "beername",
-    			null, "AVG(rating) DESC, COUNT(*) DESC", "1");
+    			null, "AVG(rating) DESC, COUNT(*) DESC, MAX(stamp) DESC", "1");
 
     	if (q.getCount() == 0)
     		return "-";
@@ -310,7 +310,7 @@ public class BeerDbService {
     	Cursor q = db.query(DB_TABLE,
     			new String[] {"beername", "COUNT(*) AS count"},
     			null, null, "beername",
-    			null, "COUNT(*) DESC", "1");
+    			null, "COUNT(*) DESC, MAX(stamp) DESC", "1");
     	
     	if (q.getCount() == 0)
     		return "-";
