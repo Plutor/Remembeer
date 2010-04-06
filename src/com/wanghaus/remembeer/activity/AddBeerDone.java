@@ -63,6 +63,8 @@ public class AddBeerDone extends BaseActivity {
         			popupParts.set(2, getText(R.string.addbeerdone_suffix_thisYear_large));
 	    		break;
         	}
+
+        	dbs.close();
         	
         	if (count == 1) {
         		popupParts.set(0, getText(R.string.addbeerdone_prefix_small));

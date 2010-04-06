@@ -6,9 +6,6 @@ import java.util.Date;
 
 import android.app.DatePickerDialog;
 import android.app.Dialog;
-import android.app.Notification;
-import android.app.NotificationManager;
-import android.app.PendingIntent;
 import android.app.TimePickerDialog;
 import android.content.Context;
 import android.content.DialogInterface;
@@ -17,7 +14,6 @@ import android.content.SharedPreferences;
 import android.content.DialogInterface.OnClickListener;
 import android.database.Cursor;
 import android.os.Bundle;
-import android.os.Handler;
 import android.preference.PreferenceManager;
 import android.util.Log;
 import android.view.LayoutInflater;
@@ -39,12 +35,11 @@ import com.wanghaus.remembeer.app.DatePickerCancellableDialog;
 import com.wanghaus.remembeer.app.TimePickerCancellableDialog;
 import com.wanghaus.remembeer.helper.BeerDbHelper;
 import com.wanghaus.remembeer.helper.TwitterHelper;
+import com.wanghaus.remembeer.service.NotifyService;
 
 public class AddBeer extends BaseActivity {
 	private static final int DATE_DIALOG_ID = 0;
 	private static final int TIME_DIALOG_ID = 1;
-	public final static int BEER_HISTORY_ID = 2;
-
 	
 	private Spinner drinkWhenSpinner;
 	private Calendar specificTime = Calendar.getInstance();
@@ -266,24 +261,19 @@ public class AddBeer extends BaseActivity {
             beerID = (int)dbs.addBeer(beername, container, specificTime.getTime());
             
             if ((int)drinkWhenSpinner.getSelectedItemPosition() == 0) {
-                final Handler handler = new Handler();
-                final Runnable rater = new Runnable()
-                {
-                    public void run()
-                    {
-                    	ratingsCallback(beerID);
-                    }
-                };
-
                 SharedPreferences settings = PreferenceManager.getDefaultSharedPreferences(this);
                         
                 if (settings.getBoolean("remindersEnabled", true)) {
                 	try {
-                		Float fTimeout = new Float(settings.getString("remindersDelay", "5"));
-                		fTimeout *= 60000;
-                		int mTimeout = fTimeout.intValue();
+                		Float reminderDelay = Float.valueOf(settings.getString("remindersDelay", "5"));
+                		reminderDelay *= 60000;
+                		int timeout = reminderDelay.intValue();
                 		
-                		handler.postDelayed(rater, mTimeout);
+                   		Intent notifyServiceIntent = new Intent(this, NotifyService.class);
+                   		notifyServiceIntent.putExtra("beerid", beerID);
+                   		notifyServiceIntent.putExtra("timeout", timeout);
+                   		
+                   		startService(notifyServiceIntent);
                  	} catch (Exception e) {
                  		Log.w("remindersDelay", e);
                  	}
@@ -348,39 +338,4 @@ public class AddBeer extends BaseActivity {
         
         return null;
     }
-    
-    private void ratingsCallback(long BeerID) {
-    	BeerDbHelper dbs = new BeerDbHelper(this);
-    	
-    	if (dbs.isBeerUnrated(BeerID)) {
-    		String ns = Context.NOTIFICATION_SERVICE;
-    		NotificationManager mNotificationManager = (NotificationManager) getSystemService(ns);
-        
-    		int icon = R.drawable.beer_half_full;
-    		CharSequence tickerText = getText(R.string.reminder_tickerText);
-    		long when = System.currentTimeMillis();
-        
-    		Notification ratingsreminder = new Notification(icon, tickerText, when);
-    		ratingsreminder.flags |= Notification.FLAG_AUTO_CANCEL;
-        
-    		SharedPreferences settings = PreferenceManager.getDefaultSharedPreferences(this);
-        
-    		if (settings.getBoolean("remindersVibrate", true)) {
-    			ratingsreminder.defaults |= Notification.DEFAULT_VIBRATE;
-    		}
-        
-    		Context context = getApplicationContext();
-    		CharSequence contentTitle = getText(R.string.reminder_title);
-    		CharSequence contentText = getText(R.string.reminder_text);
-    		Intent notificationIntent = new Intent(this, History.class);
-    		PendingIntent contentIntent = PendingIntent.getActivity(this, 0, notificationIntent, 0);
-
-    		ratingsreminder.setLatestEventInfo(context, contentTitle, contentText, contentIntent);
-
-    		mNotificationManager.notify(BEER_HISTORY_ID, ratingsreminder);
-    	}
-    	
-    	dbs.close();
-    }   
-
 }
