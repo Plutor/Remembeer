@@ -144,6 +144,7 @@ public class BeerDbService {
         		new String[] { String.valueOf(stamp.getTime()/1000) } );
         stampCursor.moveToFirst();
         newRow.put("stamp", stampCursor.getString(0));
+		stampCursor.close();
 		
 		return db.insert(DB_TABLE, null, newRow);
     }
@@ -237,7 +238,9 @@ public class BeerDbService {
     
     public long getBeerCount() {
     	Cursor beercountQuery = db.query(DB_TABLE, new String[] {"ROWID"}, null, null, null, null, null);
-    	return beercountQuery.getCount();
+    	long rv = beercountQuery.getCount();
+    	beercountQuery.close();
+    	return rv;
     }
     
     public long getBeerCount(String querybeer) {
@@ -245,21 +248,27 @@ public class BeerDbService {
     		return getBeerCount();
 
     	Cursor beercountQuery = getBeerNames(querybeer);
-    	return beercountQuery.getCount();
+    	long rv = beercountQuery.getCount();
+    	beercountQuery.close();
+    	return rv;
     }
     
     public long getBeerCountThisYear() {
     	Cursor beercountQuery = db.query(DB_TABLE, new String[] {"ROWID"},
     			"STRFTIME('%Y', stamp) = STRFTIME('%Y', current_date)",
     			null, null, null, null);
-    	return beercountQuery.getCount();
+    	long rv = beercountQuery.getCount();
+    	beercountQuery.close();
+    	return rv;
     }
     
     public long getBeerCountThisMonth() {
     	Cursor beercountQuery = db.query(DB_TABLE, new String[] {"ROWID"},
     			"STRFTIME('%Y%m', stamp) = STRFTIME('%Y%m', current_date)",
     			null, null, null, null);
-    	return beercountQuery.getCount();
+    	long rv = beercountQuery.getCount();
+    	beercountQuery.close();
+    	return rv;
     }
 
     public long getBeerCountLastDays(Integer count) {
@@ -267,13 +276,17 @@ public class BeerDbService {
     			"JULIANDAY(stamp) > JULIANDAY(current_date) - ? AND JULIANDAY(stamp) <= JULIANDAY(current_date) + 1", // I'm looking at you, DST
     			new String[] {count.toString()},
     			null, null, null);
-    	return beercountQuery.getCount();
+    	long rv = beercountQuery.getCount();
+    	beercountQuery.close();
+    	return rv;
     }
     
     public long getBeerTypesCount() {
     	Cursor beercountQuery = db.query(DB_TABLE, new String[] {"DISTINCT beername"},
     			null, null, null, null, null);
-    	return beercountQuery.getCount();
+    	long rv = beercountQuery.getCount();
+    	beercountQuery.close();
+    	return rv;
     }
     
     public String getFavoriteBeer() {

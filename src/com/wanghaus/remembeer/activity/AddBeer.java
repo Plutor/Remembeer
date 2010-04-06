@@ -379,6 +379,8 @@ public class AddBeer extends BaseActivity {
 
     		mNotificationManager.notify(BEER_HISTORY_ID, ratingsreminder);
     	}
+    	
+    	dbs.close();
     }   
 
 }
