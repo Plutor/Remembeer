@@ -22,11 +22,6 @@
 		<activity android:name=".activity.ConfigureTwitter"
 			android:theme="@android:style/Theme.Dialog"></activity>
 
-		<!-- Eventually -->		
-		<!-- <activity android:name=".activity.ChartsList"></activity>
-		<activity android:name=".activity.ViewChart"></activity>
--->  
-
     	<service android:name=".service.NotifyService"></service>
 	</application>
     <uses-sdk android:minSdkVersion="3" />
