@@ -46,7 +46,7 @@ public class BaseActivity extends Activity {
 				.setVisible(false);
 		}
 		
-		if (this instanceof Stats || this instanceof ChartsList || this instanceof ViewChart)
+		if (this instanceof Stats )
 			menu.findItem(R.id.optionsmenu_statistics)
 				.setVisible(false);
 
