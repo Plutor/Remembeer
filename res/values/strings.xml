@@ -8,7 +8,8 @@
 	<string name="drink_when">Drink when:</string>
 	<string name="drink_when_prompt">Choose a time</string>
 	<string name="save">Save beer!</string>
-	<string name="skip">Cancel</string>
+	<string name="done">Done</string>
+	<string name="cancel">Cancel</string>
 	
 	<string name="addbeerdone_title">Beer added</string>
 	<string name="morestats">See more stats</string>
@@ -86,8 +87,11 @@
 	<string name="import_local">Import Beers\nfrom local file</string>
 	<string name="export_whoops">Whoops, unable to export your beers</string>
 	<string name="export_success">Successfully exported database to \n</string>
-	<string name="export_done">Done</string>
 	<string name="import_throbber">Loading Beers from local file</string>
 	<string name="import_title_before">Imported </string>
 	<string name="import_title_after"> Beers</string>
+	
+	<string name="drink_another">Drink another </string>
+	<string name="history_delete">Delete this beer?</string>
+	<string name="history_delete_warn">This action cannot be undone.</string>
 </resources>

@@ -67,7 +67,7 @@ public class History extends BaseActivity {
                  Integer position = (Integer)v.getTag();
                  String beername = getBeerValue(position, "beername");
                  if (beername != null) {
-                	 MenuItem item = menu.add(0, DRINK_ANOTHER, 0, "Drink another " + beername);
+                	 MenuItem item = menu.add(0, DRINK_ANOTHER, 0, getString(R.string.drink_another) + beername);
           			 Intent nextIntent = new Intent(getBaseContext(), AddBeer.class);
           			 nextIntent.putExtra("beername", beername);
           			 nextIntent.putExtra("container", getBeerValue(position, "container"));
@@ -79,9 +79,9 @@ public class History extends BaseActivity {
             	 MenuItem item = menu.add(0, DELETE, 0, "Delete");
             	 item.setOnMenuItemClickListener( new MenuItem.OnMenuItemClickListener() {
 					public boolean onMenuItemClick(MenuItem item) {
-						new AlertDialog.Builder(topThis).setTitle("Delete this beer?")
-						.setMessage("This action cannot be undone.")
-						.setPositiveButton((CharSequence) "Delete",
+						new AlertDialog.Builder(topThis).setTitle(getString(R.string.history_delete))
+						.setMessage(getString(R.string.history_delete_warn))
+						.setPositiveButton((CharSequence) getString(R.string.cancel),
 								new DialogInterface.OnClickListener() {
 									public void onClick(DialogInterface arg0, int arg1) {
 										dbs.deleteBeer(beerId);

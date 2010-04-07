@@ -44,6 +44,6 @@ android:id="@+id/ExportDone"
 android:layout_width="wrap_content"
 android:layout_height="wrap_content"
 android:layout_marginTop="15px"
-android:text="@string/export_done"
+android:text="@string/done"
 android:layout_gravity="center_horizontal"></Button>
 </LinearLayout>
