@@ -15,7 +15,14 @@
 		<activity android:name=".activity.AddBeerDone"
 			android:theme="@android:style/Theme.Dialog"></activity>
 		<activity android:name=".activity.Stats"></activity>
-		<activity android:name=".activity.History"></activity>
+		<activity android:name=".activity.History">
+			<intent-filter>
+                <action android:name="android.intent.action.SEARCH" />
+                <category android:name="android.intent.category.DEFAULT" />
+            </intent-filter>
+            <meta-data android:name="android.app.searchable" 
+                       android:resource="@xml/searchable" />			
+		</activity>
 		<activity android:name=".activity.ImportExport"
 		        android:theme="@android:style/Theme.Dialog"></activity>
 		<activity android:name=".activity.Config"></activity>

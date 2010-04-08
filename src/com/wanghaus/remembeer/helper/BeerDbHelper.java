@@ -467,4 +467,10 @@ public class BeerDbHelper {
 		return 0;
 	}
 
+	public Cursor searchBeerHistory(String queryString) {
+		return db.query(DB_TABLE,
+				new String[] {"ROWID AS _id", "beername", "container || ' at ' || stamp AS details", "rating", "container"},
+				"beername LIKE ?", new String[] {"%" + queryString + "%"}, null, null, null);
+	}
+	
 }

@@ -2,6 +2,7 @@ package com.wanghaus.remembeer.activity;
 
 import android.app.Activity;
 import android.app.AlertDialog;
+import android.app.SearchManager;
 import android.content.Context;
 import android.content.DialogInterface;
 import android.content.Intent;
@@ -45,7 +46,13 @@ public class History extends BaseActivity {
     	super.onCreate(savedInstanceState);
         setContentView(R.layout.history);
         
-        initBeerList();
+        final Intent queryIntent = getIntent();
+        final String queryAction = queryIntent.getAction();
+        
+		if (Intent.ACTION_SEARCH.equals(queryAction))
+        	doSearchWithIntent(queryIntent);
+        else
+        	initBeerList();
         
         clickListener = new View.OnClickListener() {
         	public void onClick(View itemView) {
@@ -90,7 +97,7 @@ public class History extends BaseActivity {
 												.getAdapter();
 										listAdapter.getCursor().requery();
 									}
-								}).setNegativeButton("Cancel", null).show();
+								}).setNegativeButton(getString(R.string.cancel), null).show();
 
 						return true; /* true means: "we handled the event". */
 					}
@@ -269,4 +276,25 @@ public class History extends BaseActivity {
 		return super.onOptionsItemSelected(item);
 	}
 
+    private void doSearchWithIntent(Intent queryIntent) {
+    	final String queryString = queryIntent.getStringExtra(SearchManager.QUERY);
+    	
+    	if (historyList == null)
+    		historyList = (ListView)findViewById(R.id.history_list);
+        
+    	if (dbs == null)
+    		dbs = new BeerDbHelper(this);
+    	
+        recentBeers = dbs.searchBeerHistory(queryString);
+    	
+        // Map Cursor columns to views defined in simple_list_item_2.xml
+        historyAdapter = new HistoryCursorAdapter(this,
+                R.layout.history_row, recentBeers, 
+                new String[] { "beername", "details" }, 
+                new int[] { R.id.beername, R.id.details });
+
+        historyList.setAdapter(historyAdapter);
+	}
+
+	
 }
