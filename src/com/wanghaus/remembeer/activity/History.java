@@ -37,6 +37,7 @@ public class History extends BaseActivity {
 	private Cursor recentBeers;
 	private BeerDbHelper dbs;
 	private ListAdapter historyAdapter;
+	private boolean isSearch;
 	
 	private View.OnClickListener clickListener;
 	private View.OnCreateContextMenuListener contextMenuListener;
@@ -49,11 +50,14 @@ public class History extends BaseActivity {
         final Intent queryIntent = getIntent();
         final String queryAction = queryIntent.getAction();
         
-		if (Intent.ACTION_SEARCH.equals(queryAction))
-        	doSearchWithIntent(queryIntent);
-        else
-        	initBeerList();
-        
+		if (Intent.ACTION_SEARCH.equals(queryAction)) {
+			isSearch = true;
+			doSearchWithIntent(queryIntent);
+		} else {
+			isSearch = false;
+			initBeerList();
+		}
+		
         clickListener = new View.OnClickListener() {
         	public void onClick(View itemView) {
         		View smallRatingView = itemView.findViewById(R.id.smallRating);
@@ -159,7 +163,7 @@ public class History extends BaseActivity {
 	     public View getView(int position, View convertView, ViewGroup parent) {
 	    	 View row;
 	    	 
-	    	 if (position == 0) {
+	    	 if (position == 0 && !isSearch) {
 	    		 // Show the add button
 		         LayoutInflater inflater = LayoutInflater.from(context);
 		         row = inflater.inflate(R.layout.history_add, null);
@@ -169,6 +173,17 @@ public class History extends BaseActivity {
 		        	 public void onClick(View arg0) {
 		        		 Intent nextIntent = new Intent(getBaseContext(), AddBeer.class);
 		        		 startActivity(nextIntent);
+		        	 }
+		         });
+	    	 } else if (position == 0 && isSearch) {
+	    		// Show the add button
+		         LayoutInflater inflater = LayoutInflater.from(context);
+		         row = inflater.inflate(R.layout.history_clear, null);
+		         
+		         View clearButton = row.findViewById(R.id.history_clear);
+		         clearButton.setOnClickListener(new View.OnClickListener() {
+		        	 public void onClick(View arg0) {
+		        		 finish();
 		        	 }
 		         });
 	    	 } else {

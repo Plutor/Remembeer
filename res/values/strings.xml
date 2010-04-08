@@ -94,6 +94,7 @@
 	<string name="drink_another">Drink another </string>
 	<string name="history_delete">Delete this beer?</string>
 	<string name="history_delete_warn">This action cannot be undone.</string>
+	<string name="history_clear_search">Show all History</string>
 	
 	<string name="search_label">Search your Beers</string>
 </resources>
