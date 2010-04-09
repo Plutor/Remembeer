@@ -1,0 +1,100 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string name="app_name">Remembeer</string>
+
+    <string name="beername">Nom de la bière:</string>
+    <string name="container">Contenant:</string>
+	<string name="container_prompt">Choisir le contenant</string>
+	<string name="drink_when">Boire quand:</string>
+	<string name="drink_when_prompt">Choisir une date</string>
+	<string name="save">Sauvegarder!</string>
+	<string name="done">Terminé</string>
+	<string name="cancel">Annuler</string>
+	
+	<string name="addbeerdone_title">Bière ajoutée</string>
+	<string name="morestats">Plus de stats</string>
+	<string name="addanother">Boire une autre!</string>
+	
+	<string name="your_rating">Votre avis:</string>
+	<string name="addbeer_fromhistory">Ajouter une bière</string>
+	<string name="charts_fromstats">Voir le classement</string>
+	
+	<string name="abvtitle">titreabr</string>
+	<string name="avg_rating">note_moy</string>
+	<string name="brewery">brasserie</string>
+	<string name="count">nombre</string>
+	<string name="location">lieu</string>
+	<string name="notes">notes</string>
+
+	<string name="viewstat_placeholder">Placer ici le nom de la statistique</string>
+	
+	<string name="pref_addBeerDoneActivity">Ecran affiché après ajout</string>
+	<string name="pref_addBeerDoneActivity_default">Historique</string>	
+	<string name="pref_remindersEnabled">Activer les rappels</string>
+	<string name="pref_remindersVibrate">Vibrer</string>
+	<string name="pref_remindersDelay">Délai entre les rappels</string>
+	<string name="pref_remindersDelay_summary">en minutes</string>
+	<string name="pref_twitterEnabled">Notification Twitter</string>
+	<string name="pref_twitterEnabled_summary">Tweeter automatiquement les bières bues</string>
+	<string name="pref_twitterTemplate">template Twitter</string>
+	<string name="pref_twitterTemplate_default">Je viens de boire une BEERNAME #biere</string>
+	
+	<string name="twitter_signin">Configurer votre compte Twitter</string>
+	<string name="twitter_setup_username">nom d'utilisateur</string>
+	<string name="twitter_setup_password">Mot de passe</string>
+	<string name="twitter_teardown_title">Supprimer les informations du compte Twitter?</string>
+	<string name="twitter_login">Nom d'utilisateur</string>
+	<string name="twitter_progress_title">Autorisation</string>
+	<string name="twitter_progress_message">Autorisation Twitter en cours</string>
+	<string name="twitter_whoops">Oups, impossible de vous authentifier avec ce mot de passe.</string>
+	
+	<string name="reminder_tickerText">Elle est comment cette bière?</string>
+	<string name="reminder_title">Alors cette bière?</string>
+	<string name="reminder_text">Donnez un avis sur votre bière.</string>
+
+	<string name="stat_beerCount">Nombre de bière bues</string>
+	<string name="stat_favoriteBeer">Bière favorite</string>
+	<string name="stat_mostDrunkBeer">Bière la plus bue</string>
+	<string name="stat_favoriteDrinkingHour">Heure de dégustation préférée</string>
+	
+	<string name="addbeerdone_prefix_small">C'était votre</string>
+	<string name="addbeerdone_num_eq1">première</string>
+	<string name="addbeerdone_num_eq2">seconde</string>
+	<string name="addbeerdone_suffix_thisMonth_small">bière ce mois-ci</string>
+	<string name="addbeerdone_suffix_last7days_small">bière dans les 7 derniers jours</string>
+	<string name="addbeerdone_suffix_beerTypes_small">différents types de bières</string>
+	<string name="addbeerdone_suffix_thisYear_small">bières cette année</string>
+
+	<string name="addbeerdone_prefix_large">Vous avez bu</string>
+	<string name="addbeerdone_suffix_thisMonth_large">bières ce mois-ci</string>
+	<string name="addbeerdone_suffix_last7days_large">bières dans les 7 derniers jours</string>
+	<string name="addbeerdone_suffix_beerTypes_large">différents types de bières</string>
+	<string name="addbeerdone_suffix_thisYear_large">bières cette année</string>
+	
+	<string name="optionsmenu_addbeer">Ajouter</string>
+	<string name="optionsmenu_history">Historique</string>
+	<string name="optionsmenu_history_sort_alpha">Trier par nom</string>
+	<string name="optionsmenu_history_sort_date">Trier par date</string>
+	<string name="optionsmenu_export">Importer/Exporter</string>
+	<string name="optionsmenu_statistics">Statistiques</string>
+	<string name="optionsmenu_settings">Options</string>
+	
+	<string name="import_title">Importer / Exporter</string>
+	<string name="export_title">Dernier Export: </string>
+	<string name="export_date">Jamais</string>
+	<string name="export_email">Export par Email</string>
+	<string name="export_local">Export Local</string>
+	<string name="import_local">Import Bières\ndepuis un fichier local</string>
+	<string name="export_whoops">Oups, impossible d'expoter vos bières</string>
+	<string name="export_success">Base exportée avec succès vers \n</string>
+	<string name="import_throbber">Chargement des bières depuis un fichier local</string>
+	<string name="import_title_before">Importé </string>
+	<string name="import_title_after"> Bières</string>
+	
+	<string name="drink_another">Boire une autre </string>
+	<string name="history_delete">Supprimer cette bière?</string>
+	<string name="history_delete_warn">Cette action ne peut pas être annulée.</string>
+	<string name="history_clear_search">Voir toute l'historique</string>
+	
+	<string name="search_label">Rechercher dans vos bières</string>
+</resources>
