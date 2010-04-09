@@ -204,7 +204,8 @@ public class BeerDbHelper {
         		"beername LIKE ?",
         		new String[] { "%" + substr + "%" },
         		"beername",
-        		null, null);
+        		null,
+        		"COUNT(*) DESC");
     }
     
     public String[] getContainers() {
