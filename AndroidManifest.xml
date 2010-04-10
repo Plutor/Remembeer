@@ -1,8 +1,8 @@
 <?xml version="1.0" encoding="utf-8"?>
 <manifest xmlns:android="http://schemas.android.com/apk/res/android"
       android:sharedUserId="com.wanghaus.remembeer"
-      android:versionCode="13"
-      android:versionName="1.0.3" package="com.wanghaus.remembeer">
+      android:versionCode="15"
+      android:versionName="1.0.5" package="com.wanghaus.remembeer">
     <application android:icon="@drawable/beer_and_scroll" android:label="@string/app_name">
         <activity android:name=".activity.AddBeer"
                   android:label="@string/app_name">
