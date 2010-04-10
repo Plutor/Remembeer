@@ -72,13 +72,13 @@ public class History extends BaseActivity {
         final Activity topThis = this;
         contextMenuListener = new View.OnCreateContextMenuListener() {
              public void onCreateContextMenu(ContextMenu menu, View v, ContextMenuInfo menuInfo) {
-                 menu.setHeaderTitle("ContextMenu");
-
-                 // Drink another
                  Integer position = (Integer)v.getTag();
                  String beername = getBeerValue(position, "beername");
+                 menu.setHeaderTitle(beername);
+
+                 // Drink another
                  if (beername != null) {
-                	 MenuItem item = menu.add(0, DRINK_ANOTHER, 0, getString(R.string.drink_another) + beername);
+                	 MenuItem item = menu.add(0, DRINK_ANOTHER, 0, getString(R.string.drink_another));
           			 Intent nextIntent = new Intent(getBaseContext(), AddBeer.class);
           			 nextIntent.putExtra("beername", beername);
           			 nextIntent.putExtra("container", getBeerValue(position, "container"));
