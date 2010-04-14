@@ -24,17 +24,26 @@ import com.wanghaus.remembeer.R;
 
 public class BeerDbHelper {
 	private static final String DB_NAME = "Remembeer";
-	private static final String DB_TABLE = "drinks";
-	private static final int DB_VERSION = 3;
+	private static final String DB_TABLE_DRINKS = "drinks";
+	private static final String DB_TABLE_BEERS = "beers";
+	private static final int DB_VERSION = 4;
 	private static final String DB_CSV = new String(Environment.getExternalStorageDirectory() +  File.separator + "BeerLog_export.csv");
 
-	private static final String DB_CREATE = 
-		"CREATE TABLE IF NOT EXISTS " + DB_TABLE + "(" +
-			"beername VARCHAR(255) NOT NULL, " +
-			"container VARCHAR(32) NOT NULL, " +
-			"stamp DATETIME NOT NULL, " +
-			"rating INT NOT NULL DEFAULT 0" +
-		")";
+	private static final String[] DB_CREATE = new String[] {
+			"CREATE TABLE IF NOT EXISTS " + DB_TABLE_DRINKS + "("
+					+ "beer_id INT NOT NULL, " // foreign key
+					+ "container TEXT NOT NULL, "
+					+ "stamp DATETIME NOT NULL, "
+					+ "rating REAL NOT NULL DEFAULT 0, "
+					+ "notes TEXT "
+					+ ")",
+			"CREATE TABLE IF NOT EXISTS " + DB_TABLE_BEERS + "("
+					+ "name TEXT NOT NULL, "
+					+ "brewery TEXT, "
+					+ "brewery_location TEXT, "
+					+ "abv REAL, "
+					+ "notes TEXT "
+					+ ")", };
 
     private final Context context; 
 	private static SQLiteDatabase db;
@@ -58,33 +67,88 @@ public class BeerDbHelper {
 
         @Override
         public void onCreate(SQLiteDatabase db) {
-            db.execSQL(DB_CREATE);
+        	for (String sql : DB_CREATE)
+        		db.execSQL(sql);
         }
 
-        @Override
-        public void onUpgrade(SQLiteDatabase db, int oldVersion, int newVersion) {
-        	if (oldVersion < 2) {
-        		db.execSQL("ALTER TABLE " + DB_TABLE + " " +
-        				"ADD COLUMN rating INT NOT NULL DEFAULT 0");
-        	}
-        	
-        	if (oldVersion < 3) {
-        		db.execSQL("UPDATE " + DB_TABLE + " " +
-        				"SET container='Bottle' WHERE container LIKE 'Bottle%'");
-        	}
-        	
-        	// if (oldVersion < 4) etc..
-        	// ABV (float)
-        	// Brewery (varchar255)
-        	// Location (varchar 255)
-        	// Notes (uhh... varchar1024? pointer to some other file?)
-        }
+       @Override
+		public void onUpgrade(SQLiteDatabase db, int oldVersion, int newVersion) {
+			switch (oldVersion) {
+			case 1:
+			case 2:
+				db.execSQL("ALTER TABLE " + DB_TABLE_DRINKS + " "
+						+ "ADD COLUMN rating INT NOT NULL DEFAULT 0");
+				db.execSQL("UPDATE " + DB_TABLE_DRINKS + " "
+						+ "SET container='Bottle' WHERE container LIKE 'Bottle%'");
+
+			case 3:
+				// Create beers
+				db.execSQL(
+						"CREATE TABLE IF NOT EXISTS " + DB_TABLE_BEERS + "("
+						+ "name TEXT NOT NULL, "
+						+ "brewery TEXT, "
+						+ "brewery_location TEXT, "
+						+ "abv REAL, "
+						+ "notes TEXT "
+						+ ")");
+				
+				// Add beer_id column to drinks
+				db.execSQL("ALTER TABLE " + DB_TABLE_DRINKS + " "
+						+ "ADD COLUMN beer_id INT NOT NULL DEFAULT 0");
+
+				// For each drink
+				Cursor allDrinks = db.query(DB_TABLE_DRINKS,
+						new String[] { "ROWID", "beername" }, null, null, null, null, null);
+				
+				while (allDrinks.moveToNext()) {
+					int drinkid = allDrinks.getInt(0);
+					String beername = allDrinks.getString(1);
+					int beerid = 0;
+					
+					// Try to find a beer with that name
+					Cursor thisbeer = db.query(DB_TABLE_BEERS,
+							new String[] { "ROWID" },
+							"name = ?",
+							new String[] { beername },
+							null, null, null);
+
+					if (thisbeer.getCount() > 0) {
+						thisbeer.moveToFirst();
+						beerid = thisbeer.getInt(0);
+					} else {
+						// If it doesn't exist, create it
+						ContentValues newBeer = new ContentValues();
+						newBeer.put("name", beername);
+						beerid = (int) db.insert(DB_TABLE_BEERS, null, newBeer);
+					}
+					
+					// Set beer_id for that drink
+					ContentValues newDrink = new ContentValues();
+					newDrink.put("beer_id", beerid);
+					db.update(DB_TABLE_DRINKS, newDrink,
+							"ROWID = ?", new String[] { String.valueOf(drinkid) });
+				}
+				
+				// Remove beername column from drinks
+				db.execSQL("ALTER TABLE " + DB_TABLE_DRINKS + " "
+						+ "DROP COLUMN beername");
+				
+				// Add notes column to drinks				
+				db.execSQL("ALTER TABLE " + DB_TABLE_DRINKS + " "
+						+ "ADD COLUMN notes TEXT");
+
+			// XXX - future cases go here
+			default:
+				// TODO - Raise holy hell
+			}
+		}
     }
     
     public void close() {
         DBHelper.close();
     }
     
+    // TODO - Needs to be migrated to the two-table schema
     public int importHistoryFromCsvFile() {
     	BufferedReader inFile;
     	String iLine;
@@ -116,7 +180,7 @@ public class BeerDbHelper {
     			inputvalues.put("stamp", elements[2].substring(1, elements[2].length() -1));
     			inputvalues.put("rating", elements[3].substring(1, elements[3].length() -1));
     			if (getBeerCountWhen(elements[2].substring(1, elements[2].length() -1)) == 0) {
-    				db.insert(DB_TABLE, null, inputvalues);
+    				db.insert(DB_TABLE_DRINKS, null, inputvalues);
     				count++;
     			}
     			iLine = inFile.readLine();
@@ -146,18 +210,18 @@ public class BeerDbHelper {
         newRow.put("stamp", stampCursor.getString(0));
 		stampCursor.close();
 		
-		return db.insert(DB_TABLE, null, newRow);
+		return db.insert(DB_TABLE_DRINKS, null, newRow);
     }
     
 	public void setBeerRating(long id, int rating) {
 		ContentValues newRow = new ContentValues();
         newRow.put("rating", rating);
 
-        db.update(DB_TABLE, newRow, "ROWID = ?", new String[] { String.valueOf(id) });
+        db.update(DB_TABLE_DRINKS, newRow, "ROWID = ?", new String[] { String.valueOf(id) });
 	}
 
 	public void deleteBeer(long id) {
-		db.execSQL("DELETE FROM " + DB_TABLE + " WHERE ROWID = " + String.valueOf(id));
+		db.execSQL("DELETE FROM " + DB_TABLE_DRINKS + " WHERE ROWID = " + String.valueOf(id));
     }
     
     /*
@@ -182,13 +246,13 @@ public class BeerDbHelper {
     	if (limit != null)
     		strLimit = limit.toString();
     	
-        return db.query(DB_TABLE,
+        return db.query(DB_TABLE_DRINKS,
         		new String[] {"ROWID AS _id", "beername", "container || ' at ' || stamp AS details", "rating", "container"},
         		null, null, null, null, sortBy, strLimit);
     }
     
     public Cursor getBeerNames() {
-        return db.query(DB_TABLE,
+        return db.query(DB_TABLE_DRINKS,
         		new String[] {"MAX(ROWID) AS _id", "beername"},
         		null, null,
         		"beername",
@@ -199,7 +263,7 @@ public class BeerDbHelper {
     	if (substr == null)
     		return getBeerNames();
     	
-        return db.query(DB_TABLE,
+        return db.query(DB_TABLE_DRINKS,
         		new String[] {"MAX(ROWID) AS _id", "beername"},
         		"beername LIKE ?",
         		new String[] { "%" + substr + "%" },
@@ -218,7 +282,7 @@ public class BeerDbHelper {
     		rv.add(b.toString());
     	
     	// Then get the most-used containers
-    	Cursor containerQuery = db.query(DB_TABLE, new String[] {"container"}, 
+    	Cursor containerQuery = db.query(DB_TABLE_DRINKS, new String[] {"container"}, 
     			null, null, "container", null, "COUNT(*) ASC");
     	
     	// Resort as needed
@@ -238,7 +302,7 @@ public class BeerDbHelper {
     }
     
     public long getBeerCount() {
-    	Cursor beercountQuery = db.query(DB_TABLE, new String[] {"ROWID"}, null, null, null, null, null);
+    	Cursor beercountQuery = db.query(DB_TABLE_DRINKS, new String[] {"ROWID"}, null, null, null, null, null);
     	long rv = beercountQuery.getCount();
     	beercountQuery.close();
     	return rv;
@@ -255,7 +319,7 @@ public class BeerDbHelper {
     }
     
     public long getBeerCountThisYear() {
-    	Cursor beercountQuery = db.query(DB_TABLE, new String[] {"ROWID"},
+    	Cursor beercountQuery = db.query(DB_TABLE_DRINKS, new String[] {"ROWID"},
     			"STRFTIME('%Y', stamp) = STRFTIME('%Y', current_date)",
     			null, null, null, null);
     	long rv = beercountQuery.getCount();
@@ -264,7 +328,7 @@ public class BeerDbHelper {
     }
     
     public long getBeerCountThisMonth() {
-    	Cursor beercountQuery = db.query(DB_TABLE, new String[] {"ROWID"},
+    	Cursor beercountQuery = db.query(DB_TABLE_DRINKS, new String[] {"ROWID"},
     			"STRFTIME('%Y%m', stamp) = STRFTIME('%Y%m', current_date)",
     			null, null, null, null);
     	long rv = beercountQuery.getCount();
@@ -273,7 +337,7 @@ public class BeerDbHelper {
     }
 
     public long getBeerCountLastDays(Integer count) {
-    	Cursor beercountQuery = db.query(DB_TABLE, new String[] {"ROWID"},
+    	Cursor beercountQuery = db.query(DB_TABLE_DRINKS, new String[] {"ROWID"},
     			"JULIANDAY(stamp) > JULIANDAY(current_date) - ? AND JULIANDAY(stamp) <= JULIANDAY(current_date) + 1", // I'm looking at you, DST
     			new String[] {count.toString()},
     			null, null, null);
@@ -283,7 +347,7 @@ public class BeerDbHelper {
     }
     
     public long getBeerTypesCount() {
-    	Cursor beercountQuery = db.query(DB_TABLE, new String[] {"DISTINCT beername"},
+    	Cursor beercountQuery = db.query(DB_TABLE_DRINKS, new String[] {"DISTINCT beername"},
     			null, null, null, null, null);
     	long rv = beercountQuery.getCount();
     	beercountQuery.close();
@@ -292,7 +356,7 @@ public class BeerDbHelper {
     
     public String getFavoriteBeer() {
     	// TODO - There's gotta be a better way to calculate this
-    	Cursor q = db.query(DB_TABLE,
+    	Cursor q = db.query(DB_TABLE_DRINKS,
     			new String[] {"beername", "AVG(rating) AS rating"},
     			null, null, "beername",
     			null, "AVG(rating) DESC, COUNT(*) DESC, MAX(stamp) DESC", "1");
@@ -308,7 +372,7 @@ public class BeerDbHelper {
     }
     
     public String getMostDrunkBeer() {
-    	Cursor q = db.query(DB_TABLE,
+    	Cursor q = db.query(DB_TABLE_DRINKS,
     			new String[] {"beername", "COUNT(*) AS count"},
     			null, null, "beername",
     			null, "COUNT(*) DESC, MAX(stamp) DESC", "1");
@@ -324,7 +388,7 @@ public class BeerDbHelper {
     }
     
     public String getFavoriteDrinkingHour() {
-    	Cursor q = db.query(DB_TABLE,
+    	Cursor q = db.query(DB_TABLE_DRINKS,
     			new String[] {"STRFTIME('%H', stamp) AS hour", "COUNT(*) AS count"},
     			null, null, "STRFTIME('%H', stamp)",
     			null, "COUNT(*) DESC", "1");
@@ -346,7 +410,7 @@ public class BeerDbHelper {
     }
 
     public Uri exportHistoryToCsvFile() {
-    	Cursor q = db.query(DB_TABLE,
+    	Cursor q = db.query(DB_TABLE_DRINKS,
     			new String[] {"beername", "container", "stamp", "rating"},
     			null, null, null,
     			null, "stamp ASC");
@@ -418,7 +482,7 @@ public class BeerDbHelper {
     }
     
     public boolean isBeerUnrated(long id) {
-    	Cursor q = db.query(DB_TABLE,
+    	Cursor q = db.query(DB_TABLE_DRINKS,
     			new String[] {"ROWID"},
     			"ROWID = ? and rating = 0", new String[] {String.valueOf(id)},
     			null, null, null);
@@ -451,7 +515,7 @@ public class BeerDbHelper {
 	public int getBeerCountWhen(String whenStamp) {
 		int count;
 		
-		Cursor q = db.query(DB_TABLE, new String[] {"beername"},
+		Cursor q = db.query(DB_TABLE_DRINKS, new String[] {"beername"},
 				"stamp = ?", new String[] {whenStamp}, null, null, null);
  	
 		count = q.getCount();
@@ -469,7 +533,7 @@ public class BeerDbHelper {
 	}
 
 	public Cursor searchBeerHistory(String queryString) {
-		return db.query(DB_TABLE,
+		return db.query(DB_TABLE_DRINKS,
 				new String[] {"ROWID AS _id", "beername", "container || ' at ' || stamp AS details", "rating", "container"},
 				"beername LIKE ?", new String[] {"%" + queryString + "%"}, null, null, null);
 	}
