@@ -28,7 +28,7 @@ public class MoreInfo extends BaseActivity {
         	String beername = getIntent().getStringExtra("beername");
         	// TODO: add a menu option to search for a new beername to display the info on
 	        
-	        infos.add( new BeerInfo("Count", String.valueOf(dbs.getBeerCount(beername))) );
+	        infos.add( new BeerInfo("Count", String.valueOf(dbs.getDrinkCount(beername))) );
 	        infos.add( new BeerInfo("ABV", String.valueOf(dbs.getBeerABV(beername))));
 	        infos.add( new BeerInfo("Brewery", dbs.getBeerBrewer(beername)));
 	        infos.add( new BeerInfo("Location", dbs.getBeerBrewerLocation(beername)));

@@ -34,21 +34,21 @@ public class AddBeerDone extends BaseActivity {
         	
         	switch (statType) {
         	case 0:
-        		count = dbs.getBeerCountThisMonth();
+        		count = dbs.getDrinkCountThisMonth();
         		if (count <= 2)
         			popupParts.set(2, getText(R.string.addbeerdone_suffix_thisMonth_small));
         		else
         			popupParts.set(2, getText(R.string.addbeerdone_suffix_thisMonth_large));
         		break;
         	case 1:
-        		count = dbs.getBeerCountLastDays(7);
+        		count = dbs.getDrinkCountLastDays(7);
         		if (count <= 2)
         			popupParts.set(2, getText(R.string.addbeerdone_suffix_last7days_small));
         		else
         			popupParts.set(2, getText(R.string.addbeerdone_suffix_last7days_large));
         		break;
         	case 2:
-        		count = dbs.getBeerTypesCount();
+        		count = dbs.getBeersCount();
         		if (count <= 2)
         			popupParts.set(2, getText(R.string.addbeerdone_suffix_beerTypes_small));
         		else
@@ -56,7 +56,7 @@ public class AddBeerDone extends BaseActivity {
         		break;
         	case 3:
         	default:
-	    		count = dbs.getBeerCountThisYear();
+	    		count = dbs.getDrinkCountThisYear();
         		if (count <= 2)
         			popupParts.set(2, getText(R.string.addbeerdone_suffix_thisYear_small));
         		else

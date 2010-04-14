@@ -95,7 +95,7 @@ public class History extends BaseActivity {
 						.setPositiveButton((CharSequence) getString(R.string.cancel),
 								new DialogInterface.OnClickListener() {
 									public void onClick(DialogInterface arg0, int arg1) {
-										dbs.deleteBeer(beerId);
+										dbs.deleteDrink(beerId);
 										// Update the view
 										SimpleCursorAdapter listAdapter = (SimpleCursorAdapter) historyList
 												.getAdapter();
@@ -121,9 +121,9 @@ public class History extends BaseActivity {
     	// First check what the sort setting is
         SharedPreferences settings = PreferenceManager.getDefaultSharedPreferences(this);
         if (settings.getString("sortBy", "date").equals("alpha")) {
-        	recentBeers = dbs.getBeerHistoryAlphabetically();
+        	recentBeers = dbs.getDrinkHistoryAlphabetically();
         } else {
-        	recentBeers = dbs.getBeerHistory();
+        	recentBeers = dbs.getDrinkHistory();
         }
         
         // Map Cursor columns to views defined in simple_list_item_2.xml
@@ -227,7 +227,7 @@ public class History extends BaseActivity {
 							Integer intRating = ((Float) rating).intValue();
 	
 							BeerDbHelper bds = new BeerDbHelper(context);
-							bds.setBeerRating(id, intRating);
+							bds.setDrinkRating(id, intRating);
 	
 							smallRatingBar.setRating(rating);
 							
@@ -300,7 +300,7 @@ public class History extends BaseActivity {
     	if (dbs == null)
     		dbs = new BeerDbHelper(this);
     	
-        recentBeers = dbs.searchBeerHistory(queryString);
+        recentBeers = dbs.searchDrinkHistory(queryString);
     	
         // Map Cursor columns to views defined in simple_list_item_2.xml
         historyAdapter = new HistoryCursorAdapter(this,

@@ -24,7 +24,7 @@ public class Stats extends BaseActivity {
         setContentView(R.layout.stats);
         
         BeerDbHelper dbs = new BeerDbHelper(this);
-        stats.add( new BeerStat( getText(R.string.stat_beerCount), String.valueOf(dbs.getBeerCount())) );
+        stats.add( new BeerStat( getText(R.string.stat_beerCount), String.valueOf(dbs.getDrinkCount())) );
         stats.add( new BeerStat( getText(R.string.stat_favoriteBeer), dbs.getFavoriteBeer()) );
         stats.add( new BeerStat( getText(R.string.stat_mostDrunkBeer), dbs.getMostDrunkBeer()) );
         stats.add( new BeerStat( getText(R.string.stat_favoriteDrinkingHour), dbs.getFavoriteDrinkingHour()) );

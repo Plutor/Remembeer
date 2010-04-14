@@ -258,7 +258,7 @@ public class AddBeer extends BaseActivity {
             	break;
             }
 
-            beerID = (int)dbs.addBeer(beername, container, specificTime.getTime());
+            beerID = (int)dbs.addDrink(beername, container, specificTime.getTime());
             
             if ((int)drinkWhenSpinner.getSelectedItemPosition() == 0) {
                 SharedPreferences settings = PreferenceManager.getDefaultSharedPreferences(this);
