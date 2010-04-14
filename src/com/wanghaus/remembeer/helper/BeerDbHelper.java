@@ -71,8 +71,10 @@ public class BeerDbHelper {
         		db.execSQL(sql);
         }
 
-       @Override
+        @Override
 		public void onUpgrade(SQLiteDatabase db, int oldVersion, int newVersion) {
+        	Log.e("BeerDbHelper", "Upgrading database from version " + oldVersion + " to " + newVersion);
+        	
 			switch (oldVersion) {
 			case 1:
 			case 2:
@@ -92,16 +94,22 @@ public class BeerDbHelper {
 						+ "notes TEXT "
 						+ ")");
 				
-				// Add beer_id column to drinks
-				db.execSQL("ALTER TABLE " + DB_TABLE_DRINKS + " "
-						+ "ADD COLUMN beer_id INT NOT NULL DEFAULT 0");
+				// Create temp table
+				db.execSQL("CREATE TEMPORARY TABLE " + DB_TABLE_DRINKS + "_temp ("
+						+ "beer_id INT NOT NULL, " // foreign key
+						+ "container TEXT NOT NULL, "
+						+ "stamp DATETIME NOT NULL, "
+						+ "rating REAL NOT NULL DEFAULT 0, "
+						+ "notes TEXT "
+						+ ")");
 
 				// For each drink
 				Cursor allDrinks = db.query(DB_TABLE_DRINKS,
-						new String[] { "ROWID", "beername" }, null, null, null, null, null);
-				
+						new String[] { "ROWID", "beername", "container", "stamp", "rating" },
+						null, null, null, null, null);
+	        	Log.e("BeerDbHelper", "Migrating " + allDrinks.getCount() + " beers");
+
 				while (allDrinks.moveToNext()) {
-					int drinkid = allDrinks.getInt(0);
 					String beername = allDrinks.getString(1);
 					int beerid = 0;
 					
@@ -116,26 +124,35 @@ public class BeerDbHelper {
 						thisbeer.moveToFirst();
 						beerid = thisbeer.getInt(0);
 					} else {
+			        	Log.i("BeerDbHelper", "Creating beer '" + beername + "'");
+
 						// If it doesn't exist, create it
 						ContentValues newBeer = new ContentValues();
 						newBeer.put("name", beername);
 						beerid = (int) db.insert(DB_TABLE_BEERS, null, newBeer);
 					}
 					
-					// Set beer_id for that drink
+					// Add row to temp table
 					ContentValues newDrink = new ContentValues();
 					newDrink.put("beer_id", beerid);
-					db.update(DB_TABLE_DRINKS, newDrink,
-							"ROWID = ?", new String[] { String.valueOf(drinkid) });
+					newDrink.put("container", allDrinks.getString(2));
+					newDrink.put("stamp", allDrinks.getString(3));
+					newDrink.put("rating", allDrinks.getFloat(4));
+					db.insert(DB_TABLE_DRINKS + "_temp", null, newDrink);
 				}
 				
-				// Remove beername column from drinks
-				db.execSQL("ALTER TABLE " + DB_TABLE_DRINKS + " "
-						+ "DROP COLUMN beername");
-				
-				// Add notes column to drinks				
-				db.execSQL("ALTER TABLE " + DB_TABLE_DRINKS + " "
-						+ "ADD COLUMN notes TEXT");
+				// Replace real table with new table (with content from temp table)
+				db.execSQL("DROP TABLE " + DB_TABLE_DRINKS);
+				db.execSQL("CREATE TABLE " + DB_TABLE_DRINKS + " ("
+						+ "beer_id INT NOT NULL, " // foreign key
+						+ "container TEXT NOT NULL, "
+						+ "stamp DATETIME NOT NULL, "
+						+ "rating REAL NOT NULL DEFAULT 0, "
+						+ "notes TEXT "
+						+ ")");
+				db.execSQL("INSERT INTO " + DB_TABLE_DRINKS + " " + 
+						"SELECT beer_id, container, stamp, rating, notes FROM " + DB_TABLE_DRINKS + "_temp");
+				db.execSQL("DROP TABLE " + DB_TABLE_DRINKS + "_temp");
 
 			// XXX - future cases go here
 			default:
