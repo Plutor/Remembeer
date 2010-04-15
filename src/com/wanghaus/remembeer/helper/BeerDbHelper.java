@@ -277,25 +277,35 @@ public class BeerDbHelper {
     			+ " ORDER BY " + sortBy,
     			null);
     }
-    
+
+	public Cursor searchDrinkHistory(String queryString) {
+    	return db.rawQuery(
+    			"SELECT d.ROWID AS _id, b.name AS beername, container || ' at ' || stamp AS details, rating, container "
+    			+ "FROM " + DB_TABLE_DRINKS + " d, " + DB_TABLE_BEERS + " b "
+    			+ "WHERE d.beer_id = b.ROWID "
+    			+ "AND b.name LIKE ? ",
+    			new String[] {"%" + queryString + "%"});
+	}	
+
     public Cursor getBeerNames() {
         return db.query(DB_TABLE_BEERS,
         		new String[] {"ROWID AS _id", "name"},
         		null, null, null, null, null);
     }
 
-    // TODO - Needs to be migrated to the two-table schema
     public Cursor getBeerNames(String substr) {
     	if (substr == null)
     		return getBeerNames();
     	
-        return db.query(DB_TABLE_DRINKS,
-        		new String[] {"MAX(ROWID) AS _id", "beername"},
-        		"beername LIKE ?",
-        		new String[] { "%" + substr + "%" },
-        		"beername",
-        		null,
-        		"COUNT(*) DESC");
+    	return db.rawQuery(
+    			"SELECT b.ROWID AS _id, b.name AS beername "
+    			+ "FROM " + DB_TABLE_DRINKS + " d, " + DB_TABLE_BEERS + " b "
+    			+ "WHERE d.beer_id = b.ROWID "
+    			+ "AND b.name LIKE ?"
+    			+ "GROUP BY b.name "
+    			+ "ORDER BY COUNT(*) DESC",
+    			new String[] { "%" + substr + "%"}
+    		);
     }
     
     public String[] getContainers() {
@@ -334,7 +344,7 @@ public class BeerDbHelper {
     	return rv;
     }
     
-    // TODO - Needs to be migrated to the two-table schema
+    // XXX - This doesn't do what it thinks it does
     public long getDrinkCount(String querybeer) {
     	if (querybeer == null)
     		return getDrinkCount();
@@ -381,14 +391,17 @@ public class BeerDbHelper {
     	return rv;
     }
     
-    // TODO - Needs to be migrated to the two-table schema
     public String getFavoriteBeer() {
     	// TODO - There's gotta be a better way to calculate this
-    	Cursor q = db.query(DB_TABLE_DRINKS,
-    			new String[] {"beername", "AVG(rating) AS rating"},
-    			null, null, "beername",
-    			null, "AVG(rating) DESC, COUNT(*) DESC, MAX(stamp) DESC", "1");
-
+    	Cursor q = db.rawQuery(
+    			"SELECT b.name AS beername, AVG(d.rating) AS rating "
+    			+ "FROM " + DB_TABLE_DRINKS + " d, " + DB_TABLE_BEERS + " b "
+    			+ "WHERE d.beer_id = b.ROWID "
+    			+ "GROUP BY b.ROWID "
+    			+ "ORDER BY AVG(rating) DESC, COUNT(*) DESC, MAX(stamp) DESC "
+    			+ "LIMIT 1",
+    			null );
+    	
     	if (q.getCount() == 0)
     		return "-";
     	
@@ -399,12 +412,15 @@ public class BeerDbHelper {
     	return favoriteBeer;
     }
     
-    // TODO - Needs to be migrated to the two-table schema
     public String getMostDrunkBeer() {
-    	Cursor q = db.query(DB_TABLE_DRINKS,
-    			new String[] {"beername", "COUNT(*) AS count"},
-    			null, null, "beername",
-    			null, "COUNT(*) DESC, MAX(stamp) DESC", "1");
+    	Cursor q = db.rawQuery(
+    			"SELECT b.name AS beername, COUNT(*) AS count "
+    			+ "FROM " + DB_TABLE_DRINKS + " d, " + DB_TABLE_BEERS + " b "
+    			+ "WHERE d.beer_id = b.ROWID "
+    			+ "GROUP BY b.ROWID "
+    			+ "ORDER BY COUNT(*) DESC, MAX(stamp) DESC "
+    			+ "LIMIT 1",
+    			null );
     	
     	if (q.getCount() == 0)
     		return "-";
@@ -438,12 +454,12 @@ public class BeerDbHelper {
     	return favoriteHour;
     }
 
-    // TODO - Needs to be migrated to the two-table schema
     public Uri exportHistoryToCsvFile() {
-    	Cursor q = db.query(DB_TABLE_DRINKS,
-    			new String[] {"beername", "container", "stamp", "rating"},
-    			null, null, null,
-    			null, "stamp ASC");
+    	Cursor q = db.rawQuery(
+    			"SELECT b.name AS beername, container, stamp, rating "
+    			+ "FROM " + DB_TABLE_DRINKS + " d, " + DB_TABLE_BEERS + " b "
+    			+ "WHERE d.beer_id = b.ROWID ",
+    			null);
     	
     	if (q.getCount() == 0) {
     		q.close();
@@ -542,11 +558,10 @@ public class BeerDbHelper {
 		return null;
 	}
 	
-    // TODO - Needs to be migrated to the two-table schema
 	public int getDrinkCountWhen(String whenStamp) {
 		int count;
 		
-		Cursor q = db.query(DB_TABLE_DRINKS, new String[] {"beername"},
+		Cursor q = db.query(DB_TABLE_DRINKS, new String[] {"ROWID"},
 				"stamp = ?", new String[] {whenStamp}, null, null, null);
  	
 		count = q.getCount();
@@ -562,12 +577,4 @@ public class BeerDbHelper {
 		
 		return 0;
 	}
-
-    // TODO - Needs to be migrated to the two-table schema
-	public Cursor searchDrinkHistory(String queryString) {
-		return db.query(DB_TABLE_DRINKS,
-				new String[] {"ROWID AS _id", "beername", "container || ' at ' || stamp AS details", "rating", "container"},
-				"beername LIKE ?", new String[] {"%" + queryString + "%"}, null, null, null);
-	}
-	
 }
