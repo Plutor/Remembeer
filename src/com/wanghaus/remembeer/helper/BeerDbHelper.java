@@ -214,14 +214,31 @@ public class BeerDbHelper {
 	/*
      * Write methods
      */
-    // TODO - Needs to be migrated to the two-table schema
     public long addDrink(String beername, String container, Date stamp) {
-    	// TODO - Lookup the beer
-    	// TODO - Add it if we need to
+    	// Lookup the beer
+    	Cursor beer = db.query(DB_TABLE_BEERS,
+    			new String[] { "ROWID as _id" },
+    			"name = ?", new String[] { beername },
+    			null, null, null);
+    	int beerid = 0;
+    	if (beer != null && beer.getCount() > 0) {
+    		beer.moveToFirst();
+    		beerid = beer.getInt(0);
+    	} else {
+        	// Add it if we need to
+        	Log.i("BeerDbHelper", "Creating beer '" + beername + "'");
+
+			// If it doesn't exist, create it
+			ContentValues newBeer = new ContentValues();
+			newBeer.put("name", beername);
+			beerid = (int) db.insert(DB_TABLE_BEERS, null, newBeer);
+    	}
+    	
+    	if (beer != null) beer.close();    	
     	
 		ContentValues newRow = new ContentValues();
 		
-        newRow.put("beername", beername);
+        newRow.put("beer_id", beerid);
         newRow.put("container", container);
         
         // Get the sqlite format for the stamp
@@ -234,7 +251,6 @@ public class BeerDbHelper {
 		return db.insert(DB_TABLE_DRINKS, null, newRow);
     }
     
-    // TODO - Needs to be migrated to the two-table schema
 	public void setDrinkRating(long id, int rating) {
 		ContentValues newRow = new ContentValues();
         newRow.put("rating", rating);
@@ -242,7 +258,6 @@ public class BeerDbHelper {
         db.update(DB_TABLE_DRINKS, newRow, "ROWID = ?", new String[] { String.valueOf(id) });
 	}
 
-    // TODO - Needs to be migrated to the two-table schema
 	public void deleteDrink(long id) {
 		db.execSQL("DELETE FROM " + DB_TABLE_DRINKS + " WHERE ROWID = " + String.valueOf(id));
     }
