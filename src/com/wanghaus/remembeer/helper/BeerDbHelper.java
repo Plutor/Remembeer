@@ -264,24 +264,24 @@ public class BeerDbHelper {
     	return getDrinkHistory(limit, "beername ASC");
     }
 
-    // TODO - Needs to be migrated to the two-table schema
     public Cursor getDrinkHistory(Integer limit, String sortBy) {
-    	String strLimit = null;
+    	String strLimit = "";
     	if (limit != null)
-    		strLimit = limit.toString();
+    		strLimit = " LIMIT " + limit.toString();
     	
-        return db.query(DB_TABLE_DRINKS,
-        		new String[] {"ROWID AS _id", "beername", "container || ' at ' || stamp AS details", "rating", "container"},
-        		null, null, null, null, sortBy, strLimit);
+    	return db.rawQuery(
+    			"SELECT d.ROWID AS _id, b.name AS beername, container || ' at ' || stamp AS details, rating, container "
+    			+ "FROM " + DB_TABLE_DRINKS + " d, " + DB_TABLE_BEERS + " b "
+    			+ "WHERE d.beer_id = b.ROWID"
+    			+ strLimit
+    			+ " ORDER BY " + sortBy,
+    			null);
     }
     
-    // TODO - Needs to be migrated to the two-table schema
     public Cursor getBeerNames() {
-        return db.query(DB_TABLE_DRINKS,
-        		new String[] {"MAX(ROWID) AS _id", "beername"},
-        		null, null,
-        		"beername",
-        		null, null);
+        return db.query(DB_TABLE_BEERS,
+        		new String[] {"ROWID AS _id", "name"},
+        		null, null, null, null, null);
     }
 
     // TODO - Needs to be migrated to the two-table schema
