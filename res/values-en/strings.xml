@@ -11,6 +11,11 @@
 	<string name="done">Done</string>
 	<string name="cancel">Cancel</string>
 	
+	<string name="editBeerInfo"><u>Edit beer info..</u></string>
+	<string name="loadingBeerInfo">Looking up beer info..</string>
+	<string name="noneBeerInfo">Enter a beer name</string>
+	<string name="unknownBeerInfo">Unknown</string>
+	
 	<string name="addbeerdone_title">Beer added</string>
 	<string name="morestats">See more stats</string>
 	<string name="addanother">Drink another!</string>
