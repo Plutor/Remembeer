@@ -165,7 +165,6 @@ public class BeerDbHelper {
         DBHelper.close();
     }
     
-    // TODO - Needs to be migrated to the two-table schema
     public int importHistoryFromCsvFile() {
     	BufferedReader inFile;
     	String iLine;
@@ -185,19 +184,18 @@ public class BeerDbHelper {
 			Log.e("importHistory", e.toString());
 		}
 
-    	try {
-    		
-    		ContentValues inputvalues = new ContentValues();
+    	try {    		
     		iLine = inFile.readLine(); // read line from file
     		while(iLine != null){
     			Log.v("importLine", iLine);
     			String[] elements = iLine.split(",");
-    			inputvalues.put("beername", elements[0].substring(1, elements[0].length() -1));
-    			inputvalues.put("container", elements[1].substring(1, elements[1].length() -1));
-    			inputvalues.put("stamp", elements[2].substring(1, elements[2].length() -1));
-    			inputvalues.put("rating", elements[3].substring(1, elements[3].length() -1));
-    			if (getDrinkCountWhen(elements[2].substring(1, elements[2].length() -1)) == 0) {
-    				db.insert(DB_TABLE_DRINKS, null, inputvalues);
+    			
+    			for (int i=0; i<elements.length; ++i)
+    				elements[i] = elements[i].replaceAll("^\"", "").replaceAll("\"$", "");
+
+    			if (getDrinkCountWhen(elements[2]) == 0) {
+        			long drinkid = addDrink(elements[0], elements[1], elements[2]);
+        			setDrinkRating(drinkid, Integer.valueOf(elements[3]));
     				count++;
     			}
     			iLine = inFile.readLine();
@@ -215,41 +213,42 @@ public class BeerDbHelper {
      * Write methods
      */
     public long addDrink(String beername, String container, Date stamp) {
+        // Get the sqlite format for the stamp
+        Cursor stampCursor = db.rawQuery( "SELECT DATETIME(?, 'unixepoch', 'localtime')",
+        		new String[] { String.valueOf(stamp.getTime()/1000) } );
+        stampCursor.moveToFirst();
+        String stampStr = stampCursor.getString(0);
+		stampCursor.close();		
+		
+		return addDrink(beername, container, stampStr);
+    }
+    public long addDrink(String beername, String container, String stamp) {
     	// Lookup the beer
-    	Cursor beer = db.query(DB_TABLE_BEERS,
-    			new String[] { "ROWID as _id" },
-    			"name = ?", new String[] { beername },
-    			null, null, null);
-    	int beerid = 0;
-    	if (beer != null && beer.getCount() > 0) {
-    		beer.moveToFirst();
-    		beerid = beer.getInt(0);
-    	} else {
-        	// Add it if we need to
-        	Log.i("BeerDbHelper", "Creating beer '" + beername + "'");
+    	Integer beerid = lookupBeerId(beername);
 
-			// If it doesn't exist, create it
-			ContentValues newBeer = new ContentValues();
-			newBeer.put("name", beername);
-			beerid = (int) db.insert(DB_TABLE_BEERS, null, newBeer);
-    	}
-    	
-    	if (beer != null) beer.close();    	
+    	// Add it if we need to
+    	if (beerid == null)
+    		beerid = addBeer(beername);
     	
 		ContentValues newRow = new ContentValues();
 		
         newRow.put("beer_id", beerid);
         newRow.put("container", container);
+        newRow.put("stamp", stamp);
         
-        // Get the sqlite format for the stamp
-        Cursor stampCursor = db.rawQuery( "SELECT DATETIME(?, 'unixepoch', 'localtime')",
-        		new String[] { String.valueOf(stamp.getTime()/1000) } );
-        stampCursor.moveToFirst();
-        newRow.put("stamp", stampCursor.getString(0));
-		stampCursor.close();
-		
 		return db.insert(DB_TABLE_DRINKS, null, newRow);
     }
+	
+	public int addBeer(String beername) {
+		// TODO - Support other attributes
+		Log.i("addBeer", "Creating beer '" + beername + "'");
+	
+		ContentValues newBeer = new ContentValues();
+		newBeer.put("name", beername);
+		int beerid = (int) db.insert(DB_TABLE_BEERS, null, newBeer);
+		
+		return beerid;
+	}
     
 	public void setDrinkRating(long id, int rating) {
 		ContentValues newRow = new ContentValues();
@@ -591,5 +590,21 @@ public class BeerDbHelper {
 			return localCsv.lastModified();
 		
 		return 0;
+	}
+
+	public Integer lookupBeerId(String beername) {
+    	Cursor beer = db.query(DB_TABLE_BEERS,
+    			new String[] { "ROWID as _id" },
+    			"name = ?", new String[] { beername },
+    			null, null, null);
+    	Integer beerid = null;
+    	
+    	if (beer != null && beer.getCount() > 0) {
+    		beer.moveToFirst();
+    		beerid = beer.getInt(0);
+    	}
+    	if (beer != null) beer.close();
+
+    	return beerid;
 	}
 }
