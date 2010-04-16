@@ -126,15 +126,19 @@ public class AddBeer extends BaseActivity {
 	        		
 	        		TextView previewBrewery = (TextView) findViewById(R.id.previewBrewery);
 	        		if (beerInfo.containsKey("brewery") && beerInfo.get("brewery") != null && !beerInfo.get("brewery").equals(""))
-	        			previewBrewery.setText("Brewery: " + beerInfo.get("brewery"));
+	        			previewBrewery.setText(getText(R.string.beerInfoBrewery).toString()
+	        					+ beerInfo.get("brewery"));
 	        		else
-	        			previewBrewery.setText("Brewery: " + getText(R.string.unknownBeerInfo));
+	        			previewBrewery.setText(getText(R.string.beerInfoBrewery).toString()
+	        					+ getText(R.string.unknownBeerInfo));
 	        		
 	        		TextView previewStyle = (TextView) findViewById(R.id.previewStyle);
 	        		if (beerInfo.containsKey("style") && beerInfo.get("style") != null && !beerInfo.get("style").equals(""))
-	        			previewStyle.setText("Style: " + beerInfo.get("style"));
+	        			previewStyle.setText(getText(R.string.beerInfoStyle).toString()
+	        					+ beerInfo.get("style"));
 	        		else
-	        			previewStyle.setText("Style: " + getText(R.string.unknownBeerInfo));
+	        			previewStyle.setText(getText(R.string.beerInfoStyle).toString()
+	        					+ getText(R.string.unknownBeerInfo));
 	        }
 	        lastBeername = currentBeername;
 	        
