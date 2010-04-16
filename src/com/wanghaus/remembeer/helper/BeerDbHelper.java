@@ -8,7 +8,9 @@ import java.io.FileReader;
 import java.io.IOException;
 import java.io.PrintWriter;
 import java.util.Date;
+import java.util.HashMap;
 import java.util.LinkedList;
+import java.util.Map;
 
 import android.content.ContentValues;
 import android.content.Context;
@@ -41,6 +43,7 @@ public class BeerDbHelper {
 					+ "name TEXT NOT NULL, "
 					+ "brewery TEXT, "
 					+ "brewery_location TEXT, "
+					+ "style TEXT, "
 					+ "abv REAL, "
 					+ "notes TEXT "
 					+ ")", };
@@ -90,6 +93,7 @@ public class BeerDbHelper {
 						+ "name TEXT NOT NULL, "
 						+ "brewery TEXT, "
 						+ "brewery_location TEXT, "
+						+ "style TEXT, "
 						+ "abv REAL, "
 						+ "notes TEXT "
 						+ ")");
@@ -552,26 +556,34 @@ public class BeerDbHelper {
     	return (isUnrated > 0);
 	}
 
-	public double getBeerABV(String beername) {
-		// TODO Auto-generated method stub
-		return 0.0;
+	public Map<String, String> getBeerInfo(String beername) {
+		Map<String, String> rv = new HashMap<String, String>();
+		
+    	if (beername == null)
+    		return rv;
+    	
+    	Cursor s = db.rawQuery(
+    			"SELECT b.ROWID AS _id, b.* "
+    			+ "FROM " + DB_TABLE_DRINKS + " d, " + DB_TABLE_BEERS + " b "
+    			+ "WHERE d.beer_id = b.ROWID "
+    			+ "AND b.name LIKE ?"
+    			+ "GROUP BY b.name "
+    			+ "ORDER BY COUNT(*) DESC",
+    			new String[] { "%" + beername + "%"}
+    		);
+		if (s.getCount() > 0) {
+			s.moveToFirst();
+			for (int i=0; i<s.getColumnCount(); ++i) {
+				rv.put(s.getColumnName(i), s.getString(i));
+			}
+		}
+		s.close();
+		
+		// XXX - If we got no reply, this is where the web service comes in
+		
+		return rv;
 	}
 
-	public String getBeerBrewer(String beername) {
-		// TODO Auto-generated method stub
-		return null;
-	}
-
-	public String getBeerBrewerLocation(String beername) {
-		// TODO Auto-generated method stub
-		return null;
-	}
-
-	public String getBeerNotes(String beername) {
-		// TODO Auto-generated method stub
-		return null;
-	}
-	
 	public int getDrinkCountWhen(String whenStamp) {
 		int count;
 		

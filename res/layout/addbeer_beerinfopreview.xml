@@ -5,6 +5,7 @@
 	android:layout_height="wrap_content"
 	android:layout_gravity="center_vertical"
 	
+	android:id="@+id/beerInfoPreview"
 	android:visibility="invisible">
 
 	<TextView
@@ -12,7 +13,7 @@
 		android:layout_width="fill_parent"
 		android:layout_height="wrap_content"
 
-		android:text="Brewery: Harpoon Brewing, Boston, MA, USA"
+		android:text="@string/unknownBeerInfo"
 		android:lines="1"
 		android:ellipsize="end"
 
@@ -24,7 +25,7 @@
 		android:layout_width="fill_parent"
 		android:layout_height="wrap_content"
 
-		android:text="Style: Hefeweisen"
+		android:text="@string/unknownBeerInfo"
 		android:lines="1"
 		android:ellipsize="end"
 

@@ -3,6 +3,7 @@ package com.wanghaus.remembeer.activity;
 import java.text.DateFormat;
 import java.util.Calendar;
 import java.util.Date;
+import java.util.Map;
 
 import android.app.DatePickerDialog;
 import android.app.Dialog;
@@ -14,6 +15,7 @@ import android.content.SharedPreferences;
 import android.content.DialogInterface.OnClickListener;
 import android.database.Cursor;
 import android.os.Bundle;
+import android.os.Handler;
 import android.preference.PreferenceManager;
 import android.util.Log;
 import android.view.LayoutInflater;
@@ -44,6 +46,7 @@ public class AddBeer extends BaseActivity {
 	private Spinner drinkWhenSpinner;
 	private Calendar specificTime = Calendar.getInstance();
 	private BeerDbHelper dbs;
+	private Handler handler;
 	
     /** Called when the activity is first created. */
     @Override
@@ -52,6 +55,7 @@ public class AddBeer extends BaseActivity {
         setContentView(R.layout.addbeer);
         
         dbs = new BeerDbHelper(this);
+        handler = new Handler();
 
         initBeernameAutoComplete();
         initContainerSpinner();
@@ -84,8 +88,61 @@ public class AddBeer extends BaseActivity {
         } catch (Exception e) {
         	// Do nothing
         }
+
+        // TODO - Only do this while we're active
+        handler.postDelayed(beerInfoLookupRunnable, 500);
     }
 
+    private Runnable beerInfoLookupRunnable = new Runnable() {
+    	private String lastBeername = null;
+    	private String lastLookupBeername = null;
+    	
+		public void run() {
+	        AutoCompleteTextView beernameView = (AutoCompleteTextView) findViewById(R.id.beername);
+	        String currentBeername = beernameView.getText().toString();
+	        
+	        if (currentBeername != null && currentBeername.length() > 0 &&
+	        	lastBeername != null && lastBeername.equals(currentBeername) &&
+	        	!currentBeername.equals(lastLookupBeername)) {
+	    			Log.i("beerInfoLookupRunnable", "looking up " + currentBeername);
+	    			lastLookupBeername = currentBeername;
+	    			
+	        		// Start looking it up
+	        		View beerInfoNoneView = findViewById(R.id.beerInfoNone);
+	        		View beerInfoLoadingView = findViewById(R.id.beerInfoLoading);
+	        		View beerInfoPreviewView = findViewById(R.id.beerInfoPreview);
+	        		
+	        		beerInfoNoneView.setVisibility(View.INVISIBLE);
+	        		beerInfoPreviewView.setVisibility(View.INVISIBLE);
+	        		beerInfoLoadingView.setVisibility(View.VISIBLE);
+	        		
+	        		// Actual lookup
+	        		Map<String, String> beerInfo = dbs.getBeerInfo(currentBeername);
+	        		
+	        		// Show the returned values
+	        		beerInfoNoneView.setVisibility(View.INVISIBLE);
+	        		beerInfoPreviewView.setVisibility(View.VISIBLE);
+	        		beerInfoLoadingView.setVisibility(View.INVISIBLE);
+	        		
+	        		TextView previewBrewery = (TextView) findViewById(R.id.previewBrewery);
+	        		if (beerInfo.containsKey("brewery") && beerInfo.get("brewery") != null && !beerInfo.get("brewery").equals(""))
+	        			previewBrewery.setText("Brewery: " + beerInfo.get("brewery"));
+	        		else
+	        			previewBrewery.setText("Brewery: " + getText(R.string.unknownBeerInfo));
+	        		
+	        		TextView previewStyle = (TextView) findViewById(R.id.previewStyle);
+	        		if (beerInfo.containsKey("style") && beerInfo.get("style") != null && !beerInfo.get("style").equals(""))
+	        			previewStyle.setText("Style: " + beerInfo.get("style"));
+	        		else
+	        			previewStyle.setText("Style: " + getText(R.string.unknownBeerInfo));
+	        }
+	        lastBeername = currentBeername;
+	        
+	        // reschedule for a second in the future
+	        handler.postDelayed(beerInfoLookupRunnable, 1000);	        
+		}
+    };
+    
     private class BeerNameAutocompleteAdapter extends CursorAdapter {
             public BeerNameAutocompleteAdapter(Context context, Cursor c) {
                     super(context, c);
