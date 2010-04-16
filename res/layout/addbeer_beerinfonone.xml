@@ -8,6 +8,5 @@
 
 	android:id="@+id/beerInfoNone"
 	android:text="@string/noneBeerInfo"
-	android:layout_gravity="center"
-	android:textColor="#999" />
+	android:layout_gravity="center" />
 		
