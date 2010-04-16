@@ -125,20 +125,23 @@ public class AddBeer extends BaseActivity {
 	        		beerInfoLoadingView.setVisibility(View.INVISIBLE);
 	        		
 	        		TextView previewBrewery = (TextView) findViewById(R.id.previewBrewery);
-	        		if (beerInfo.containsKey("brewery") && beerInfo.get("brewery") != null && !beerInfo.get("brewery").equals(""))
-	        			previewBrewery.setText(getText(R.string.beerInfoBrewery).toString()
-	        					+ beerInfo.get("brewery"));
-	        		else
-	        			previewBrewery.setText(getText(R.string.beerInfoBrewery).toString()
-	        					+ getText(R.string.unknownBeerInfo));
+	        		String previewBreweryVal = getText(R.string.beerInfoBrewery).toString();
+	        		if (beerInfo.containsKey("brewery") && beerInfo.get("brewery") != null && !beerInfo.get("brewery").equals("")) {
+	        			previewBreweryVal += beerInfo.get("brewery");
+
+	        			if (beerInfo.containsKey("brewery_location") && beerInfo.get("brewery_location") != null && !beerInfo.get("brewery_location").equals(""))
+		        			previewBreweryVal += ", " + beerInfo.get("brewery_location");
+	        		} else
+	        			previewBreweryVal += getText(R.string.unknownBeerInfo).toString();
+	        		previewBrewery.setText(previewBreweryVal);
 	        		
 	        		TextView previewStyle = (TextView) findViewById(R.id.previewStyle);
+	        		String previewStyleVal = getText(R.string.beerInfoStyle).toString(); 
 	        		if (beerInfo.containsKey("style") && beerInfo.get("style") != null && !beerInfo.get("style").equals(""))
-	        			previewStyle.setText(getText(R.string.beerInfoStyle).toString()
-	        					+ beerInfo.get("style"));
+	        			previewStyleVal += beerInfo.get("style");
 	        		else
-	        			previewStyle.setText(getText(R.string.beerInfoStyle).toString()
-	        					+ getText(R.string.unknownBeerInfo));
+	        			previewStyleVal += getText(R.string.unknownBeerInfo).toString();
+	        		previewStyle.setText(previewStyleVal);
 	        }
 	        lastBeername = currentBeername;
 	        
