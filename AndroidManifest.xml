@@ -1,38 +1,69 @@
 <?xml version="1.0" encoding="utf-8"?>
-<manifest xmlns:android="http://schemas.android.com/apk/res/android"
-      android:sharedUserId="com.wanghaus.remembeer"
-      android:versionCode="15"
-      android:versionName="1.0.5" package="com.wanghaus.remembeer">
-    <application android:icon="@drawable/beer_and_scroll" android:label="@string/app_name">
-        <activity android:name=".activity.AddBeer"
-                  android:label="@string/app_name">
-            <intent-filter>
-                <action android:name="android.intent.action.MAIN" />
-                <category android:name="android.intent.category.LAUNCHER" />
-            </intent-filter>
-        </activity>
-
-		<activity android:name=".activity.AddBeerDone"
-			android:theme="@android:style/Theme.Dialog"></activity>
-		<activity android:name=".activity.Stats"></activity>
-		<activity android:name=".activity.History">
+<manifest
+	xmlns:android="http://schemas.android.com/apk/res/android"
+	android:sharedUserId="com.wanghaus.remembeer"
+	android:versionCode="15"
+	android:versionName="1.0.5"
+	package="com.wanghaus.remembeer">
+	<application
+		android:icon="@drawable/beer_and_scroll"
+		android:label="@string/app_name">
+		
+		<activity
+			android:name=".activity.AddBeer"
+			android:label="@string/app_name">
 			<intent-filter>
-                <action android:name="android.intent.action.SEARCH" />
-                <category android:name="android.intent.category.DEFAULT" />
-            </intent-filter>
-            <meta-data android:name="android.app.searchable" 
-                       android:resource="@xml/searchable" />			
+				<action
+					android:name="android.intent.action.MAIN" />
+				<category
+					android:name="android.intent.category.LAUNCHER" />
+			</intent-filter>
 		</activity>
-		<activity android:name=".activity.ImportExport"
-		        android:theme="@android:style/Theme.Dialog"></activity>
-		<activity android:name=".activity.Config"></activity>
-		<activity android:name=".activity.ConfigureTwitter"
+
+		<activity
+			android:name=".activity.AddBeerDone"
+			android:theme="@android:style/Theme.Dialog"></activity>
+			
+		<activity
+			android:name=".activity.BeerInfo"
 			android:theme="@android:style/Theme.Dialog"></activity>
 
-    	<service android:name=".service.NotifyService"></service>
-	</application>
-    <uses-sdk android:minSdkVersion="3" />
+		<activity
+			android:name=".activity.Config"></activity>
+			
+		<activity
+			android:name=".activity.ConfigureTwitter"
+			android:theme="@android:style/Theme.Dialog"></activity>
 
-	<uses-permission android:name="android.permission.INTERNET"></uses-permission>
-    <uses-permission android:name="android.permission.VIBRATE"></uses-permission>
+		<activity
+			android:name=".activity.History">
+			<intent-filter>
+				<action
+					android:name="android.intent.action.SEARCH" />
+				<category
+					android:name="android.intent.category.DEFAULT" />
+			</intent-filter>
+			<meta-data
+				android:name="android.app.searchable"
+				android:resource="@xml/searchable" />
+		</activity>
+		
+		<activity
+			android:name=".activity.ImportExport"
+			android:theme="@android:style/Theme.Dialog"></activity>
+			
+		<activity
+			android:name=".activity.Stats"></activity>
+			
+		<service
+			android:name=".service.NotifyService"></service>
+	</application>
+	
+	<uses-sdk
+		android:minSdkVersion="3" />
+
+	<uses-permission
+		android:name="android.permission.INTERNET"></uses-permission>
+	<uses-permission
+		android:name="android.permission.VIBRATE"></uses-permission>
 </manifest> 

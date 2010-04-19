@@ -42,6 +42,7 @@ import com.wanghaus.remembeer.service.NotifyService;
 public class AddBeer extends BaseActivity {
 	private static final int DATE_DIALOG_ID = 0;
 	private static final int TIME_DIALOG_ID = 1;
+	private static final int BEERINFO_DIALOG_ID = 2;
 	
 	private Spinner drinkWhenSpinner;
 	private Calendar specificTime = Calendar.getInstance();
@@ -58,6 +59,7 @@ public class AddBeer extends BaseActivity {
         handler = new Handler();
 
         initBeernameAutoComplete();
+        initBeerinfoPreview();
         initContainerSpinner();
         initDrinkWhenSpinner();
         
@@ -71,7 +73,19 @@ public class AddBeer extends BaseActivity {
         });
     }
     
-    private void initBeernameAutoComplete() {
+    private void initBeerinfoPreview() {
+    	View beerinfoPreview = findViewById(R.id.beerInfoPreview);
+    	final Context context = this;
+    	
+    	beerinfoPreview.setOnClickListener( new View.OnClickListener() {
+			public void onClick(View arg0) {
+		    	Intent popupIntent = new Intent(context, BeerInfo.class);
+		    	startActivityForResult(popupIntent, BEERINFO_DIALOG_ID);
+			}
+    	});
+    }
+
+	private void initBeernameAutoComplete() {
         // Beer name autocomplete text field
         AutoCompleteTextView beernameView = (AutoCompleteTextView) findViewById(R.id.beername);
         
@@ -402,4 +416,15 @@ public class AddBeer extends BaseActivity {
         
         return null;
     }
+
+	@Override
+	protected void onActivityResult(int requestCode, int resultCode, Intent data) {
+		switch (requestCode) {
+		case BEERINFO_DIALOG_ID:
+			// TODO - We get a new beerId back, probably?  Or actual data?
+			break;
+		default:
+			super.onActivityResult(requestCode, resultCode, data);
+		}
+	}
 }
