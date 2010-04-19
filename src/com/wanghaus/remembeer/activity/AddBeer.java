@@ -49,6 +49,8 @@ public class AddBeer extends BaseActivity {
 	private BeerDbHelper dbs;
 	private Handler handler;
 	
+	private Integer beerId = null;
+	
     /** Called when the activity is first created. */
     @Override
     public void onCreate(Bundle savedInstanceState) {
@@ -79,8 +81,14 @@ public class AddBeer extends BaseActivity {
     	
     	beerinfoPreview.setOnClickListener( new View.OnClickListener() {
 			public void onClick(View arg0) {
-		    	Intent popupIntent = new Intent(context, BeerInfo.class);
-		    	startActivityForResult(popupIntent, BEERINFO_DIALOG_ID);
+		    	Intent beerInfoPopupIntent = new Intent(context, BeerInfo.class);
+		    	if (beerId != null)
+		    		beerInfoPopupIntent.putExtra("beerId", beerId);
+		    	else {
+		            AutoCompleteTextView beernameView = (AutoCompleteTextView) findViewById(R.id.beername);
+		            beerInfoPopupIntent.putExtra("beername", beernameView.getText().toString());
+		    	}
+		    	startActivityForResult(beerInfoPopupIntent, BEERINFO_DIALOG_ID);
 			}
     	});
     }
@@ -156,6 +164,12 @@ public class AddBeer extends BaseActivity {
 	        		else
 	        			previewStyleVal += getText(R.string.unknownBeerInfo).toString();
 	        		previewStyle.setText(previewStyleVal);
+	        		
+	        		if (beerInfo.containsKey("_id")) {
+	        			beerId = Integer.valueOf(beerInfo.get("_id"));
+	        		} else {
+	        			beerId = null;
+	        		}
 	        }
 	        lastBeername = currentBeername;
 	        

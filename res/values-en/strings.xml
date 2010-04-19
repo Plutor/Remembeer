@@ -11,13 +11,6 @@
 	<string name="done">Done</string>
 	<string name="cancel">Cancel</string>
 	
-	<string name="loadingBeerInfo">Looking up beer info..</string>
-	<string name="noneBeerInfo">Enter a beer name</string>
-	<string name="unknownBeerInfo">Unknown</string>
-	<string name="beerInfoBrewery"><b>Brewery</b>: </string>
-	<string name="beerInfoStyle"><b>Style</b>: </string>
-	<string name="editBeerInfo"><u>Edit beer info..</u></string>
-	
 	<string name="addbeerdone_title">Beer added</string>
 	<string name="morestats">See more stats</string>
 	<string name="addanother">Drink another!</string>
@@ -26,12 +19,17 @@
 	<string name="addbeer_fromhistory">Add a beer</string>
 	<string name="charts_fromstats">View charts</string>
 	
-	<string name="abvtitle">abvtitle</string>
-	<string name="avg_rating">avg_rating</string>
-	<string name="brewery">brewery</string>
-	<string name="count">count</string>
-	<string name="location">location</string>
-	<string name="notes">notes</string>
+	<string name="loadingBeerInfo">Looking up beer info..</string>
+	<string name="noneBeerInfo">Enter a beer name</string>
+	<string name="unknownBeerInfo">Unknown</string>
+	<string name="beerInfoBrewery"><b>Brewery</b>: </string>
+	<string name="beerInfoStyle"><b>Style</b>: </string>
+	<string name="editBeerInfo"><u>Edit beer info..</u></string>
+	<string name="beerinfo_abvLabel">ABV</string>
+	<string name="beerinfo_breweryLabel">Brewery</string>
+	<string name="beerinfo_locationLabel">Location</string>
+	<string name="beerinfo_styleLabel">Style</string>
+	<string name="beerinfo_notesLabel">Notes</string>
 
 	<string name="viewstat_placeholder">This is where the stat name goes</string>
 	

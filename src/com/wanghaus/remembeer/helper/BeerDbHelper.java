@@ -563,10 +563,10 @@ public class BeerDbHelper {
     		return rv;
     	
     	Cursor s = db.rawQuery(
-    			"SELECT b.ROWID AS _id, b.* "
+    			"SELECT b.ROWID AS _id, b.*, COUNT(*) AS drink_count "
     			+ "FROM " + DB_TABLE_DRINKS + " d, " + DB_TABLE_BEERS + " b "
     			+ "WHERE d.beer_id = b.ROWID "
-    			+ "AND b.name LIKE ?"
+    			+ "AND b.name LIKE ? "
     			+ "GROUP BY b.name "
     			+ "ORDER BY COUNT(*) DESC",
     			new String[] { "%" + beername + "%"}
@@ -580,6 +580,49 @@ public class BeerDbHelper {
 		s.close();
 		
 		// XXX - If we got no reply, this is where the web service comes in
+		
+		return rv;
+	}
+	public Map<String, String> getBeerInfo(int beerId) {
+		Map<String, String> rv = new HashMap<String, String>();
+		
+    	Cursor s = db.rawQuery(
+    			"SELECT b.ROWID AS _id, b.*, COUNT(*) AS drink_count "
+    			+ "FROM " + DB_TABLE_DRINKS + " d, " + DB_TABLE_BEERS + " b "
+    			+ "WHERE d.beer_id = b.ROWID "
+    			+ "AND b.ROWID = ? "
+    			+ "GROUP BY b.name ",
+    			new String[] { String.valueOf(beerId) }
+    		);
+		if (s.getCount() > 0) {
+			s.moveToFirst();
+			for (int i=0; i<s.getColumnCount(); ++i) {
+				rv.put(s.getColumnName(i), s.getString(i));
+			}
+		}
+		s.close();
+		
+		// XXX - If we got no reply, this is where the web service comes in
+		
+		return rv;
+	}
+
+	public Map<String, String> getDrinkInfo(int drinkId) {
+		Map<String, String> rv = new HashMap<String, String>();
+		
+    	Cursor s = db.rawQuery(
+    			"SELECT * "
+    			+ "FROM " + DB_TABLE_DRINKS + " "
+    			+ "WHERE d.beer_id = ?",
+    			new String[] { String.valueOf(drinkId) }
+    		);
+		if (s.getCount() > 0) {
+			s.moveToFirst();
+			for (int i=0; i<s.getColumnCount(); ++i) {
+				rv.put(s.getColumnName(i), s.getString(i));
+			}
+		}
+		s.close();
 		
 		return rv;
 	}
