@@ -435,7 +435,7 @@ public class AddBeer extends BaseActivity {
 	protected void onActivityResult(int requestCode, int resultCode, Intent data) {
 		switch (requestCode) {
 		case BEERINFO_DIALOG_ID:
-			// TODO - We get a new beerId back, probably?  Or actual data?
+			// TODO - We get a beer object back, we should remember it here for when we save the beer
 			break;
 		default:
 			super.onActivityResult(requestCode, resultCode, data);

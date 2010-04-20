@@ -3,8 +3,12 @@ package com.wanghaus.remembeer.activity;
 import java.util.HashMap;
 import java.util.Map;
 
+import android.content.Intent;
 import android.os.Bundle;
+import android.view.View;
 import android.view.ViewGroup;
+import android.view.View.OnClickListener;
+import android.widget.Button;
 import android.widget.EditText;
 
 import com.wanghaus.remembeer.R;
@@ -49,30 +53,46 @@ public class BeerInfo extends BaseActivity {
         
         // Fill in the known values
         if (beer != null && beer.size() > 0) {
-        	try {
-        		EditText v = (EditText) findViewById(R.id.beerinfo_abv);
-        		v.setText( beer.get("abv") );
-        	} catch (Exception e) { /* nothin */ }
-
-        	try {
-        		EditText v = (EditText) findViewById(R.id.beerinfo_brewery);
-        		v.setText( beer.get("brewery") );
-        	} catch (Exception e) { /* nothin */ }
-
-        	try {
-        		EditText v = (EditText) findViewById(R.id.beerinfo_location);
-        		v.setText( beer.get("brewery_location") );
-        	} catch (Exception e) { /* nothin */ }
-
-        	try {
-        		EditText v = (EditText) findViewById(R.id.beerinfo_style);
-        		v.setText( beer.get("style") );
-        	} catch (Exception e) { /* nothin */ }
-
-        	try {
-        		EditText v = (EditText) findViewById(R.id.beerinfo_notes);
-        		v.setText( beer.get("notes") );
-        	} catch (Exception e) { /* nothin */ }
+        	setViewWithValue( R.id.beerinfo_abv, beer, "abv" );
+        	setViewWithValue( R.id.beerinfo_brewery, beer, "brewery" );
+        	setViewWithValue( R.id.beerinfo_location, beer, "brewery_location" );
+        	setViewWithValue( R.id.beerinfo_style, beer, "style" );
+        	setViewWithValue( R.id.beerinfo_notes, beer, "notes" );
         }
+        
+        // Init save button
+        Button b = (Button) findViewById(R.id.beerinfo_save);
+        b.setOnClickListener( new OnClickListener() {
+			public void onClick(View button) {
+				Intent resultData = new Intent();
+				
+				setIntentExtraFromView( R.id.beerinfo_abv, resultData, "abv" );
+				setIntentExtraFromView( R.id.beerinfo_brewery, resultData, "brewery" );
+				setIntentExtraFromView( R.id.beerinfo_location, resultData, "brewery_location" );
+				setIntentExtraFromView( R.id.beerinfo_style, resultData, "style" );
+				setIntentExtraFromView( R.id.beerinfo_notes, resultData, "notes" );
+
+        		setResult(RESULT_OK, resultData);
+        		finish();
+			}
+        });
+	}
+	
+	private void setViewWithValue(int viewId, Map<String, String> beer, String key) {
+    	try {
+    		EditText v = (EditText) findViewById( viewId );
+    		v.setText( beer.get(key) );
+    	} catch (Exception e) {
+    		/* nothin */ 
+    	}
+	}
+	
+	private void setIntentExtraFromView(int viewId, Intent intent, String key) {
+		try {
+    		EditText v = (EditText) findViewById(viewId);
+    		intent.putExtra(key, v.getText().toString());
+    	} catch (Exception e) {
+    		/* nothin */
+    	}
 	}
 }
