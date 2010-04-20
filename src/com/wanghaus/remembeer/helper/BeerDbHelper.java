@@ -7,9 +7,11 @@ import java.io.FileOutputStream;
 import java.io.FileReader;
 import java.io.IOException;
 import java.io.PrintWriter;
+import java.util.ArrayList;
 import java.util.Date;
 import java.util.HashMap;
 import java.util.LinkedList;
+import java.util.List;
 import java.util.Map;
 
 import android.content.ContentValues;
@@ -23,6 +25,7 @@ import android.os.Environment;
 import android.util.Log;
 
 import com.wanghaus.remembeer.R;
+import com.wanghaus.remembeer.model.Beer;
 
 public class BeerDbHelper {
 	private static final String DB_NAME = "Remembeer";
@@ -556,25 +559,27 @@ public class BeerDbHelper {
     	return (isUnrated > 0);
 	}
 
-	public Map<String, String> getBeerInfo(String beername) {
-		Map<String, String> rv = new HashMap<String, String>();
+	public List<Beer> getBeers(String whereStr, String[] whereArgs, String orderStr) {
+		List<Beer> rv = new ArrayList<Beer>();
 		
-    	if (beername == null)
-    		return rv;
-    	
+		if (whereStr != null && !whereStr.equals(""))
+			whereStr = " AND " + whereStr + " ";
+		if (orderStr != null && !orderStr.equals(""))
+			orderStr = " ORDER BY " + orderStr + " ";
+		
     	Cursor s = db.rawQuery(
     			"SELECT b.ROWID AS _id, b.*, COUNT(*) AS drink_count "
     			+ "FROM " + DB_TABLE_DRINKS + " d, " + DB_TABLE_BEERS + " b "
     			+ "WHERE d.beer_id = b.ROWID "
-    			+ "AND b.name LIKE ? "
-    			+ "GROUP BY b.name "
-    			+ "ORDER BY COUNT(*) DESC",
-    			new String[] { "%" + beername + "%"}
+    			+ whereStr
+    			+ "GROUP BY b.ROWID "
+    			+ orderStr,
+    			whereArgs
     		);
 		if (s.getCount() > 0) {
-			s.moveToFirst();
-			for (int i=0; i<s.getColumnCount(); ++i) {
-				rv.put(s.getColumnName(i), s.getString(i));
+			while (s.moveToNext()) {
+				Beer b = new Beer(s);
+				rv.add(b);
 			}
 		}
 		s.close();
@@ -583,28 +588,32 @@ public class BeerDbHelper {
 		
 		return rv;
 	}
-	public Map<String, String> getBeerInfo(int beerId) {
-		Map<String, String> rv = new HashMap<String, String>();
+
+	public Beer getBeer(String beername) {
+    	if (beername == null)
+    		return null;
+
+    	List<Beer> beers = getBeers(
+    			"b.name LIKE ?",
+    			new String[] { "%" + beername + "%"},
+    			"COUNT(*) DESC");
+
+		if (beers.size() > 0)
+			return beers.get(0);
 		
-    	Cursor s = db.rawQuery(
-    			"SELECT b.ROWID AS _id, b.*, COUNT(*) AS drink_count "
-    			+ "FROM " + DB_TABLE_DRINKS + " d, " + DB_TABLE_BEERS + " b "
-    			+ "WHERE d.beer_id = b.ROWID "
-    			+ "AND b.ROWID = ? "
-    			+ "GROUP BY b.name ",
-    			new String[] { String.valueOf(beerId) }
-    		);
-		if (s.getCount() > 0) {
-			s.moveToFirst();
-			for (int i=0; i<s.getColumnCount(); ++i) {
-				rv.put(s.getColumnName(i), s.getString(i));
-			}
-		}
-		s.close();
+		return null;
+	}
+	
+	public Beer getBeer(int beerId) {
+    	List<Beer> beers = getBeers(
+    			"b.ROWID = ?",
+    			new String[] { String.valueOf(beerId) },
+    			"COUNT(*) DESC");
+
+		if (beers.size() > 0)
+			return beers.get(0);
 		
-		// XXX - If we got no reply, this is where the web service comes in
-		
-		return rv;
+		return null;
 	}
 
 	public Map<String, String> getDrinkInfo(int drinkId) {

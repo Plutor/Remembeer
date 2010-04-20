@@ -1,6 +1,5 @@
 package com.wanghaus.remembeer.activity;
 
-import java.util.HashMap;
 import java.util.Map;
 
 import android.content.Intent;
@@ -13,10 +12,11 @@ import android.widget.EditText;
 
 import com.wanghaus.remembeer.R;
 import com.wanghaus.remembeer.helper.BeerDbHelper;
+import com.wanghaus.remembeer.model.Beer;
 
 public class BeerInfo extends BaseActivity {
 	private String beername;
-	private Map<String, String> beer;
+	private Beer beer;
 	
 	@Override
 	public void onCreate(Bundle savedInstanceState) {
@@ -39,11 +39,11 @@ public class BeerInfo extends BaseActivity {
 		
 		if (beerId != -1) {
 			// Load the beer
-			beer = dbs.getBeerInfo(beerId);
+			beer = dbs.getBeer(beerId);
 			beername = beer.get("name");
 			setTitle( "Edit " + beername + " info" );
 		} else if (beername != null) {
-			beer = new HashMap<String, String>();
+			beer = new Beer();
 			beer.put("name", beername);
 			setTitle( "Edit " + beername + " info" );
 		}
@@ -78,7 +78,7 @@ public class BeerInfo extends BaseActivity {
         });
 	}
 	
-	private void setViewWithValue(int viewId, Map<String, String> beer, String key) {
+	private void setViewWithValue(int viewId, Beer beer, String key) {
     	try {
     		EditText v = (EditText) findViewById( viewId );
     		v.setText( beer.get(key) );

@@ -3,7 +3,6 @@ package com.wanghaus.remembeer.activity;
 import java.text.DateFormat;
 import java.util.Calendar;
 import java.util.Date;
-import java.util.Map;
 
 import android.app.DatePickerDialog;
 import android.app.Dialog;
@@ -37,6 +36,7 @@ import com.wanghaus.remembeer.app.DatePickerCancellableDialog;
 import com.wanghaus.remembeer.app.TimePickerCancellableDialog;
 import com.wanghaus.remembeer.helper.BeerDbHelper;
 import com.wanghaus.remembeer.helper.TwitterHelper;
+import com.wanghaus.remembeer.model.Beer;
 import com.wanghaus.remembeer.service.NotifyService;
 
 public class AddBeer extends BaseActivity {
@@ -139,7 +139,7 @@ public class AddBeer extends BaseActivity {
 	        		beerInfoLoadingView.setVisibility(View.VISIBLE);
 	        		
 	        		// Actual lookup
-	        		Map<String, String> beerInfo = dbs.getBeerInfo(currentBeername);
+	        		Beer beer = dbs.getBeer(currentBeername);
 	        		
 	        		// Show the returned values
 	        		beerInfoNoneView.setVisibility(View.INVISIBLE);
@@ -148,25 +148,25 @@ public class AddBeer extends BaseActivity {
 	        		
 	        		TextView previewBrewery = (TextView) findViewById(R.id.previewBrewery);
 	        		String previewBreweryVal = getText(R.string.beerInfoBrewery).toString();
-	        		if (beerInfo.containsKey("brewery") && beerInfo.get("brewery") != null && !beerInfo.get("brewery").equals("")) {
-	        			previewBreweryVal += beerInfo.get("brewery");
+	        		if (beer.getBrewery() != null && !beer.getBrewery().equals("")) {
+	        			previewBreweryVal += beer.getBrewery();
 
-	        			if (beerInfo.containsKey("brewery_location") && beerInfo.get("brewery_location") != null && !beerInfo.get("brewery_location").equals(""))
-		        			previewBreweryVal += ", " + beerInfo.get("brewery_location");
+	        			if (beer.getLocation() != null && !beer.getLocation().equals(""))
+		        			previewBreweryVal += ", " + beer.getLocation();
 	        		} else
 	        			previewBreweryVal += getText(R.string.unknownBeerInfo).toString();
 	        		previewBrewery.setText(previewBreweryVal);
 	        		
 	        		TextView previewStyle = (TextView) findViewById(R.id.previewStyle);
 	        		String previewStyleVal = getText(R.string.beerInfoStyle).toString(); 
-	        		if (beerInfo.containsKey("style") && beerInfo.get("style") != null && !beerInfo.get("style").equals(""))
-	        			previewStyleVal += beerInfo.get("style");
+	        		if (beer.getStyle() != null && !beer.getStyle().equals(""))
+	        			previewStyleVal += beer.getStyle();
 	        		else
 	        			previewStyleVal += getText(R.string.unknownBeerInfo).toString();
 	        		previewStyle.setText(previewStyleVal);
 	        		
-	        		if (beerInfo.containsKey("_id")) {
-	        			beerId = Integer.valueOf(beerInfo.get("_id"));
+	        		if (beer.getId() != null) {
+	        			beerId = Integer.valueOf(beer.getId());
 	        		} else {
 	        			beerId = null;
 	        		}
