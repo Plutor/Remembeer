@@ -49,7 +49,7 @@ public class AddBeer extends BaseActivity {
 	private BeerDbHelper dbs;
 	private Handler handler;
 	
-	private Integer beerId = null;
+	private Beer beer = null;
 	
     /** Called when the activity is first created. */
     @Override
@@ -82,8 +82,8 @@ public class AddBeer extends BaseActivity {
     	beerinfoPreview.setOnClickListener( new View.OnClickListener() {
 			public void onClick(View arg0) {
 		    	Intent beerInfoPopupIntent = new Intent(context, BeerInfo.class);
-		    	if (beerId != null)
-		    		beerInfoPopupIntent.putExtra("beerId", beerId);
+		    	if (beer != null)
+		    		beerInfoPopupIntent.putExtra("beer", beer);
 		    	else {
 		            AutoCompleteTextView beernameView = (AutoCompleteTextView) findViewById(R.id.beername);
 		            beerInfoPopupIntent.putExtra("beername", beernameView.getText().toString());
@@ -139,7 +139,7 @@ public class AddBeer extends BaseActivity {
 	        		beerInfoLoadingView.setVisibility(View.VISIBLE);
 	        		
 	        		// Actual lookup
-	        		Beer beer = dbs.getBeer(currentBeername);
+	        		beer = dbs.getBeer(currentBeername);
 	        		
 	        		// Show the returned values
 	        		beerInfoNoneView.setVisibility(View.INVISIBLE);
@@ -164,13 +164,8 @@ public class AddBeer extends BaseActivity {
 	        		else
 	        			previewStyleVal += getText(R.string.unknownBeerInfo).toString();
 	        		previewStyle.setText(previewStyleVal);
-	        		
-	        		if (beer.getId() != null) {
-	        			beerId = Integer.valueOf(beer.getId());
-	        		} else {
-	        			beerId = null;
-	        		}
 	        }
+	        
 	        lastBeername = currentBeername;
 	        
 	        // reschedule for a second in the future
@@ -350,7 +345,7 @@ public class AddBeer extends BaseActivity {
             	break;
             }
 
-            beerID = (int)dbs.addDrink(beername, container, specificTime.getTime());
+            beerID = (int)dbs.addDrink(beer, container, specificTime.getTime());
             
             if ((int)drinkWhenSpinner.getSelectedItemPosition() == 0) {
                 SharedPreferences settings = PreferenceManager.getDefaultSharedPreferences(this);
@@ -435,7 +430,13 @@ public class AddBeer extends BaseActivity {
 	protected void onActivityResult(int requestCode, int resultCode, Intent data) {
 		switch (requestCode) {
 		case BEERINFO_DIALOG_ID:
-			// TODO - We get a beer object back, we should remember it here for when we save the beer
+			// We get a beer object back, remember it here for later
+			if (resultCode == RESULT_OK && data != null) {
+				Beer returnBeer = (Beer) data.getSerializableExtra("beer");
+				if (returnBeer != null)
+					beer = returnBeer;
+			}
+			
 			break;
 		default:
 			super.onActivityResult(requestCode, resultCode, data);

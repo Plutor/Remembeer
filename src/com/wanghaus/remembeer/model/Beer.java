@@ -3,6 +3,8 @@ package com.wanghaus.remembeer.model;
 import android.database.Cursor;
 
 public class Beer extends Model {	
+	private static final long serialVersionUID = -2080563347089735252L;
+
 	public Beer() {
 		super();
 	}
@@ -13,8 +15,8 @@ public class Beer extends Model {
 	//
 	//** READ-WRITE PROPERTIES
 	//
-	public String getId()				{ return get("ROWID"); }
-	public void setId(String val)		{ put("ROWID", val); }
+	public String getId()				{ return get("_id"); }
+	public void setId(String val)		{ put("_id", val); }
 
 	public String getName()				{ return get("name"); }
 	public void setName(String val)	{ put("name", val); }

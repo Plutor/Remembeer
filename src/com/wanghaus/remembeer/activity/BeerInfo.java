@@ -18,14 +18,18 @@ public class BeerInfo extends BaseActivity {
 	private String beername;
 	private Beer beer;
 	
+	private BeerDbHelper dbs;
+	
 	@Override
 	public void onCreate(Bundle savedInstanceState) {
 		super.onCreate(savedInstanceState);
 		setContentView(R.layout.beerinfo);
 
-		BeerDbHelper dbs = new BeerDbHelper(this);
+		dbs = new BeerDbHelper(this);
+
 		int beerId = getIntent().getIntExtra("beerId", -1);
 		int drinkId = getIntent().getIntExtra("drinkId", -1);
+		beer = (Beer) getIntent().getSerializableExtra("beer");
 		beername = getIntent().getStringExtra("beerId");
 		
 		if (drinkId != -1) {
@@ -37,17 +41,20 @@ public class BeerInfo extends BaseActivity {
 			}
 		}
 		
-		if (beerId != -1) {
+		if (beer != null) {
+			beername = beer.getName();
+		} else if (beerId != -1) {
 			// Load the beer
 			beer = dbs.getBeer(beerId);
 			beername = beer.get("name");
-			setTitle( "Edit " + beername + " info" );
 		} else if (beername != null) {
 			beer = new Beer();
 			beer.put("name", beername);
-			setTitle( "Edit " + beername + " info" );
 		}
 
+		if (beername != null)
+			setTitle( getText(R.string.beerinfo_title) + beername );
+		
 		// Make sure it's full-width 
         getWindow().setLayout(ViewGroup.LayoutParams.FILL_PARENT, ViewGroup.LayoutParams.WRAP_CONTENT);
         
@@ -66,13 +73,19 @@ public class BeerInfo extends BaseActivity {
 			public void onClick(View button) {
 				Intent resultData = new Intent();
 				
-				setIntentExtraFromView( R.id.beerinfo_abv, resultData, "abv" );
-				setIntentExtraFromView( R.id.beerinfo_brewery, resultData, "brewery" );
-				setIntentExtraFromView( R.id.beerinfo_location, resultData, "brewery_location" );
-				setIntentExtraFromView( R.id.beerinfo_style, resultData, "style" );
-				setIntentExtraFromView( R.id.beerinfo_notes, resultData, "notes" );
-
+				if (beer == null) {
+					beer = new Beer();
+					beer.setName(beername);
+				}
+				beer.setABV( getValueFromView(R.id.beerinfo_abv) );
+				beer.setBrewery( getValueFromView(R.id.beerinfo_brewery) );
+				beer.setLocation( getValueFromView(R.id.beerinfo_location) );
+				beer.setStyle( getValueFromView(R.id.beerinfo_style) );
+				beer.setNotes( getValueFromView(R.id.beerinfo_notes) );
+				resultData.putExtra("beer", beer);
+				
         		setResult(RESULT_OK, resultData);
+        		dbs.close();
         		finish();
 			}
         });
@@ -87,12 +100,14 @@ public class BeerInfo extends BaseActivity {
     	}
 	}
 	
-	private void setIntentExtraFromView(int viewId, Intent intent, String key) {
+	private String getValueFromView(int viewId) {
 		try {
     		EditText v = (EditText) findViewById(viewId);
-    		intent.putExtra(key, v.getText().toString());
+    		return v.getText().toString();
     	} catch (Exception e) {
     		/* nothin */
     	}
+    	
+    	return null;
 	}
 }

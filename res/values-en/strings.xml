@@ -30,6 +30,8 @@
 	<string name="beerinfo_locationLabel">Location</string>
 	<string name="beerinfo_styleLabel">Style</string>
 	<string name="beerinfo_notesLabel">Notes</string>
+	<string name="beerinfo_title">Edit info for </string>
+	<string name="beerinfo_save">Save info</string>
 
 	<string name="viewstat_placeholder">This is where the stat name goes</string>
 	

@@ -1,11 +1,13 @@
 package com.wanghaus.remembeer.model;
 
+import java.io.Serializable;
 import java.util.HashMap;
 import java.util.Map;
 
 import android.database.Cursor;
 
-public class Model {
+@SuppressWarnings("serial")
+public abstract class Model implements Serializable {
 	private Map<String, String> stash;
 	
 	public Model() {
