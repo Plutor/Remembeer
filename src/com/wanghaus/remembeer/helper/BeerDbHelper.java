@@ -245,7 +245,7 @@ public class BeerDbHelper {
 		return db.insert(DB_TABLE_DRINKS, null, newRow);
     }
 	
-	private int updateOrAddBeer(Beer beer) {
+	public int updateOrAddBeer(Beer beer) {
 		if (beer.getId() != null) {
 			int beerId = Integer.valueOf(beer.getId());
 
@@ -277,7 +277,7 @@ public class BeerDbHelper {
 		}
 	}
     
-	public void setDrinkRating(long id, int rating) {
+	public void setDrinkRating(long id, float rating) {
 		ContentValues newRow = new ContentValues();
         newRow.put("rating", rating);
 
@@ -642,9 +642,9 @@ public class BeerDbHelper {
 		Map<String, String> rv = new HashMap<String, String>();
 		
     	Cursor s = db.rawQuery(
-    			"SELECT * "
+    			"SELECT ROWID AS _id, * "
     			+ "FROM " + DB_TABLE_DRINKS + " "
-    			+ "WHERE d.beer_id = ?",
+    			+ "WHERE ROWID = ?",
     			new String[] { String.valueOf(drinkId) }
     		);
 		if (s.getCount() > 0) {

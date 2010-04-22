@@ -27,14 +27,15 @@ import android.widget.TextView;
 
 import com.wanghaus.remembeer.R;
 import com.wanghaus.remembeer.helper.BeerDbHelper;
+import com.wanghaus.remembeer.model.Beer;
 
 public class History extends BaseActivity {
-	static final int DRINK_ANOTHER = 1;
-	static final int DELETE = 2;
-	static final int DO_DELETE = 3;
-	
+	private static final int BEERINFO_DIALOG_ID = 0;
+	private static final int DRINK_ANOTHER = 1;
+	private static final int DELETE = 2;	
+
 	private ListView historyList;
-	private Cursor recentBeers;
+	private Cursor recentDrinks;
 	private BeerDbHelper dbs;
 	private ListAdapter historyAdapter;
 	private boolean isSearch;
@@ -58,13 +59,16 @@ public class History extends BaseActivity {
 			initBeerList();
 		}
 		
+		final Context context = this;
         clickListener = new View.OnClickListener() {
         	public void onClick(View itemView) {
-        		View smallRatingView = itemView.findViewById(R.id.smallRating);
-        		View metadataView = itemView.findViewById(R.id.metadata);
-        		boolean isVisible = (metadataView.getVisibility() == View.VISIBLE);
-        		metadataView.setVisibility( isVisible ? View.GONE : View.VISIBLE );
-        		smallRatingView.setVisibility( isVisible ? View.VISIBLE : View.INVISIBLE );
+        		Integer position = (Integer)itemView.getTag();
+                int drinkId = Integer.valueOf(getDrinkValue(position, "_id"));
+                Log.i("History", "Passing drinkId = " + drinkId + " to BeerInfo");
+                
+		    	Intent beerInfoPopupIntent = new Intent(context, BeerInfo.class);
+	    		beerInfoPopupIntent.putExtra("drinkId", drinkId);
+		    	startActivityForResult(beerInfoPopupIntent, BEERINFO_DIALOG_ID);
 			}
         };
          
@@ -73,7 +77,7 @@ public class History extends BaseActivity {
         contextMenuListener = new View.OnCreateContextMenuListener() {
              public void onCreateContextMenu(ContextMenu menu, View v, ContextMenuInfo menuInfo) {
                  Integer position = (Integer)v.getTag();
-                 String beername = getBeerValue(position, "beername");
+                 String beername = getDrinkValue(position, "beername");
                  menu.setHeaderTitle(beername);
 
                  // Drink another
@@ -81,21 +85,21 @@ public class History extends BaseActivity {
                 	 MenuItem item = menu.add(0, DRINK_ANOTHER, 0, getString(R.string.drink_another));
           			 Intent nextIntent = new Intent(getBaseContext(), AddBeer.class);
           			 nextIntent.putExtra("beername", beername);
-          			 nextIntent.putExtra("container", getBeerValue(position, "container"));
+          			 nextIntent.putExtra("container", getDrinkValue(position, "container"));
            			 item.setIntent(nextIntent);
                  }
                  
                  // Delete
-                 final long beerId = Long.valueOf(getBeerValue(position, "_id"));
-            	 MenuItem item = menu.add(0, DELETE, 0, "Delete");
+                 final long drinkId = Long.valueOf(getDrinkValue(position, "_id"));
+            	 MenuItem item = menu.add(0, DELETE, 0, getString(R.string.history_delete));
             	 item.setOnMenuItemClickListener( new MenuItem.OnMenuItemClickListener() {
 					public boolean onMenuItemClick(MenuItem item) {
-						new AlertDialog.Builder(topThis).setTitle(getString(R.string.history_delete))
+						new AlertDialog.Builder(topThis).setTitle(getString(R.string.history_delete_title))
 						.setMessage(getString(R.string.history_delete_warn))
-						.setPositiveButton((CharSequence) getString(R.string.cancel),
+						.setPositiveButton((CharSequence) getString(R.string.history_delete),
 								new DialogInterface.OnClickListener() {
 									public void onClick(DialogInterface arg0, int arg1) {
-										dbs.deleteDrink(beerId);
+										dbs.deleteDrink(drinkId);
 										// Update the view
 										SimpleCursorAdapter listAdapter = (SimpleCursorAdapter) historyList
 												.getAdapter();
@@ -121,25 +125,25 @@ public class History extends BaseActivity {
     	// First check what the sort setting is
         SharedPreferences settings = PreferenceManager.getDefaultSharedPreferences(this);
         if (settings.getString("sortBy", "date").equals("alpha")) {
-        	recentBeers = dbs.getDrinkHistoryAlphabetically();
+        	recentDrinks = dbs.getDrinkHistoryAlphabetically();
         } else {
-        	recentBeers = dbs.getDrinkHistory();
+        	recentDrinks = dbs.getDrinkHistory();
         }
         
         // Map Cursor columns to views defined in simple_list_item_2.xml
         historyAdapter = new HistoryCursorAdapter(this,
-                R.layout.history_row, recentBeers, 
+                R.layout.history_row, recentDrinks, 
                 new String[] { "beername", "details" }, 
                 new int[] { R.id.beername, R.id.details });
 
         historyList.setAdapter(historyAdapter);
     }
     
-    private String getBeerValue(Integer position, String colName) {
+    private String getDrinkValue(Integer position, String colName) {
 		try {
-			recentBeers.moveToPosition(position);
-			int column = recentBeers.getColumnIndexOrThrow(colName);
-			String rv = recentBeers.getString(column);
+			recentDrinks.moveToPosition(position);
+			int column = recentDrinks.getColumnIndexOrThrow(colName);
+			String rv = recentDrinks.getString(column);
 			
 			return rv;
 		} catch (Exception e) {
@@ -161,94 +165,70 @@ public class History extends BaseActivity {
 		}
 
 	     public View getView(int position, View convertView, ViewGroup parent) {
-	    	 View row;
-	    	 
-	    	 if (position == 0 && !isSearch) {
-	    		 // Show the add button
-		         LayoutInflater inflater = LayoutInflater.from(context);
-		         row = inflater.inflate(R.layout.history_add, null);
-		         
-		         View addBeerButton = row.findViewById(R.id.history_addbeer);
-		         addBeerButton.setOnClickListener(new View.OnClickListener() {
-		        	 public void onClick(View arg0) {
-		        		 Intent nextIntent = new Intent(getBaseContext(), AddBeer.class);
-		        		 startActivity(nextIntent);
-		        	 }
-		         });
-	    	 } else if (position == 0 && isSearch) {
-	    		// Show the add button
-		         LayoutInflater inflater = LayoutInflater.from(context);
-		         row = inflater.inflate(R.layout.history_clear, null);
-		         
-		         View clearButton = row.findViewById(R.id.history_clear);
-		         clearButton.setOnClickListener(new View.OnClickListener() {
-		        	 public void onClick(View arg0) {
-		        		 finish();
-		        	 }
-		         });
-	    	 } else {
-	    		 // Show a real beer row
-	    		 position--;
+			View row;
 
-		         final Cursor cursor = getCursor();
-		         cursor.moveToPosition(position);
-		         int index;
-		         
-		         LayoutInflater inflater = LayoutInflater.from(context);
-		         row = inflater.inflate(R.layout.history_row, null);
-		         row.setTag( cursor.getPosition() );
-					
-		         TextView beername = (TextView) row.findViewById(R.id.beername);
-		         index = cursor.getColumnIndex("beername");
-		         beername.setText(cursor.getString(index));
-		         
-		         TextView details = (TextView) row.findViewById(R.id.details);
-		         index = cursor.getColumnIndex("details");
-		         details.setText(cursor.getString(index));
-	
-		         final RatingBar smallRatingBar = (RatingBar) row.findViewById(R.id.smallRating);
-		         RatingBar ratingBar = (RatingBar) row.findViewById(R.id.rating);
-		         if (ratingBar != null && smallRatingBar != null) {
-			         index = cursor.getColumnIndex("rating");
-			         ratingBar.setRating( cursor.getFloat(index) );
-			         smallRatingBar.setRating( cursor.getFloat(index) );
-			         ratingBar.setTag(position);
-			         
-			         ratingBar.setOnRatingBarChangeListener(new RatingBar.OnRatingBarChangeListener() {
-						public void onRatingChanged(RatingBar ratingBar,
-								float rating, boolean fromUser) {
-							Integer position = (Integer) ratingBar.getTag();
-							cursor.moveToPosition(position);
-							int index;
-	
-							index = cursor.getColumnIndex("_id");
-							long id = cursor.getLong(index);
-	
-							Integer intRating = ((Float) rating).intValue();
-	
-							BeerDbHelper bds = new BeerDbHelper(context);
-							bds.setDrinkRating(id, intRating);
-	
-							smallRatingBar.setRating(rating);
-							
-							SimpleCursorAdapter listAdapter = (SimpleCursorAdapter) historyList.getAdapter();
-							listAdapter.getCursor().requery();
-						}
-					});
-		         }
-		         
-		         row.setOnClickListener( clickListener );
-		         row.setOnCreateContextMenuListener( contextMenuListener );
-	    	 }
-	    	 
-	         return row;
-	     } 
-	     
-	     @Override
-	     public int getCount() {
-	    	 return super.getCount() + 1;
-	     }
-    }
+			if (position == 0 && !isSearch) {
+				// Show the add button
+				LayoutInflater inflater = LayoutInflater.from(context);
+				row = inflater.inflate(R.layout.history_add, null);
+
+				View addBeerButton = row.findViewById(R.id.history_addbeer);
+				addBeerButton.setOnClickListener(new View.OnClickListener() {
+					public void onClick(View arg0) {
+						Intent nextIntent = new Intent(getBaseContext(),
+								AddBeer.class);
+						startActivity(nextIntent);
+					}
+				});
+			} else if (position == 0 && isSearch) {
+				// Show the add button
+				LayoutInflater inflater = LayoutInflater.from(context);
+				row = inflater.inflate(R.layout.history_clear, null);
+
+				View clearButton = row.findViewById(R.id.history_clear);
+				clearButton.setOnClickListener(new View.OnClickListener() {
+					public void onClick(View arg0) {
+						finish();
+					}
+				});
+			} else {
+				// Show a real beer row
+				position--;
+
+				final Cursor cursor = getCursor();
+				cursor.moveToPosition(position);
+				int index;
+
+				LayoutInflater inflater = LayoutInflater.from(context);
+				row = inflater.inflate(R.layout.history_row, null);
+				row.setTag(cursor.getPosition());
+
+				TextView beername = (TextView) row.findViewById(R.id.beername);
+				index = cursor.getColumnIndex("beername");
+				beername.setText(cursor.getString(index));
+
+				TextView details = (TextView) row.findViewById(R.id.details);
+				index = cursor.getColumnIndex("details");
+				details.setText(cursor.getString(index));
+
+				RatingBar smallRatingBar = (RatingBar) row.findViewById(R.id.smallRating);
+				if (smallRatingBar != null) {
+					index = cursor.getColumnIndex("rating");
+					smallRatingBar.setRating(cursor.getFloat(index));
+				}
+				
+				row.setOnClickListener(clickListener);
+				row.setOnCreateContextMenuListener(contextMenuListener);
+			}
+
+			return row;
+		}
+
+		@Override
+		public int getCount() {
+			return super.getCount() + 1;
+		}
+	}
 
     @Override
     public boolean onPrepareOptionsMenu(Menu menu) {
@@ -300,16 +280,45 @@ public class History extends BaseActivity {
     	if (dbs == null)
     		dbs = new BeerDbHelper(this);
     	
-        recentBeers = dbs.searchDrinkHistory(queryString);
+        recentDrinks = dbs.searchDrinkHistory(queryString);
     	
         // Map Cursor columns to views defined in simple_list_item_2.xml
         historyAdapter = new HistoryCursorAdapter(this,
-                R.layout.history_row, recentBeers, 
+                R.layout.history_row, recentDrinks, 
                 new String[] { "beername", "details" }, 
                 new int[] { R.id.beername, R.id.details });
 
         historyList.setAdapter(historyAdapter);
 	}
 
-	
+	@Override
+	protected void onActivityResult(int requestCode, int resultCode, Intent data) {
+		switch (requestCode) {
+		case BEERINFO_DIALOG_ID:
+			// We get a beer object back, remember it here for later
+			if (resultCode == RESULT_OK && data != null) {
+				Beer returnBeer = (Beer) data.getSerializableExtra("beer");
+				float rating = data.getFloatExtra("rating", -1);
+				int drinkId = data.getIntExtra("drinkId", -1);
+
+				if (returnBeer != null) {
+					// Update it
+					dbs.updateOrAddBeer(returnBeer);
+				}
+				
+				if (rating > 0 && drinkId > 0) {
+					// Save it
+					dbs.setDrinkRating(drinkId, rating);
+					
+					// Update the list
+					SimpleCursorAdapter listAdapter = (SimpleCursorAdapter) historyList.getAdapter();
+					listAdapter.getCursor().requery();
+				}
+			}
+			
+			break;
+		default:
+			super.onActivityResult(requestCode, resultCode, data);
+		}
+	}
 }

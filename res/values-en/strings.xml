@@ -30,8 +30,9 @@
 	<string name="beerinfo_locationLabel">Location</string>
 	<string name="beerinfo_styleLabel">Style</string>
 	<string name="beerinfo_notesLabel">Notes</string>
-	<string name="beerinfo_title">Edit info for </string>
-	<string name="beerinfo_save">Save info</string>
+	<string name="beerinfo_title">Edit info for</string>
+	<string name="beerinfo_saveInfo">Save info</string>
+	<string name="beerinfo_saveRating">Save rating</string>
 
 	<string name="viewstat_placeholder">This is where the stat name goes</string>
 	
@@ -99,7 +100,8 @@
 	<string name="import_title_after"> Beers</string>
 	
 	<string name="drink_another">Drink another </string>
-	<string name="history_delete">Delete this beer?</string>
+	<string name="history_delete">Delete</string>
+	<string name="history_delete_title">Delete this beer?</string>
 	<string name="history_delete_warn">This action cannot be undone.</string>
 	<string name="history_clear_search">Show all History</string>
 	

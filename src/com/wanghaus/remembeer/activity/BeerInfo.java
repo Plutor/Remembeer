@@ -4,11 +4,13 @@ import java.util.Map;
 
 import android.content.Intent;
 import android.os.Bundle;
+import android.util.Log;
 import android.view.View;
 import android.view.ViewGroup;
 import android.view.View.OnClickListener;
 import android.widget.Button;
 import android.widget.EditText;
+import android.widget.RatingBar;
 
 import com.wanghaus.remembeer.R;
 import com.wanghaus.remembeer.helper.BeerDbHelper;
@@ -17,6 +19,7 @@ import com.wanghaus.remembeer.model.Beer;
 public class BeerInfo extends BaseActivity {
 	private String beername;
 	private Beer beer;
+	private Map<String, String> drink;
 	
 	private BeerDbHelper dbs;
 	
@@ -33,12 +36,28 @@ public class BeerInfo extends BaseActivity {
 		beername = getIntent().getStringExtra("beerId");
 		
 		if (drinkId != -1) {
+            Log.i("BeerInfo", "Got drinkId = " + drinkId);
+
 			try {
-				Map<String, String> drink = dbs.getDrinkInfo(drinkId);
+				drink = dbs.getDrinkInfo(drinkId);
 				beerId = Integer.valueOf( drink.get("beer_id") );
 			} catch (Exception e) {
+				Log.e("BeerInfo", "Can't load drink " + drinkId, e);
 				beerId = -1;
 			}
+			
+			if (drink != null) {
+				// Show the rating section
+	    		View metadataView = findViewById(R.id.metadata);
+	    		metadataView.setVisibility( View.VISIBLE );
+	
+	    		// Init ratingbar
+				RatingBar ratingBar = (RatingBar) findViewById(R.id.rating);
+				if (ratingBar != null)
+					ratingBar.setRating( Float.valueOf(drink.get("rating")) );
+			}
+			
+            Log.i("BeerInfo", "Got beerId = " + beerId);
 		}
 		
 		if (beer != null) {
@@ -53,7 +72,7 @@ public class BeerInfo extends BaseActivity {
 		}
 
 		if (beername != null)
-			setTitle( getText(R.string.beerinfo_title) + beername );
+			setTitle( getText(R.string.beerinfo_title) + " " + beername );
 		
 		// Make sure it's full-width 
         getWindow().setLayout(ViewGroup.LayoutParams.FILL_PARENT, ViewGroup.LayoutParams.WRAP_CONTENT);
@@ -68,8 +87,7 @@ public class BeerInfo extends BaseActivity {
         }
         
         // Init save button
-        Button b = (Button) findViewById(R.id.beerinfo_save);
-        b.setOnClickListener( new OnClickListener() {
+        OnClickListener saveClickListener = new OnClickListener() {
 			public void onClick(View button) {
 				Intent resultData = new Intent();
 				
@@ -84,11 +102,21 @@ public class BeerInfo extends BaseActivity {
 				beer.setNotes( getValueFromView(R.id.beerinfo_notes) );
 				resultData.putExtra("beer", beer);
 				
+	    		if (drink != null) {
+					RatingBar ratingBar = (RatingBar) findViewById(R.id.rating);
+					resultData.putExtra("drinkId", Integer.valueOf(drink.get("_id")) );
+					resultData.putExtra("rating", ratingBar.getRating());
+	    		}
+				
         		setResult(RESULT_OK, resultData);
         		dbs.close();
         		finish();
 			}
-        });
+        };
+        Button b = (Button) findViewById(R.id.beerinfo_saveInfo);
+        b.setOnClickListener(saveClickListener);
+        b = (Button) findViewById(R.id.beerinfo_saveRating);
+        b.setOnClickListener(saveClickListener);
 	}
 	
 	private void setViewWithValue(int viewId, Beer beer, String key) {

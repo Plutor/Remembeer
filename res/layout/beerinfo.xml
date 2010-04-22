@@ -10,22 +10,52 @@
 		android:layout_height="fill_parent"
 		android:orientation="vertical">
 
+		<LinearLayout
+			android:layout_width="wrap_content"
+			android:layout_height="wrap_content"
+			android:id="@+id/metadata"
+			android:visibility="gone"
+			android:orientation="vertical"
+			android:paddingTop="4dp">
+
+			<TextView
+				android:text="@string/your_rating"
+				android:layout_width="wrap_content"
+				android:layout_height="wrap_content"
+				android:layout_marginLeft="6dip"
+				android:layout_marginRight="6dip" />
+			<RatingBar
+				android:id="@+id/rating"
+				android:layout_width="wrap_content"
+				android:layout_height="wrap_content"
+				android:layout_gravity="center"
+				android:numStars="5"
+				android:stepSize="1" />
+
+			<Button
+				android:id="@+id/beerinfo_saveRating"
+				android:layout_width="150dip"
+				android:layout_height="wrap_content"
+				android:text="@string/beerinfo_saveRating"
+				android:layout_gravity="center"
+				android:layout_marginTop="10dip"
+				android:layout_marginBottom="20dip" />
+		</LinearLayout>
+
 		<TextView
 			android:id="@+id/beerinfo_abvLabel"
 			android:layout_width="fill_parent"
 			android:layout_height="wrap_content"
 			android:text="@string/beerinfo_abvLabel"
 			android:layout_marginLeft="6dip"
-			android:layout_marginRight="6dip">
-		</TextView>
+			android:layout_marginRight="6dip" />
 		<EditText
 			android:id="@+id/beerinfo_abv"
 			android:layout_width="fill_parent"
 			android:layout_height="wrap_content"
 			android:numeric="decimal"
 			android:layout_marginLeft="6dip"
-			android:layout_marginRight="6dip">
-		</EditText>
+			android:layout_marginRight="6dip" />
 
 		<TextView
 			android:id="@+id/beerinfo_breweryLabel"
@@ -33,16 +63,14 @@
 			android:layout_height="wrap_content"
 			android:text="@string/beerinfo_breweryLabel"
 			android:layout_marginLeft="6dip"
-			android:layout_marginRight="6dip">
-		</TextView>
+			android:layout_marginRight="6dip" />
 		<EditText
 			android:id="@+id/beerinfo_brewery"
 			android:layout_width="fill_parent"
 			android:layout_height="wrap_content"
 			android:capitalize="words"
 			android:layout_marginLeft="6dip"
-			android:layout_marginRight="6dip">
-		</EditText>
+			android:layout_marginRight="6dip" />
 
 		<TextView
 			android:id="@+id/beerinfo_locationLabel"
@@ -50,8 +78,7 @@
 			android:layout_height="wrap_content"
 			android:text="@string/beerinfo_locationLabel"
 			android:layout_marginLeft="6dip"
-			android:layout_marginRight="6dip">
-		</TextView>
+			android:layout_marginRight="6dip" />
 		<AutoCompleteTextView
 			android:id="@+id/beerinfo_location"
 			android:layout_width="fill_parent"
@@ -59,8 +86,7 @@
 			android:autoText="true"
 			android:capitalize="words"
 			android:layout_marginLeft="6dip"
-			android:layout_marginRight="6dip">
-		</AutoCompleteTextView>
+			android:layout_marginRight="6dip" />
 
 		<TextView
 			android:id="@+id/beerinfo_styleLabel"
@@ -68,16 +94,14 @@
 			android:layout_height="wrap_content"
 			android:text="@string/beerinfo_styleLabel"
 			android:layout_marginLeft="6dip"
-			android:layout_marginRight="6dip">
-		</TextView>
+			android:layout_marginRight="6dip" />
 		<EditText
 			android:id="@+id/beerinfo_style"
 			android:layout_width="fill_parent"
 			android:layout_height="wrap_content"
 			android:capitalize="words"
 			android:layout_marginLeft="6dip"
-			android:layout_marginRight="6dip">
-		</EditText>
+			android:layout_marginRight="6dip" />
 
 		<TextView
 			android:id="@+id/beerinfo_notesLabel"
@@ -85,24 +109,22 @@
 			android:layout_height="wrap_content"
 			android:text="@string/beerinfo_notesLabel"
 			android:layout_marginLeft="6dip"
-			android:layout_marginRight="6dip">
-		</TextView>
+			android:layout_marginRight="6dip" />
 		<EditText
 			android:id="@+id/beerinfo_notes"
 			android:layout_width="fill_parent"
 			android:layout_height="wrap_content"
 			android:layout_marginLeft="6dip"
-			android:layout_marginRight="6dip">
-		</EditText>
+			android:layout_marginRight="6dip" />
 
-		<TextView
-			android:layout_width="fill_parent"
-			android:layout_height="20dip" />
 		<Button
-			android:id="@+id/beerinfo_save"
+			android:id="@+id/beerinfo_saveInfo"
 			android:layout_width="150dip"
 			android:layout_height="wrap_content"
-			android:text="@string/beerinfo_save"
+			android:text="@string/beerinfo_saveInfo"
+			android:layout_marginTop="10dip"
+			android:layout_marginBottom="10dip"
 			android:layout_gravity="center" />
+
 	</LinearLayout>
 </ScrollView>
