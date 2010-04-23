@@ -246,18 +246,26 @@ public class BeerDbHelper {
     }
 	
 	public int updateOrAddBeer(Beer beer) {
+		ContentValues newBeer = new ContentValues();
+		newBeer.put("name", beer.getName());
+		newBeer.put("brewery", beer.getBrewery());
+		newBeer.put("brewery_location", beer.getLocation());
+		newBeer.put("style", beer.getStyle());
+		if (beer.getABV() == null || beer.getABV().equals(""))
+			newBeer.put("abv", (Float)null);
+		else {
+			try {
+				newBeer.put("abv", Float.valueOf(beer.getABV()));
+			} catch (Exception e) { }
+		}
+		newBeer.put("notes", beer.getNotes());
+
 		if (beer.getId() != null) {
 			int beerId = Integer.valueOf(beer.getId());
 
 			// update
 			Log.i("addBeer", "Updating beer '" + beer.getName() + "'");
 			
-			ContentValues newBeer = new ContentValues();
-			newBeer.put("name", beer.getName());
-			newBeer.put("brewery", beer.getBrewery());
-			newBeer.put("brewery_location", beer.getLocation());
-			newBeer.put("style", beer.getStyle());
-			newBeer.put("notes", beer.getNotes());
 			db.update(DB_TABLE_BEERS, newBeer, "ROWID=?", new String[] { beer.getId() });
 
 			return beerId;
@@ -265,12 +273,6 @@ public class BeerDbHelper {
 			Log.i("addBeer", "Creating beer '" + beer.getName() + "'");
 			
 			// insert
-			ContentValues newBeer = new ContentValues();
-			newBeer.put("name", beer.getName());
-			newBeer.put("brewery", beer.getBrewery());
-			newBeer.put("brewery_location", beer.getLocation());
-			newBeer.put("style", beer.getStyle());
-			newBeer.put("notes", beer.getNotes());
 			int beerId = (int) db.insert(DB_TABLE_BEERS, null, newBeer);
 			
 			return beerId;
