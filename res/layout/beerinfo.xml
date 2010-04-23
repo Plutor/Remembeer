@@ -11,7 +11,7 @@
 		android:orientation="vertical">
 
 		<LinearLayout
-			android:layout_width="wrap_content"
+			android:layout_width="fill_parent"
 			android:layout_height="wrap_content"
 			android:id="@+id/metadata"
 			android:visibility="gone"
@@ -34,28 +34,13 @@
 
 			<Button
 				android:id="@+id/beerinfo_saveRating"
-				android:layout_width="150dip"
+				android:layout_width="150sp"
 				android:layout_height="wrap_content"
 				android:text="@string/beerinfo_saveRating"
 				android:layout_gravity="center"
 				android:layout_marginTop="10dip"
 				android:layout_marginBottom="20dip" />
 		</LinearLayout>
-
-		<TextView
-			android:id="@+id/beerinfo_abvLabel"
-			android:layout_width="fill_parent"
-			android:layout_height="wrap_content"
-			android:text="@string/beerinfo_abvLabel"
-			android:layout_marginLeft="6dip"
-			android:layout_marginRight="6dip" />
-		<EditText
-			android:id="@+id/beerinfo_abv"
-			android:layout_width="fill_parent"
-			android:layout_height="wrap_content"
-			android:numeric="decimal"
-			android:layout_marginLeft="6dip"
-			android:layout_marginRight="6dip" />
 
 		<TextView
 			android:id="@+id/beerinfo_breweryLabel"
@@ -104,6 +89,34 @@
 			android:layout_marginRight="6dip" />
 
 		<TextView
+			android:id="@+id/beerinfo_abvLabel"
+			android:layout_width="fill_parent"
+			android:layout_height="wrap_content"
+			android:text="@string/beerinfo_abvLabel"
+			android:layout_marginLeft="6dip"
+			android:layout_marginRight="6dip" />
+		<LinearLayout
+			android:layout_width="wrap_content"
+			android:layout_height="wrap_content"
+			android:orientation="horizontal"
+			android:layout_marginLeft="6dip"
+			android:layout_marginRight="6dip">
+			<EditText
+				android:id="@+id/beerinfo_abv"
+				android:layout_width="70sp"
+				android:layout_height="wrap_content"
+				android:layout_gravity="right"
+				android:numeric="decimal" />
+			<TextView
+				android:layout_width="wrap_content"
+				android:layout_height="fill_parent"
+				android:text="%"
+				android:textSize="20sp"
+				android:gravity="center_vertical"
+				android:layout_marginLeft="6dip" />
+		</LinearLayout>
+
+		<TextView
 			android:id="@+id/beerinfo_notesLabel"
 			android:layout_width="fill_parent"
 			android:layout_height="wrap_content"
@@ -115,16 +128,17 @@
 			android:layout_width="fill_parent"
 			android:layout_height="wrap_content"
 			android:layout_marginLeft="6dip"
-			android:layout_marginRight="6dip" />
+			android:layout_marginRight="6dip"
+			android:minLines="2"
+			android:gravity="top" />
 
 		<Button
 			android:id="@+id/beerinfo_saveInfo"
-			android:layout_width="150dip"
+			android:layout_width="150sp"
 			android:layout_height="wrap_content"
 			android:text="@string/beerinfo_saveInfo"
 			android:layout_marginTop="10dip"
 			android:layout_marginBottom="10dip"
 			android:layout_gravity="center" />
-
 	</LinearLayout>
 </ScrollView>
