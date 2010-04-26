@@ -10,37 +10,53 @@
 		android:layout_height="fill_parent"
 		android:orientation="vertical">
 
-		<LinearLayout
-			android:layout_width="fill_parent"
+		<FrameLayout
+			android:layout_width="wrap_content"
 			android:layout_height="wrap_content"
-			android:id="@+id/metadata"
-			android:visibility="gone"
-			android:orientation="vertical"
-			android:paddingTop="4dp">
+			android:layout_marginLeft="5dip"
+			android:layout_marginRight="5dip"
+			android:background="#333">
 
-			<TextView
-				android:text="@string/your_rating"
-				android:layout_width="wrap_content"
+			<LinearLayout
+				android:layout_width="fill_parent"
 				android:layout_height="wrap_content"
-				android:layout_marginLeft="6dip"
-				android:layout_marginRight="6dip" />
-			<RatingBar
-				android:id="@+id/rating"
-				android:layout_width="wrap_content"
-				android:layout_height="wrap_content"
-				android:layout_gravity="center"
-				android:numStars="5"
-				android:stepSize="1" />
+				android:id="@+id/metadata"
+				android:visibility="gone"
+				android:orientation="vertical"
+				android:paddingTop="4dp">
+				<TextView
+					android:id="@+id/drank_when"
+					android:layout_width="fill_parent"
+					android:layout_height="wrap_content"
+					android:gravity="center_horizontal"
+					android:layout_marginLeft="6dip"
+					android:layout_marginRight="6dip" />
 
-			<Button
-				android:id="@+id/beerinfo_saveRating"
-				android:layout_width="150sp"
-				android:layout_height="wrap_content"
-				android:text="@string/beerinfo_saveRating"
-				android:layout_gravity="center"
-				android:layout_marginTop="10dip"
-				android:layout_marginBottom="20dip" />
-		</LinearLayout>
+				<TextView
+					android:text="@string/your_rating"
+					android:layout_width="wrap_content"
+					android:layout_height="wrap_content"
+					android:layout_marginLeft="6dip"
+					android:layout_marginRight="6dip" />
+				<RatingBar
+					android:id="@+id/rating"
+					android:layout_width="wrap_content"
+					android:layout_height="wrap_content"
+					android:layout_gravity="center"
+					android:numStars="5"
+					android:stepSize="1" />
+				<Button
+					android:id="@+id/beerinfo_saveRating"
+					android:layout_width="150sp"
+					android:layout_height="wrap_content"
+					android:text="@string/beerinfo_saveRating"
+					android:layout_gravity="center"
+					android:layout_marginTop="10dip"
+					android:layout_marginBottom="5dip" />
+
+			</LinearLayout>
+
+		</FrameLayout>
 
 		<TextView
 			android:id="@+id/beerinfo_breweryLabel"

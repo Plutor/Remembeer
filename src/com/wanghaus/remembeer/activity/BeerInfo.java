@@ -11,6 +11,7 @@ import android.view.View.OnClickListener;
 import android.widget.Button;
 import android.widget.EditText;
 import android.widget.RatingBar;
+import android.widget.TextView;
 
 import com.wanghaus.remembeer.R;
 import com.wanghaus.remembeer.helper.BeerDbHelper;
@@ -74,6 +75,11 @@ public class BeerInfo extends BaseActivity {
 		if (beername != null)
 			setTitle( getText(R.string.beerinfo_title) + " " + beername );
 		
+		if (drink != null) {
+			TextView drankWhen = (TextView) findViewById(R.id.drank_when);
+	        drankWhen.setText("@ " + drink.get("stamp"));
+		}
+
 		// Make sure it's full-width 
         getWindow().setLayout(ViewGroup.LayoutParams.FILL_PARENT, ViewGroup.LayoutParams.WRAP_CONTENT);
         
