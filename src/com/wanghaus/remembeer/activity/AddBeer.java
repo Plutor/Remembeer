@@ -17,9 +17,11 @@ import android.os.Bundle;
 import android.os.Handler;
 import android.preference.PreferenceManager;
 import android.util.Log;
+import android.view.KeyEvent;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.view.View.OnKeyListener;
 import android.widget.AdapterView;
 import android.widget.ArrayAdapter;
 import android.widget.AutoCompleteTextView;
@@ -29,6 +31,7 @@ import android.widget.DatePicker;
 import android.widget.Spinner;
 import android.widget.TextView;
 import android.widget.TimePicker;
+import android.widget.AdapterView.OnItemClickListener;
 import android.widget.AdapterView.OnItemSelectedListener;
 
 import com.wanghaus.remembeer.R;
@@ -50,6 +53,7 @@ public class AddBeer extends BaseActivity {
 	private Handler handler;
 	
 	private Beer beer = null;
+	private String beernameWhenLookupScheduled = null;
 	
     /** Called when the activity is first created. */
     @Override
@@ -111,67 +115,37 @@ public class AddBeer extends BaseActivity {
         	// Do nothing
         }
 
-        // TODO - Only do this while we're active
-        handler.postDelayed(beerInfoLookupRunnable, 500);
+        // When something is typed, schedule a lookup for 200ms later
+        beernameView.setOnKeyListener( new OnKeyListener() {
+			public boolean onKey(View v, int keycode, KeyEvent event) {
+				if (event.getAction() == KeyEvent.ACTION_DOWN)
+					return false;
+				
+				AutoCompleteTextView beernameView = (AutoCompleteTextView) findViewById(R.id.beername);
+		        String currentBeername = beernameView.getText().toString();
+
+		        if ( currentBeername != null && !currentBeername.equals(beernameWhenLookupScheduled) ) {
+			        handler.removeCallbacks(beerInfoLookupRunnable);
+			        beernameWhenLookupScheduled = currentBeername;
+		            handler.postDelayed(beerInfoLookupRunnable, 200);
+		        }
+		        
+	            return true;
+			}
+        });
+        
+        // When an autocomplete item is chosen, search right away
+        beernameView.setOnItemClickListener( new OnItemClickListener() {
+			public void onItemClick(AdapterView<?> parent, View v, int position, long id) {
+		        if (v instanceof TextView) {
+		        	TextView tv = (TextView) v;
+		        	
+			        String selectedBeername = tv.getText().toString();
+			        performSearch(selectedBeername);
+		        }
+			}
+        });
     }
-
-    private Runnable beerInfoLookupRunnable = new Runnable() {
-    	private String lastBeername = null;
-    	private String lastLookupBeername = null;
-    	
-		public void run() {
-	        AutoCompleteTextView beernameView = (AutoCompleteTextView) findViewById(R.id.beername);
-	        String currentBeername = beernameView.getText().toString();
-	        
-	        if (currentBeername != null && currentBeername.length() > 0 &&
-	        	lastBeername != null && lastBeername.equals(currentBeername) &&
-	        	!currentBeername.equals(lastLookupBeername)) {
-	    			Log.i("beerInfoLookupRunnable", "looking up " + currentBeername);
-	    			lastLookupBeername = currentBeername;
-	    			
-	        		// Start looking it up
-	        		View beerInfoNoneView = findViewById(R.id.beerInfoNone);
-	        		View beerInfoLoadingView = findViewById(R.id.beerInfoLoading);
-	        		View beerInfoPreviewView = findViewById(R.id.beerInfoPreview);
-	        		
-	        		beerInfoNoneView.setVisibility(View.INVISIBLE);
-	        		beerInfoPreviewView.setVisibility(View.INVISIBLE);
-	        		beerInfoLoadingView.setVisibility(View.VISIBLE);
-	        		
-	        		// Actual lookup
-	        		beer = dbs.getBeer(currentBeername);
-	        		
-	        		// Show the returned values
-	        		beerInfoNoneView.setVisibility(View.INVISIBLE);
-	        		beerInfoPreviewView.setVisibility(View.VISIBLE);
-	        		beerInfoLoadingView.setVisibility(View.INVISIBLE);
-	        		
-	        		TextView previewBrewery = (TextView) findViewById(R.id.previewBrewery);
-	        		String previewBreweryVal = getText(R.string.beerInfoBrewery).toString();
-	        		if (beer.getBrewery() != null && !beer.getBrewery().equals("")) {
-	        			previewBreweryVal += beer.getBrewery();
-
-	        			if (beer.getLocation() != null && !beer.getLocation().equals(""))
-		        			previewBreweryVal += ", " + beer.getLocation();
-	        		} else
-	        			previewBreweryVal += getText(R.string.unknownBeerInfo).toString();
-	        		previewBrewery.setText(previewBreweryVal);
-	        		
-	        		TextView previewStyle = (TextView) findViewById(R.id.previewStyle);
-	        		String previewStyleVal = getText(R.string.beerInfoStyle).toString(); 
-	        		if (beer.getStyle() != null && !beer.getStyle().equals(""))
-	        			previewStyleVal += beer.getStyle();
-	        		else
-	        			previewStyleVal += getText(R.string.unknownBeerInfo).toString();
-	        		previewStyle.setText(previewStyleVal);
-	        }
-	        
-	        lastBeername = currentBeername;
-	        
-	        // reschedule for a second in the future
-	        handler.postDelayed(beerInfoLookupRunnable, 1000);	        
-		}
-    };
     
     private class BeerNameAutocompleteAdapter extends CursorAdapter {
             public BeerNameAutocompleteAdapter(Context context, Cursor c) {
@@ -207,6 +181,59 @@ public class AddBeer extends BaseActivity {
                 return dbs.getBeerNames( constraint.toString() );
             }
     } 
+
+
+    private Runnable beerInfoLookupRunnable = new Runnable() {
+		public void run() {
+			AutoCompleteTextView beernameView = (AutoCompleteTextView) findViewById(R.id.beername);
+	        String currentBeername = beernameView.getText().toString();
+	        
+	        if (currentBeername != null && currentBeername.length() > 0 &&
+        		beernameWhenLookupScheduled != null && beernameWhenLookupScheduled.equals(currentBeername)) {
+	    			performSearch(currentBeername);
+	        }
+		}
+    };
+    
+    private void performSearch(String searchBeerName) {
+		Log.i("beerInfoLookup", "looking up " + searchBeerName);
+
+		// Start looking it up
+		View beerInfoNoneView = findViewById(R.id.beerInfoNone);
+		View beerInfoLoadingView = findViewById(R.id.beerInfoLoading);
+		View beerInfoPreviewView = findViewById(R.id.beerInfoPreview);
+		
+		beerInfoNoneView.setVisibility(View.INVISIBLE);
+		beerInfoPreviewView.setVisibility(View.INVISIBLE);
+		beerInfoLoadingView.setVisibility(View.VISIBLE);
+		
+		// Actual lookup
+		beer = dbs.getBeer(searchBeerName);
+		
+		// Show the returned values
+		beerInfoNoneView.setVisibility(View.INVISIBLE);
+		beerInfoPreviewView.setVisibility(View.VISIBLE);
+		beerInfoLoadingView.setVisibility(View.INVISIBLE);
+		
+		TextView previewBrewery = (TextView) findViewById(R.id.previewBrewery);
+		String previewBreweryVal = getText(R.string.beerInfoBrewery).toString();
+		if (beer.getBrewery() != null && !beer.getBrewery().equals("")) {
+			previewBreweryVal += beer.getBrewery();
+
+			if (beer.getLocation() != null && !beer.getLocation().equals(""))
+    			previewBreweryVal += ", " + beer.getLocation();
+		} else
+			previewBreweryVal += getText(R.string.unknownBeerInfo).toString();
+		previewBrewery.setText(previewBreweryVal);
+		
+		TextView previewStyle = (TextView) findViewById(R.id.previewStyle);
+		String previewStyleVal = getText(R.string.beerInfoStyle).toString(); 
+		if (beer.getStyle() != null && !beer.getStyle().equals(""))
+			previewStyleVal += beer.getStyle();
+		else
+			previewStyleVal += getText(R.string.unknownBeerInfo).toString();
+		previewStyle.setText(previewStyleVal);
+    }
 
     private void initContainerSpinner() {
         // Containers dropdown
