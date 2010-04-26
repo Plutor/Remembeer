@@ -118,7 +118,7 @@ public class AddBeer extends BaseActivity {
         // When something is typed, schedule a lookup for 200ms later
         beernameView.setOnKeyListener( new OnKeyListener() {
 			public boolean onKey(View v, int keycode, KeyEvent event) {
-				if (event.getAction() == KeyEvent.ACTION_DOWN)
+				if (event.getAction() == KeyEvent.ACTION_DOWN || event.isSystem())
 					return false;
 				
 				AutoCompleteTextView beernameView = (AutoCompleteTextView) findViewById(R.id.beername);
