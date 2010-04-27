@@ -45,6 +45,23 @@
 					android:layout_gravity="center"
 					android:numStars="5"
 					android:stepSize="1" />
+
+				<TextView
+					android:id="@+id/addbeer_notesLabel"
+					android:layout_width="fill_parent"
+					android:layout_height="wrap_content"
+					android:text="@string/addbeer_notesLabel"
+					android:layout_marginLeft="6dip"
+					android:layout_marginRight="6dip" />
+				<EditText
+					android:id="@+id/addbeer_notes"
+					android:layout_width="fill_parent"
+					android:layout_height="wrap_content"
+					android:layout_marginLeft="6dip"
+					android:layout_marginRight="6dip"
+					android:minLines="2"
+					android:gravity="top" />
+					
 				<Button
 					android:id="@+id/beerinfo_saveRating"
 					android:layout_width="150sp"

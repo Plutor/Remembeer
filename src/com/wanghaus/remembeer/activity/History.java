@@ -300,16 +300,20 @@ public class History extends BaseActivity {
 				Beer returnBeer = (Beer) data.getSerializableExtra("beer");
 				float rating = data.getFloatExtra("rating", -1);
 				int drinkId = data.getIntExtra("drinkId", -1);
+				String notes = data.getStringExtra("notes");
 
 				if (returnBeer != null) {
 					// Update it
 					dbs.updateOrAddBeer(returnBeer);
 				}
 				
-				if (rating > 0 && drinkId > 0) {
+				if (drinkId > 0) {
 					// Save it
-					dbs.setDrinkRating(drinkId, rating);
-					
+					if (rating > 0)
+						dbs.setDrinkRating(drinkId, rating);
+					if (notes != null)
+						dbs.setDrinkNotes(drinkId, notes);
+
 					// Update the list
 					SimpleCursorAdapter listAdapter = (SimpleCursorAdapter) historyList.getAdapter();
 					listAdapter.getCursor().requery();

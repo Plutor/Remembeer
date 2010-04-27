@@ -64,15 +64,25 @@
 			android:prompt="@string/drink_when_prompt" />
 
 		<TextView
+			android:id="@+id/addbeer_notesLabel"
 			android:layout_width="fill_parent"
-			android:layout_height="20dip" />
+			android:layout_height="wrap_content"
+			android:text="@string/addbeer_notesLabel" />
+		<EditText
+			android:id="@+id/addbeer_notes"
+			android:layout_width="fill_parent"
+			android:layout_height="wrap_content"
+			android:minLines="2"
+			android:gravity="top" />
 
 		<Button
 			android:id="@+id/save"
 			android:layout_width="150dip"
 			android:layout_height="wrap_content"
 			android:text="@string/save"
-			android:layout_gravity="center" />
+			android:layout_gravity="center"
+			android:layout_marginTop="20dip"
+			android:layout_marginBottom="10dip" />
 	</LinearLayout>
 
 </ScrollView>

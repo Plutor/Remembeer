@@ -372,7 +372,10 @@ public class AddBeer extends BaseActivity {
             	break;
             }
 
-            beerID = (int)dbs.addDrink(beer, container, specificTime.getTime());
+            TextView notesView = (TextView) findViewById(R.id.addbeer_notes);
+            String notes = notesView.getText().toString();
+            
+            beerID = (int)dbs.addDrink(beer, container, specificTime.getTime(), notes);
             
             if ((int)drinkWhenSpinner.getSelectedItemPosition() == 0) {
                 SharedPreferences settings = PreferenceManager.getDefaultSharedPreferences(this);

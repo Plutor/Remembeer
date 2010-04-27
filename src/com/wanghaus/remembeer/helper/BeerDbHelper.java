@@ -204,7 +204,7 @@ public class BeerDbHelper {
     				Beer beer = getBeer(elements[0]);
     				long drinkid;
     				if (beer != null) {
-    					drinkid = addDrink(beer, elements[1], elements[2]);
+    					drinkid = addDrink(beer, elements[1], elements[2], null);
         				setDrinkRating(drinkid, Integer.valueOf(elements[3]));
         				count++;
     				}
@@ -223,7 +223,7 @@ public class BeerDbHelper {
 	/*
      * Write methods
      */
-    public long addDrink(Beer beer, String container, Date stamp) {
+    public long addDrink(Beer beer, String container, Date stamp, String notes) {
         // Get the sqlite format for the stamp
         Cursor stampCursor = db.rawQuery( "SELECT DATETIME(?, 'unixepoch', 'localtime')",
         		new String[] { String.valueOf(stamp.getTime()/1000) } );
@@ -231,9 +231,9 @@ public class BeerDbHelper {
         String stampStr = stampCursor.getString(0);
 		stampCursor.close();		
 		
-		return addDrink(beer, container, stampStr);
+		return addDrink(beer, container, stampStr, notes);
     }
-    public long addDrink(Beer beer, String container, String stamp) {
+    public long addDrink(Beer beer, String container, String stamp, String notes) {
     	// Update or insert the beer
     	int beerId = updateOrAddBeer(beer);
 
@@ -241,6 +241,7 @@ public class BeerDbHelper {
         newRow.put("beer_id", beerId);
         newRow.put("container", container);
         newRow.put("stamp", stamp);
+        newRow.put("notes", notes);
         
 		return db.insert(DB_TABLE_DRINKS, null, newRow);
     }
@@ -282,6 +283,13 @@ public class BeerDbHelper {
 	public void setDrinkRating(long id, float rating) {
 		ContentValues newRow = new ContentValues();
         newRow.put("rating", rating);
+
+        db.update(DB_TABLE_DRINKS, newRow, "ROWID = ?", new String[] { String.valueOf(id) });
+	}
+
+	public void setDrinkNotes(long id, String notes) {
+		ContentValues newRow = new ContentValues();
+        newRow.put("notes", notes);
 
         db.update(DB_TABLE_DRINKS, newRow, "ROWID = ?", new String[] { String.valueOf(id) });
 	}

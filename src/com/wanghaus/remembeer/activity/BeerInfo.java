@@ -56,6 +56,11 @@ public class BeerInfo extends BaseActivity {
 				RatingBar ratingBar = (RatingBar) findViewById(R.id.rating);
 				if (ratingBar != null)
 					ratingBar.setRating( Float.valueOf(drink.get("rating")) );
+				
+				// Init notes
+	            TextView notesView = (TextView) findViewById(R.id.addbeer_notes);
+	            if (notesView != null)
+	            	notesView.setText( drink.get("notes") );
 			}
 			
             Log.i("BeerInfo", "Got beerId = " + beerId);
@@ -109,9 +114,13 @@ public class BeerInfo extends BaseActivity {
 				resultData.putExtra("beer", beer);
 				
 	    		if (drink != null) {
-					RatingBar ratingBar = (RatingBar) findViewById(R.id.rating);
 					resultData.putExtra("drinkId", Integer.valueOf(drink.get("_id")) );
+
+					RatingBar ratingBar = (RatingBar) findViewById(R.id.rating);
 					resultData.putExtra("rating", ratingBar.getRating());
+
+					TextView notesView = (TextView) findViewById(R.id.addbeer_notes);
+					resultData.putExtra("notes", notesView.getText().toString());
 	    		}
 				
         		setResult(RESULT_OK, resultData);

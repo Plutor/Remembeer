@@ -7,6 +7,8 @@
 	<string name="container_prompt">Choose the container</string>
 	<string name="drink_when">Drink when:</string>
 	<string name="drink_when_prompt">Choose a time</string>
+	<string name="addbeer_notesLabel">Notes</string>
+
 	<string name="save">Save beer!</string>
 	<string name="done">Done</string>
 	<string name="cancel">Cancel</string>
@@ -29,7 +31,7 @@
 	<string name="beerinfo_breweryLabel">Brewery</string>
 	<string name="beerinfo_locationLabel">Location</string>
 	<string name="beerinfo_styleLabel">Style</string>
-	<string name="beerinfo_notesLabel">Notes</string>
+	<string name="beerinfo_notesLabel">About this beer</string>
 	<string name="beerinfo_title">Edit info for</string>
 	<string name="beerinfo_saveInfo">Save info</string>
 	<string name="beerinfo_saveRating">Save rating</string>
