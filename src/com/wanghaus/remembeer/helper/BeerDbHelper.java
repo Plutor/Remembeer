@@ -435,7 +435,7 @@ public class BeerDbHelper {
     }
     
     public long getBeersCount() {
-    	Cursor beercountQuery = db.query(DB_TABLE_DRINKS, new String[] {"DISTINCT beername"},
+    	Cursor beercountQuery = db.query(DB_TABLE_DRINKS, new String[] {"DISTINCT beer_id"},
     			null, null, null, null, null);
     	long rv = beercountQuery.getCount();
     	beercountQuery.close();
