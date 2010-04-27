@@ -63,8 +63,6 @@ public class AddBeerDone extends BaseActivity {
         			popupParts.set(2, getText(R.string.addbeerdone_suffix_thisYear_large));
 	    		break;
         	}
-
-        	dbs.close();
         	
         	if (count == 1) {
         		popupParts.set(0, getText(R.string.addbeerdone_prefix_small));
@@ -79,17 +77,19 @@ public class AddBeerDone extends BaseActivity {
         		 // TODO - Hm
             	Log.e("AddBeerDone", "The count is zero for some reason");
         	}
+        	
+        	TextView before = (TextView) findViewById(R.id.addbeerdone_before);
+            before.setText(popupParts.get(0));
+            TextView number = (TextView) findViewById(R.id.addbeerdone_number);
+            number.setText(popupParts.get(1));
+            TextView after = (TextView) findViewById(R.id.addbeerdone_after);
+            after.setText(popupParts.get(2));
+            
+            dbs.close();
         } catch (Exception e) {
         	Log.e("AddBeerDone", "Threw exception trying to calculate a stat", e);
         }
-        
-        TextView before = (TextView) findViewById(R.id.addbeerdone_before);
-        before.setText(popupParts.get(0));
-        TextView number = (TextView) findViewById(R.id.addbeerdone_number);
-        number.setText(popupParts.get(1));
-        TextView after = (TextView) findViewById(R.id.addbeerdone_after);
-        after.setText(popupParts.get(2));
-        
+
         // Close button
         Button okButton = (Button) findViewById(R.id.okbutton);
         
