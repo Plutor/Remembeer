@@ -1,6 +1,5 @@
 package com.wanghaus.remembeer.activity;
 
-import android.app.Activity;
 import android.app.AlertDialog;
 import android.app.SearchManager;
 import android.content.Context;
@@ -20,11 +19,14 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.view.ContextMenu.ContextMenuInfo;
 import android.view.MenuItem.OnMenuItemClickListener;
+import android.widget.AdapterView;
 import android.widget.ListAdapter;
 import android.widget.ListView;
 import android.widget.RatingBar;
 import android.widget.SimpleCursorAdapter;
 import android.widget.TextView;
+import android.widget.AdapterView.AdapterContextMenuInfo;
+import android.widget.AdapterView.OnItemClickListener;
 
 import com.wanghaus.remembeer.R;
 import com.wanghaus.remembeer.helper.BeerDbHelper;
@@ -42,8 +44,7 @@ public class History extends BaseActivity {
 	private ListAdapter historyAdapter;
 	private boolean isSearch;
 	
-	private View.OnClickListener clickListener;
-	private View.OnCreateContextMenuListener contextMenuListener;
+	private OnItemClickListener clickListener;
 	
     @Override
     public void onCreate(Bundle savedInstanceState) {
@@ -61,66 +62,30 @@ public class History extends BaseActivity {
 			initBeerList();
 		}
 		
-        clickListener = new View.OnClickListener() {
-        	public void onClick(View itemView) {
-        		Integer position = (Integer)itemView.getTag();
-                int drinkId = Integer.valueOf(getDrinkValue(position, "_id"));
-                Log.i("History", "Passing drinkId = " + drinkId + " to BeerInfo");
-                
-		    	getBeerInfo(drinkId);
-        	}
+        clickListener = new ListView.OnItemClickListener() {
+			public void onItemClick(AdapterView<?> parent, View itemView, int position, long id) {
+				Log.e("onItemClickListener", "onItemClick position = " + position);
+				
+        		if (position == 0) {
+        			if (isSearch) {
+        				finish();
+        			} else {
+						Intent nextIntent = new Intent(getBaseContext(),
+								AddBeer.class);
+						startActivity(nextIntent);
+        			}
+        		} else {
+	                int drinkId = Integer.valueOf(getDrinkValue(position, "_id"));
+	                Log.i("History", "Passing drinkId = " + drinkId + " to BeerInfo");
+	                
+			    	getBeerInfo(drinkId);
+        		}
+			}
         };
-         
+        historyList.setOnItemClickListener(clickListener);
+
         /* Add Context menu listener to the ListView. */
-        final Activity topThis = this;
-        contextMenuListener = new View.OnCreateContextMenuListener() {
-             public void onCreateContextMenu(ContextMenu menu, View v, ContextMenuInfo menuInfo) {
-                 Integer position = (Integer)v.getTag();
-                 String beername = getDrinkValue(position, "beername");
-                 final int drinkId = Integer.valueOf(getDrinkValue(position, "_id"));
-                 menu.setHeaderTitle(beername);
-
-                 if (beername != null) {
-                	 // Edit
-                	 MenuItem item = menu.add(0, CTXMNU_EDIT, 0, getString(R.string.history_editbeer));
-                	 item.setOnMenuItemClickListener( new OnMenuItemClickListener() {
-						@Override
-						public boolean onMenuItemClick(MenuItem arg0) {
-							getBeerInfo(drinkId);
-							return true;
-						}
-                	 } );
-                	 
-                     // Drink another
-                	 item = menu.add(0, CTXMNU_DRINK_ANOTHER, 0, getString(R.string.history_drink_another));
-          			 Intent nextIntent = new Intent(getBaseContext(), AddBeer.class);
-          			 nextIntent.putExtra("beername", beername);
-          			 nextIntent.putExtra("container", getDrinkValue(position, "container"));
-           			 item.setIntent(nextIntent);
-                 }
-                 
-                 // Delete
-            	 MenuItem item = menu.add(0, CTXMNU_DELETE, 0, getString(R.string.history_delete));
-            	 item.setOnMenuItemClickListener( new MenuItem.OnMenuItemClickListener() {
-					public boolean onMenuItemClick(MenuItem item) {
-						new AlertDialog.Builder(topThis).setTitle(getString(R.string.history_delete_title))
-						.setMessage(getString(R.string.history_delete_warn))
-						.setPositiveButton((CharSequence) getString(R.string.history_delete),
-								new DialogInterface.OnClickListener() {
-									public void onClick(DialogInterface arg0, int arg1) {
-										dbs.deleteDrink(drinkId);
-										// Update the view
-										SimpleCursorAdapter listAdapter = (SimpleCursorAdapter) historyList
-												.getAdapter();
-										listAdapter.getCursor().requery();
-									}
-								}).setNegativeButton(getString(R.string.cancel), null).show();
-
-						return true; /* true means: "we handled the event". */
-					}
-            	 });
-             }
-        };
+        registerForContextMenu(historyList);
     }
     
     private void initBeerList() {
@@ -180,26 +145,10 @@ public class History extends BaseActivity {
 				// Show the add button
 				LayoutInflater inflater = LayoutInflater.from(context);
 				row = inflater.inflate(R.layout.history_add, null);
-
-				View addBeerButton = row.findViewById(R.id.history_addbeer);
-				addBeerButton.setOnClickListener(new View.OnClickListener() {
-					public void onClick(View arg0) {
-						Intent nextIntent = new Intent(getBaseContext(),
-								AddBeer.class);
-						startActivity(nextIntent);
-					}
-				});
 			} else if (position == 0 && isSearch) {
-				// Show the add button
+				// Show the clear button
 				LayoutInflater inflater = LayoutInflater.from(context);
 				row = inflater.inflate(R.layout.history_clear, null);
-
-				View clearButton = row.findViewById(R.id.history_clear);
-				clearButton.setOnClickListener(new View.OnClickListener() {
-					public void onClick(View arg0) {
-						finish();
-					}
-				});
 			} else {
 				// Show a real beer row
 				position--;
@@ -225,9 +174,6 @@ public class History extends BaseActivity {
 					index = cursor.getColumnIndex("rating");
 					smallRatingBar.setRating(cursor.getFloat(index));
 				}
-				
-				row.setOnClickListener(clickListener);
-				row.setOnCreateContextMenuListener(contextMenuListener);
 			}
 
 			return row;
@@ -341,4 +287,67 @@ public class History extends BaseActivity {
 			super.onActivityResult(requestCode, resultCode, data);
 		}
 	}
+	
+	public void onCreateContextMenu(ContextMenu menu, View v, ContextMenuInfo menuInfo) {
+		int position = 0;
+		if (menuInfo instanceof AdapterContextMenuInfo) {
+			AdapterContextMenuInfo acmi = (AdapterContextMenuInfo)menuInfo;
+			position = acmi.position;
+		}
+		
+		if (position == 0)
+			return;
+
+		final Context thisActivity = this;
+		String beername = getDrinkValue(position, "beername");
+		final int drinkId = Integer.valueOf(getDrinkValue(position, "_id"));
+		menu.setHeaderTitle(beername);
+
+		if (beername != null) {
+			// Edit
+			MenuItem item = menu.add(0, CTXMNU_EDIT, 0, getString(R.string.history_editbeer));
+			item.setOnMenuItemClickListener(new OnMenuItemClickListener() {
+						public boolean onMenuItemClick(MenuItem arg0) {
+							getBeerInfo(drinkId);
+							return true;
+						}
+					});
+
+			// Drink another
+			item = menu.add(0, CTXMNU_DRINK_ANOTHER, 0, getString(R.string.history_drink_another));
+			Intent nextIntent = new Intent(getBaseContext(), AddBeer.class);
+			nextIntent.putExtra("beername", beername);
+			nextIntent.putExtra("container", getDrinkValue(position, "container"));
+			item.setIntent(nextIntent);
+		}
+
+		// Delete
+		MenuItem item = menu.add(0, CTXMNU_DELETE, 0, getString(R.string.history_delete));
+		item.setOnMenuItemClickListener(new MenuItem.OnMenuItemClickListener() {
+			public boolean onMenuItemClick(MenuItem item) {
+				new AlertDialog.Builder(thisActivity)
+						.setTitle(getString(R.string.history_delete_title))
+						.setMessage(getString(R.string.history_delete_warn))
+						.setPositiveButton(
+								(CharSequence) getString(R.string.history_delete),
+								new DialogInterface.OnClickListener() {
+									public void onClick(
+											DialogInterface arg0,
+											int arg1) {
+										dbs
+												.deleteDrink(drinkId);
+										// Update the view
+										SimpleCursorAdapter listAdapter = (SimpleCursorAdapter) historyList
+												.getAdapter();
+										listAdapter.getCursor()
+												.requery();
+									}
+								}).setNegativeButton(
+								getString(R.string.cancel),
+								null).show();
+				return true;
+			}
+		});
+	}
+
 }
