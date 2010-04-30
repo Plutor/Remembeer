@@ -121,7 +121,7 @@ public class AddBeer extends BaseActivity {
 				if (event.getAction() == KeyEvent.ACTION_DOWN || event.isSystem())
 					return false;
 				
-				AutoCompleteTextView beernameView = (AutoCompleteTextView) findViewById(R.id.beername);
+				TextView beernameView = (TextView) findViewById(R.id.beername);
 		        String currentBeername = beernameView.getText().toString();
 
 		        if ( currentBeername != null && !currentBeername.equals(beernameWhenLookupScheduled) ) {
@@ -145,6 +145,9 @@ public class AddBeer extends BaseActivity {
 		        }
 			}
         });
+        
+        // Lookup at init, in case we're "drinking another"
+        performSearch();
     }
     
     private class BeerNameAutocompleteAdapter extends CursorAdapter {
@@ -182,10 +185,9 @@ public class AddBeer extends BaseActivity {
             }
     } 
 
-
     private Runnable beerInfoLookupRunnable = new Runnable() {
 		public void run() {
-			AutoCompleteTextView beernameView = (AutoCompleteTextView) findViewById(R.id.beername);
+			TextView beernameView = (TextView) findViewById(R.id.beername);
 	        String currentBeername = beernameView.getText().toString();
 	        
 	        if (currentBeername != null && currentBeername.length() > 0 &&
@@ -195,44 +197,55 @@ public class AddBeer extends BaseActivity {
 		}
     };
     
+    private void performSearch() {
+		TextView beernameView = (TextView) findViewById(R.id.beername);
+        String beername = beernameView.getText().toString();
+		performSearch(beername);
+    }
     private void performSearch(String searchBeerName) {
-		Log.i("beerInfoLookup", "looking up " + searchBeerName);
-
-		// Start looking it up
 		View beerInfoNoneView = findViewById(R.id.beerInfoNone);
 		View beerInfoLoadingView = findViewById(R.id.beerInfoLoading);
 		View beerInfoPreviewView = findViewById(R.id.beerInfoPreview);
 		
-		beerInfoNoneView.setVisibility(View.INVISIBLE);
-		beerInfoPreviewView.setVisibility(View.INVISIBLE);
-		beerInfoLoadingView.setVisibility(View.VISIBLE);
-		
-		// Actual lookup
-		beer = dbs.getBeer(searchBeerName);
-		
-		// Show the returned values
-		beerInfoNoneView.setVisibility(View.INVISIBLE);
-		beerInfoPreviewView.setVisibility(View.VISIBLE);
-		beerInfoLoadingView.setVisibility(View.INVISIBLE);
-		
-		TextView previewBrewery = (TextView) findViewById(R.id.previewBrewery);
-		String previewBreweryVal = getText(R.string.beerInfoBrewery).toString();
-		if (beer.getBrewery() != null && !beer.getBrewery().equals("")) {
-			previewBreweryVal += beer.getBrewery();
-
-			if (beer.getLocation() != null && !beer.getLocation().equals(""))
-    			previewBreweryVal += ", " + beer.getLocation();
-		} else
-			previewBreweryVal += getText(R.string.unknownBeerInfo).toString();
-		previewBrewery.setText(previewBreweryVal);
-		
-		TextView previewStyle = (TextView) findViewById(R.id.previewStyle);
-		String previewStyleVal = getText(R.string.beerInfoStyle).toString(); 
-		if (beer.getStyle() != null && !beer.getStyle().equals(""))
-			previewStyleVal += beer.getStyle();
-		else
-			previewStyleVal += getText(R.string.unknownBeerInfo).toString();
-		previewStyle.setText(previewStyleVal);
+    	if (searchBeerName == null || searchBeerName.equals("")) {
+			beerInfoNoneView.setVisibility(View.VISIBLE);
+			beerInfoPreviewView.setVisibility(View.INVISIBLE);
+			beerInfoLoadingView.setVisibility(View.INVISIBLE);
+    	} else {
+			Log.i("beerInfoLookup", "looking up " + searchBeerName);
+	
+			// Start looking it up
+			beerInfoNoneView.setVisibility(View.INVISIBLE);
+			beerInfoPreviewView.setVisibility(View.INVISIBLE);
+			beerInfoLoadingView.setVisibility(View.VISIBLE);
+			
+			// Actual lookup
+			beer = dbs.getBeer(searchBeerName);
+			
+			// Show the returned values
+			beerInfoNoneView.setVisibility(View.INVISIBLE);
+			beerInfoPreviewView.setVisibility(View.VISIBLE);
+			beerInfoLoadingView.setVisibility(View.INVISIBLE);
+			
+			TextView previewBrewery = (TextView) findViewById(R.id.previewBrewery);
+			String previewBreweryVal = getText(R.string.beerInfoBrewery).toString();
+			if (beer.getBrewery() != null && !beer.getBrewery().equals("")) {
+				previewBreweryVal += beer.getBrewery();
+	
+				if (beer.getLocation() != null && !beer.getLocation().equals(""))
+	    			previewBreweryVal += ", " + beer.getLocation();
+			} else
+				previewBreweryVal += getText(R.string.unknownBeerInfo).toString();
+			previewBrewery.setText(previewBreweryVal);
+			
+			TextView previewStyle = (TextView) findViewById(R.id.previewStyle);
+			String previewStyleVal = getText(R.string.beerInfoStyle).toString(); 
+			if (beer.getStyle() != null && !beer.getStyle().equals(""))
+				previewStyleVal += beer.getStyle();
+			else
+				previewStyleVal += getText(R.string.unknownBeerInfo).toString();
+			previewStyle.setText(previewStyleVal);
+    	}
     }
 
     private void initContainerSpinner() {
@@ -353,9 +366,9 @@ public class AddBeer extends BaseActivity {
         final String beername = beernameView.getText().toString();
         final int beerID;
         
-        if (beernameView.getText().length() == 0) {
-        	return ;
-        }
+        if (beernameView.getText().length() == 0) return;
+        if (beer == null) performSearch();
+        if (beer == null) return; // If the search returned null somehow
         
     	// Save
     	if (dbs != null) {    		
