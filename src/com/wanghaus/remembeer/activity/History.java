@@ -19,6 +19,7 @@ import android.view.MenuItem;
 import android.view.View;
 import android.view.ViewGroup;
 import android.view.ContextMenu.ContextMenuInfo;
+import android.view.MenuItem.OnMenuItemClickListener;
 import android.widget.ListAdapter;
 import android.widget.ListView;
 import android.widget.RatingBar;
@@ -31,8 +32,9 @@ import com.wanghaus.remembeer.model.Beer;
 
 public class History extends BaseActivity {
 	private static final int BEERINFO_DIALOG_ID = 0;
-	private static final int DRINK_ANOTHER = 1;
-	private static final int DELETE = 2;	
+	private static final int CTXMNU_DRINK_ANOTHER = 1;
+	private static final int CTXMNU_DELETE = 2;	
+	private static final int CTXMNU_EDIT = 3;
 
 	private ListView historyList;
 	private Cursor recentDrinks;
@@ -59,17 +61,14 @@ public class History extends BaseActivity {
 			initBeerList();
 		}
 		
-		final Context context = this;
         clickListener = new View.OnClickListener() {
         	public void onClick(View itemView) {
         		Integer position = (Integer)itemView.getTag();
                 int drinkId = Integer.valueOf(getDrinkValue(position, "_id"));
                 Log.i("History", "Passing drinkId = " + drinkId + " to BeerInfo");
                 
-		    	Intent beerInfoPopupIntent = new Intent(context, BeerInfo.class);
-	    		beerInfoPopupIntent.putExtra("drinkId", drinkId);
-		    	startActivityForResult(beerInfoPopupIntent, BEERINFO_DIALOG_ID);
-			}
+		    	getBeerInfo(drinkId);
+        	}
         };
          
         /* Add Context menu listener to the ListView. */
@@ -78,11 +77,22 @@ public class History extends BaseActivity {
              public void onCreateContextMenu(ContextMenu menu, View v, ContextMenuInfo menuInfo) {
                  Integer position = (Integer)v.getTag();
                  String beername = getDrinkValue(position, "beername");
+                 final int drinkId = Integer.valueOf(getDrinkValue(position, "_id"));
                  menu.setHeaderTitle(beername);
 
-                 // Drink another
                  if (beername != null) {
-                	 MenuItem item = menu.add(0, DRINK_ANOTHER, 0, getString(R.string.drink_another));
+                	 // Edit
+                	 MenuItem item = menu.add(0, CTXMNU_EDIT, 0, getString(R.string.history_editbeer));
+                	 item.setOnMenuItemClickListener( new OnMenuItemClickListener() {
+						@Override
+						public boolean onMenuItemClick(MenuItem arg0) {
+							getBeerInfo(drinkId);
+							return true;
+						}
+                	 } );
+                	 
+                     // Drink another
+                	 item = menu.add(0, CTXMNU_DRINK_ANOTHER, 0, getString(R.string.history_drink_another));
           			 Intent nextIntent = new Intent(getBaseContext(), AddBeer.class);
           			 nextIntent.putExtra("beername", beername);
           			 nextIntent.putExtra("container", getDrinkValue(position, "container"));
@@ -90,8 +100,7 @@ public class History extends BaseActivity {
                  }
                  
                  // Delete
-                 final long drinkId = Long.valueOf(getDrinkValue(position, "_id"));
-            	 MenuItem item = menu.add(0, DELETE, 0, getString(R.string.history_delete));
+            	 MenuItem item = menu.add(0, CTXMNU_DELETE, 0, getString(R.string.history_delete));
             	 item.setOnMenuItemClickListener( new MenuItem.OnMenuItemClickListener() {
 					public boolean onMenuItemClick(MenuItem item) {
 						new AlertDialog.Builder(topThis).setTitle(getString(R.string.history_delete_title))
@@ -290,6 +299,13 @@ public class History extends BaseActivity {
 
         historyList.setAdapter(historyAdapter);
 	}
+
+
+    private void getBeerInfo(int drinkId) {
+		Intent beerInfoPopupIntent = new Intent(this, BeerInfo.class);
+		beerInfoPopupIntent.putExtra("drinkId", drinkId);
+		startActivityForResult(beerInfoPopupIntent, BEERINFO_DIALOG_ID);
+    }
 
 	@Override
 	protected void onActivityResult(int requestCode, int resultCode, Intent data) {

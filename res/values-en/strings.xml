@@ -101,7 +101,8 @@
 	<string name="import_title_before">Imported </string>
 	<string name="import_title_after"> Beers</string>
 	
-	<string name="drink_another">Drink another </string>
+	<string name="history_drink_another">Drink another </string>
+	<string name="history_editbeer">Edit beer info</string>
 	<string name="history_delete">Delete</string>
 	<string name="history_delete_title">Delete this beer?</string>
 	<string name="history_delete_warn">This action cannot be undone.</string>
