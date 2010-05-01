@@ -75,7 +75,7 @@ public class History extends BaseActivity {
 						startActivity(nextIntent);
         			}
         		} else {
-	                int drinkId = Integer.valueOf(getDrinkValue(position, "_id"));
+	                int drinkId = Integer.valueOf(getDrinkValue(position-1, "_id"));
 	                Log.i("History", "Passing drinkId = " + drinkId + " to BeerInfo");
 	                
 			    	getBeerInfo(drinkId);
