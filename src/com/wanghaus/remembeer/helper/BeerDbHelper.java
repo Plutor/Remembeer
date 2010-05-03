@@ -201,7 +201,7 @@ public class BeerDbHelper {
     				elements[i] = elements[i].replaceAll("^\"", "").replaceAll("\"$", "");
 
     			if (getDrinkCountWhen(elements[2]) == 0) {
-    				Beer beer = getBeer(elements[0]);
+    				Beer beer = findBeerBySubstring(elements[0]);
     				long drinkid;
     				if (beer != null) {
     					drinkid = addDrink(beer, elements[1], elements[2], null);
@@ -619,13 +619,29 @@ public class BeerDbHelper {
 		return rv;
 	}
 
-	public Beer getBeer(String beername) {
+	public Beer findBeerBySubstring(String beername) {
     	if (beername == null)
     		return null;
 
     	List<Beer> beers = getBeers(
     			"b.name LIKE ?",
     			new String[] { "%" + beername + "%"},
+    			"COUNT(*) DESC");
+
+		if (beers.size() > 0)
+			return beers.get(0);
+		
+		Beer newbeer = new Beer();
+		newbeer.setName(beername);
+		return newbeer;
+	}
+	public Beer findBeerByName(String beername) {
+    	if (beername == null)
+    		return null;
+
+    	List<Beer> beers = getBeers(
+    			"b.name = ?",
+    			new String[] { beername },
     			"COUNT(*) DESC");
 
 		if (beers.size() > 0)

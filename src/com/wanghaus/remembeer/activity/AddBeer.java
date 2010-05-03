@@ -220,7 +220,7 @@ public class AddBeer extends BaseActivity {
 			beerInfoLoadingView.setVisibility(View.VISIBLE);
 			
 			// Actual lookup
-			beer = dbs.getBeer(searchBeerName);
+			beer = dbs.findBeerByName(searchBeerName);
 			
 			// Show the returned values
 			beerInfoNoneView.setVisibility(View.INVISIBLE);
