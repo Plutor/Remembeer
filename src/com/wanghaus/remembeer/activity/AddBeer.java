@@ -16,12 +16,12 @@ import android.database.Cursor;
 import android.os.Bundle;
 import android.os.Handler;
 import android.preference.PreferenceManager;
+import android.text.Editable;
+import android.text.TextWatcher;
 import android.util.Log;
-import android.view.KeyEvent;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
-import android.view.View.OnKeyListener;
 import android.widget.AdapterView;
 import android.widget.ArrayAdapter;
 import android.widget.AutoCompleteTextView;
@@ -53,7 +53,7 @@ public class AddBeer extends BaseActivity {
 	private Handler handler;
 	
 	private Beer beer = null;
-	private String beernameWhenLookupScheduled = null;
+	private CharSequence beernameWhenLookupScheduled = null;
 	
     /** Called when the activity is first created. */
     @Override
@@ -116,21 +116,15 @@ public class AddBeer extends BaseActivity {
         }
 
         // When something is typed, schedule a lookup for 200ms later
-        beernameView.setOnKeyListener( new OnKeyListener() {
-			public boolean onKey(View v, int keycode, KeyEvent event) {
-				if (event.getAction() == KeyEvent.ACTION_DOWN || event.isSystem())
-					return false;
-				
-				TextView beernameView = (TextView) findViewById(R.id.beername);
-		        String currentBeername = beernameView.getText().toString();
-
+        beernameView.addTextChangedListener( new TextWatcher() {
+			public void afterTextChanged(Editable s) { }
+			public void beforeTextChanged(CharSequence s, int start, int count, int after) { 	}
+			public void onTextChanged(CharSequence currentBeername, int start, int before, int count) {
 		        if ( currentBeername != null && !currentBeername.equals(beernameWhenLookupScheduled) ) {
 			        handler.removeCallbacks(beerInfoLookupRunnable);
 			        beernameWhenLookupScheduled = currentBeername;
 		            handler.postDelayed(beerInfoLookupRunnable, 200);
 		        }
-		        
-	            return true;
 			}
         });
         
