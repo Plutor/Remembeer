@@ -75,7 +75,8 @@ public class History extends BaseActivity {
 						startActivity(nextIntent);
         			}
         		} else {
-	                int drinkId = Integer.valueOf(getDrinkValue(position-1, "_id"));
+        			position--;
+	                int drinkId = Integer.valueOf(getDrinkValue(position, "_id"));
 	                Log.i("History", "Passing drinkId = " + drinkId + " to BeerInfo");
 	                
 			    	getBeerInfo(drinkId);
@@ -295,9 +296,10 @@ public class History extends BaseActivity {
 			position = acmi.position;
 		}
 		
-		if (position == 0)
+		if (position <= 0)
 			return;
-
+		position--;
+		
 		final Context thisActivity = this;
 		String beername = getDrinkValue(position, "beername");
 		final int drinkId = Integer.valueOf(getDrinkValue(position, "_id"));
