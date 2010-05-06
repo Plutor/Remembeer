@@ -72,7 +72,6 @@
 			android:id="@+id/addbeer_notes"
 			android:layout_width="fill_parent"
 			android:layout_height="wrap_content"
-			android:minLines="2"
 			android:gravity="top" />
 
 		<Button
@@ -81,7 +80,8 @@
 			android:layout_height="wrap_content"
 			android:text="@string/save"
 			android:layout_gravity="center"
-			android:layout_marginTop="20dip"
+			android:textSize="20dip"
+			android:layout_marginTop="10dip"
 			android:layout_marginBottom="10dip" />
 	</LinearLayout>
 
