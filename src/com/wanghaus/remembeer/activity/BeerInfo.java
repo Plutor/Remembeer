@@ -8,6 +8,8 @@ import android.util.Log;
 import android.view.View;
 import android.view.ViewGroup;
 import android.view.View.OnClickListener;
+import android.widget.ArrayAdapter;
+import android.widget.AutoCompleteTextView;
 import android.widget.Button;
 import android.widget.EditText;
 import android.widget.RatingBar;
@@ -95,6 +97,11 @@ public class BeerInfo extends BaseActivity {
         	setViewWithValue( R.id.beerinfo_location, beer, "brewery_location" );
         	setViewWithValue( R.id.beerinfo_style, beer, "style" );
         	setViewWithValue( R.id.beerinfo_notes, beer, "notes" );
+
+            AutoCompleteTextView styleInput = (AutoCompleteTextView) findViewById(R.id.beerinfo_style);
+            String[] known_styles = getResources().getStringArray(R.array.beer_styles_list);
+            ArrayAdapter<String> styleArray = new ArrayAdapter<String>(this, R.layout.list_item, known_styles);
+            styleInput.setAdapter(styleArray);
         }
         
         // Init save button

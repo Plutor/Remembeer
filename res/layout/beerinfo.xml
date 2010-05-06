@@ -113,7 +113,7 @@
 			android:text="@string/beerinfo_styleLabel"
 			android:layout_marginLeft="6dip"
 			android:layout_marginRight="6dip" />
-		<EditText
+		<AutoCompleteTextView
 			android:id="@+id/beerinfo_style"
 			android:layout_width="fill_parent"
 			android:layout_height="wrap_content"
