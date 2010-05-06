@@ -117,7 +117,7 @@
 	<string name="container_prompt">Choose the container</string>
 	<string name="drink_when">Drink when:</string>
 	<string name="drink_when_prompt">Choose a time</string>
-	<string name="addbeer_notesLabel">Notes</string>
+	<string name="addbeer_notesLabel">Notes:</string>
 
 	<string name="save">Save beer!</string>
 	<string name="done">Done</string>
