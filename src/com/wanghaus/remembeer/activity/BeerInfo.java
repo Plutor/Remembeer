@@ -1,7 +1,5 @@
 package com.wanghaus.remembeer.activity;
 
-import java.util.Map;
-
 import android.content.Intent;
 import android.os.Bundle;
 import android.util.Log;
@@ -18,11 +16,12 @@ import android.widget.TextView;
 import com.wanghaus.remembeer.R;
 import com.wanghaus.remembeer.helper.BeerDbHelper;
 import com.wanghaus.remembeer.model.Beer;
+import com.wanghaus.remembeer.model.Drink;
 
 public class BeerInfo extends BaseActivity {
 	private String beername;
 	private Beer beer;
-	private Map<String, String> drink;
+	private Drink drink;
 	
 	private BeerDbHelper dbs;
 	
@@ -33,60 +32,37 @@ public class BeerInfo extends BaseActivity {
 
 		dbs = new BeerDbHelper(this);
 
-		int beerId = getIntent().getIntExtra("beerId", -1);
-		int drinkId = getIntent().getIntExtra("drinkId", -1);
 		beer = (Beer) getIntent().getSerializableExtra("beer");
-		beername = getIntent().getStringExtra("beerId");
+		drink = (Drink) getIntent().getSerializableExtra("drink");
 		
-		if (drinkId != -1) {
-            Log.i("BeerInfo", "Got drinkId = " + drinkId);
+		if (drink != null) {
+            Log.i("BeerInfo", "Got drinkId = " + drink.getId());
+    		beer = dbs.getBeer(drink.getBeerId());
 
-			try {
-				drink = dbs.getDrinkInfo(drinkId);
-				beerId = Integer.valueOf( drink.get("beer_id") );
-			} catch (Exception e) {
-				Log.e("BeerInfo", "Can't load drink " + drinkId, e);
-				beerId = -1;
-			}
+			// Show the rating section
+    		View metadataView = findViewById(R.id.metadata);
+    		metadataView.setVisibility( View.VISIBLE );
+
+    		// Init ratingbar
+			RatingBar ratingBar = (RatingBar) findViewById(R.id.rating);
+			if (ratingBar != null)
+				ratingBar.setRating( drink.getRating() );
 			
-			if (drink != null) {
-				// Show the rating section
-	    		View metadataView = findViewById(R.id.metadata);
-	    		metadataView.setVisibility( View.VISIBLE );
-	
-	    		// Init ratingbar
-				RatingBar ratingBar = (RatingBar) findViewById(R.id.rating);
-				if (ratingBar != null)
-					ratingBar.setRating( Float.valueOf(drink.get("rating")) );
-				
-				// Init notes
-	            TextView notesView = (TextView) findViewById(R.id.addbeer_notes);
-	            if (notesView != null)
-	            	notesView.setText( drink.get("notes") );
-			}
-			
-            Log.i("BeerInfo", "Got beerId = " + beerId);
+			// Init notes
+            TextView notesView = (TextView) findViewById(R.id.addbeer_notes);
+            if (notesView != null)
+            	notesView.setText( drink.getNotes() );
+
+			TextView drankWhen = (TextView) findViewById(R.id.drank_when);
+	        drankWhen.setText("@ " + drink.getStamp());
 		}
 		
-		if (beer != null) {
+		if (beer != null)
 			beername = beer.getName();
-		} else if (beerId != -1) {
-			// Load the beer
-			beer = dbs.getBeer(beerId);
-			beername = beer.get("name");
-		} else if (beername != null) {
-			beer = new Beer();
-			beer.put("name", beername);
-		}
 
 		if (beername != null)
 			setTitle( getText(R.string.beerinfo_title) + " " + beername );
 		
-		if (drink != null) {
-			TextView drankWhen = (TextView) findViewById(R.id.drank_when);
-	        drankWhen.setText("@ " + drink.get("stamp"));
-		}
-
 		// Make sure it's full-width 
         getWindow().setLayout(ViewGroup.LayoutParams.FILL_PARENT, ViewGroup.LayoutParams.WRAP_CONTENT);
         
@@ -121,13 +97,13 @@ public class BeerInfo extends BaseActivity {
 				resultData.putExtra("beer", beer);
 				
 	    		if (drink != null) {
-					resultData.putExtra("drinkId", Integer.valueOf(drink.get("_id")) );
-
 					RatingBar ratingBar = (RatingBar) findViewById(R.id.rating);
-					resultData.putExtra("rating", ratingBar.getRating());
+	    			drink.setRating(ratingBar.getRating());
 
 					TextView notesView = (TextView) findViewById(R.id.addbeer_notes);
-					resultData.putExtra("notes", notesView.getText().toString());
+	    			drink.setNotes(notesView.getText().toString());
+
+					resultData.putExtra("drink", drink);
 	    		}
 				
         		setResult(RESULT_OK, resultData);

@@ -40,6 +40,7 @@ import com.wanghaus.remembeer.app.TimePickerCancellableDialog;
 import com.wanghaus.remembeer.helper.BeerDbHelper;
 import com.wanghaus.remembeer.helper.TwitterHelper;
 import com.wanghaus.remembeer.model.Beer;
+import com.wanghaus.remembeer.model.Drink;
 import com.wanghaus.remembeer.service.NotifyService;
 
 public class AddBeer extends BaseActivity {
@@ -382,7 +383,14 @@ public class AddBeer extends BaseActivity {
             TextView notesView = (TextView) findViewById(R.id.addbeer_notes);
             String notes = notesView.getText().toString();
             
-            beerID = (int)dbs.addDrink(beer, container, specificTime.getTime(), notes);
+            int beerId = dbs.updateOrAddBeer(beer);
+            
+            Drink newDrink = new Drink();
+            newDrink.setBeerId( beerId );
+            newDrink.setContainer( container );
+            newDrink.setStamp( dbs.datetimeString(specificTime.getTime()) );
+            newDrink.setNotes( notes );
+            beerID = (int)dbs.updateOrAddDrink(newDrink);
             
             if ((int)drinkWhenSpinner.getSelectedItemPosition() == 0) {
                 SharedPreferences settings = PreferenceManager.getDefaultSharedPreferences(this);

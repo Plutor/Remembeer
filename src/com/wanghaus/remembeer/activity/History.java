@@ -31,6 +31,7 @@ import android.widget.AdapterView.OnItemClickListener;
 import com.wanghaus.remembeer.R;
 import com.wanghaus.remembeer.helper.BeerDbHelper;
 import com.wanghaus.remembeer.model.Beer;
+import com.wanghaus.remembeer.model.Drink;
 
 public class History extends BaseActivity {
 	private static final int BEERINFO_DIALOG_ID = 0;
@@ -76,10 +77,10 @@ public class History extends BaseActivity {
         			}
         		} else {
         			position--;
-	                int drinkId = Integer.valueOf(getDrinkValue(position, "_id"));
-	                Log.i("History", "Passing drinkId = " + drinkId + " to BeerInfo");
+	                Drink drink = getDrink(position);
+	                Log.i("History", "Passing drinkId = " + drink.getId() + " to BeerInfo");
 	                
-			    	getBeerInfo(drinkId);
+			    	getBeerInfo(drink);
         		}
 			}
         };
@@ -108,21 +109,18 @@ public class History extends BaseActivity {
         // Map Cursor columns to views defined in simple_list_item_2.xml
         historyAdapter = new HistoryCursorAdapter(this,
                 R.layout.history_row, recentDrinks, 
-                new String[] { "beername", "details" }, 
-                new int[] { R.id.beername, R.id.details });
+                new String[] {}, new int[] {});
 
         historyList.setAdapter(historyAdapter);
     }
     
-    private String getDrinkValue(Integer position, String colName) {
+    private Drink getDrink(Integer position) {
 		try {
 			recentDrinks.moveToPosition(position);
-			int column = recentDrinks.getColumnIndexOrThrow(colName);
-			String rv = recentDrinks.getString(column);
-			
-			return rv;
+			Drink drink = new Drink(recentDrinks);
+			return drink;
 		} catch (Exception e) {
-			Log.e("getBeerValue", "Can't determine beer " + colName, e);
+			Log.e("getBeerValue", "Can't craete drink object", e);
 		}
 		return null;
 	}
@@ -156,24 +154,23 @@ public class History extends BaseActivity {
 
 				final Cursor cursor = getCursor();
 				cursor.moveToPosition(position);
-				int index;
 
 				LayoutInflater inflater = LayoutInflater.from(context);
 				row = inflater.inflate(R.layout.history_row, null);
 				row.setTag(cursor.getPosition());
 
+				Drink drink = new Drink(cursor);
+				Beer beer = dbs.getBeer(Integer.valueOf(drink.getBeerId()));
+				
 				TextView beername = (TextView) row.findViewById(R.id.beername);
-				index = cursor.getColumnIndex("beername");
-				beername.setText(cursor.getString(index));
+				beername.setText(beer.getName());
 
 				TextView details = (TextView) row.findViewById(R.id.details);
-				index = cursor.getColumnIndex("details");
-				details.setText(cursor.getString(index));
+				details.setText(drink.getContainer() + " at " + drink.getStamp());
 
 				RatingBar smallRatingBar = (RatingBar) row.findViewById(R.id.smallRating);
 				if (smallRatingBar != null) {
-					index = cursor.getColumnIndex("rating");
-					smallRatingBar.setRating(cursor.getFloat(index));
+					smallRatingBar.setRating( drink.getRating() );
 				}
 			}
 
@@ -248,10 +245,14 @@ public class History extends BaseActivity {
 	}
 
 
-    private void getBeerInfo(int drinkId) {
-		Intent beerInfoPopupIntent = new Intent(this, BeerInfo.class);
-		beerInfoPopupIntent.putExtra("drinkId", drinkId);
-		startActivityForResult(beerInfoPopupIntent, BEERINFO_DIALOG_ID);
+    private void getBeerInfo(Drink drink) {
+    	try {
+			Intent beerInfoPopupIntent = new Intent(this, BeerInfo.class);
+			beerInfoPopupIntent.putExtra("drink", drink);
+			startActivityForResult(beerInfoPopupIntent, BEERINFO_DIALOG_ID);
+    	} catch (Exception e) {
+    		Log.e("getBeerInfo", "Unable to start BeerInfo intent" , e);
+    	}
     }
 
 	@Override
@@ -260,22 +261,17 @@ public class History extends BaseActivity {
 		case BEERINFO_DIALOG_ID:
 			// We get a beer object back, remember it here for later
 			if (resultCode == RESULT_OK && data != null) {
+				Drink returnDrink = (Drink) data.getSerializableExtra("drink");
 				Beer returnBeer = (Beer) data.getSerializableExtra("beer");
-				float rating = data.getFloatExtra("rating", -1);
-				int drinkId = data.getIntExtra("drinkId", -1);
-				String notes = data.getStringExtra("notes");
 
 				if (returnBeer != null) {
 					// Update it
 					dbs.updateOrAddBeer(returnBeer);
 				}
-				
-				if (drinkId > 0) {
-					// Save it
-					if (rating > 0)
-						dbs.setDrinkRating(drinkId, rating);
-					if (notes != null)
-						dbs.setDrinkNotes(drinkId, notes);
+
+				if (returnDrink != null) {
+					// Save the drink
+					dbs.updateOrAddDrink(returnDrink);
 
 					// Update the list
 					SimpleCursorAdapter listAdapter = (SimpleCursorAdapter) historyList.getAdapter();
@@ -301,8 +297,10 @@ public class History extends BaseActivity {
 		position--;
 		
 		final Context thisActivity = this;
-		String beername = getDrinkValue(position, "beername");
-		final int drinkId = Integer.valueOf(getDrinkValue(position, "_id"));
+        final Drink drink = getDrink(position);
+        final Beer beer = dbs.getBeer(drink.getBeerId());
+		String beername = beer.getName();
+		final int drinkId = Integer.valueOf(drink.getId());
 		menu.setHeaderTitle(beername);
 
 		if (beername != null) {
@@ -310,7 +308,7 @@ public class History extends BaseActivity {
 			MenuItem item = menu.add(0, CTXMNU_EDIT, 0, getString(R.string.history_editbeer));
 			item.setOnMenuItemClickListener(new OnMenuItemClickListener() {
 						public boolean onMenuItemClick(MenuItem arg0) {
-							getBeerInfo(drinkId);
+							getBeerInfo(drink);
 							return true;
 						}
 					});
@@ -319,7 +317,7 @@ public class History extends BaseActivity {
 			item = menu.add(0, CTXMNU_DRINK_ANOTHER, 0, getString(R.string.history_drink_another));
 			Intent nextIntent = new Intent(getBaseContext(), AddBeer.class);
 			nextIntent.putExtra("beername", beername);
-			nextIntent.putExtra("container", getDrinkValue(position, "container"));
+			nextIntent.putExtra("container", drink.getContainer());
 			item.setIntent(nextIntent);
 		}
 

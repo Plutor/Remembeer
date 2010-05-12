@@ -26,6 +26,7 @@ import android.util.Log;
 
 import com.wanghaus.remembeer.R;
 import com.wanghaus.remembeer.model.Beer;
+import com.wanghaus.remembeer.model.Drink;
 
 public class BeerDbHelper {
 	private static final String DB_NAME = "Remembeer";
@@ -202,10 +203,10 @@ public class BeerDbHelper {
 
     			if (getDrinkCountWhen(elements[2]) == 0) {
     				Beer beer = findBeerBySubstring(elements[0]);
-    				long drinkid;
     				if (beer != null) {
-    					drinkid = addDrink(beer, elements[1], elements[2], null);
-        				setDrinkRating(drinkid, Integer.valueOf(elements[3]));
+    			        Drink newDrink = new Drink( beer, elements[1], elements[2], null );
+    			        newDrink.setRating(Integer.valueOf(elements[3]));
+    					updateOrAddDrink(newDrink);
         				count++;
     				}
     			}
@@ -220,30 +221,45 @@ public class BeerDbHelper {
 		return count; 
 	}
 
-	/*
-     * Write methods
-     */
-    public long addDrink(Beer beer, String container, Date stamp, String notes) {
-        // Get the sqlite format for the stamp
+    public String datetimeString(Date stamp) {
         Cursor stampCursor = db.rawQuery( "SELECT DATETIME(?, 'unixepoch', 'localtime')",
         		new String[] { String.valueOf(stamp.getTime()/1000) } );
         stampCursor.moveToFirst();
         String stampStr = stampCursor.getString(0);
-		stampCursor.close();		
+		stampCursor.close();
 		
-		return addDrink(beer, container, stampStr, notes);
+		return stampStr;
     }
-    public long addDrink(Beer beer, String container, String stamp, String notes) {
-    	// Update or insert the beer
-    	int beerId = updateOrAddBeer(beer);
-
-		ContentValues newRow = new ContentValues();
-        newRow.put("beer_id", beerId);
-        newRow.put("container", container);
-        newRow.put("stamp", stamp);
-        newRow.put("notes", notes);
+	/*
+     * Write methods
+     */
+    public int updateOrAddDrink(Drink drink) {
+    	int beerId = Integer.valueOf(drink.getBeerId());
+    	
+		ContentValues newDrink = new ContentValues();
+        newDrink.put("beer_id", beerId);
+        newDrink.put("container", drink.getContainer());
+        newDrink.put("stamp", drink.getStamp());
+        newDrink.put("notes", drink.getNotes());
+        newDrink.put("rating", drink.getRating());
         
-		return db.insert(DB_TABLE_DRINKS, null, newRow);
+		if (drink.getId() > 0) {
+			int drinkId = drink.getId();
+
+			// update
+			Log.i("addDrink", "Updating drink '" + drinkId + "'");
+			db.update(DB_TABLE_DRINKS, newDrink, "ROWID=?", new String[] { String.valueOf(drinkId) });
+			
+			return drinkId;
+		} else {
+			Log.i("addDrink", "Creating drink at '" + drink.getStamp() + "");
+			
+			// insert
+			int drinkId = (int) db.insert(DB_TABLE_DRINKS, null, newDrink);
+			drink.setId(drinkId);
+			
+			return drinkId;
+		}
     }
 	
 	public int updateOrAddBeer(Beer beer) {
@@ -261,37 +277,35 @@ public class BeerDbHelper {
 		}
 		newBeer.put("notes", beer.getNotes());
 
-		if (beer.getId() != null) {
+		if (beer.getId() > 0) {
 			int beerId = Integer.valueOf(beer.getId());
 
 			// update
-			Log.i("addBeer", "Updating beer '" + beer.getName() + "'");
+			Log.i("addBeer", "Updating beer '" + beer.getName() + "' (" + beerId + ")");
 			
-			db.update(DB_TABLE_BEERS, newBeer, "ROWID=?", new String[] { beer.getId() });
-
+			db.update(DB_TABLE_BEERS, newBeer, "ROWID=?", new String[] { String.valueOf(beerId) });
+			beer.setId(beerId);
+			
 			return beerId;
 		} else {
 			Log.i("addBeer", "Creating beer '" + beer.getName() + "'");
 			
 			// insert
 			int beerId = (int) db.insert(DB_TABLE_BEERS, null, newBeer);
+			beer.setId(beerId);
 			
 			return beerId;
 		}
 	}
     
-	public void setDrinkRating(long id, float rating) {
-		ContentValues newRow = new ContentValues();
-        newRow.put("rating", rating);
-
-        db.update(DB_TABLE_DRINKS, newRow, "ROWID = ?", new String[] { String.valueOf(id) });
+	public void setDrinkRating(Drink drink, float rating) {
+		drink.setRating(rating);
+		updateOrAddDrink(drink);
 	}
 
-	public void setDrinkNotes(long id, String notes) {
-		ContentValues newRow = new ContentValues();
-        newRow.put("notes", notes);
-
-        db.update(DB_TABLE_DRINKS, newRow, "ROWID = ?", new String[] { String.valueOf(id) });
+	public void setDrinkNotes(Drink drink, String notes) {
+		drink.setNotes(notes);
+		updateOrAddDrink(drink);
 	}
 
 	public void deleteDrink(long id) {
@@ -314,16 +328,15 @@ public class BeerDbHelper {
     public Cursor getDrinkHistoryAlphabetically(Integer limit) {
     	return getDrinkHistory(limit, "beername ASC");
     }
-
     public Cursor getDrinkHistory(Integer limit, String sortBy) {
+    	// This really should return a Cursor, not a list.  Don't change it.
     	String strLimit = "";
     	if (limit != null)
     		strLimit = " LIMIT " + limit.toString();
     	
     	return db.rawQuery(
-    			"SELECT d.ROWID AS _id, b.name AS beername, container || ' at ' || stamp AS details, rating, container "
-    			+ "FROM " + DB_TABLE_DRINKS + " d, " + DB_TABLE_BEERS + " b "
-    			+ "WHERE d.beer_id = b.ROWID"
+    			"SELECT ROWID AS _id, * "
+    			+ "FROM " + DB_TABLE_DRINKS + " "
     			+ strLimit
     			+ " ORDER BY " + sortBy,
     			null);
@@ -615,6 +628,32 @@ public class BeerDbHelper {
 		s.close();
 		
 		// XXX - If we got no reply, this is where the web service comes in
+		
+		return rv;
+	}
+
+	public List<Drink> getDrinks(String whereStr, String[] whereArgs, String orderStr) {
+		List<Drink> rv = new ArrayList<Drink>();
+		
+		if (whereStr != null && !whereStr.equals(""))
+			whereStr = " WHERE " + whereStr + " ";
+		if (orderStr != null && !orderStr.equals(""))
+			orderStr = " ORDER BY " + orderStr + " ";
+		
+    	Cursor s = db.rawQuery(
+    			"SELECT b.ROWID AS _id, b.* "
+    			+ "FROM " + DB_TABLE_DRINKS + " d "
+    			+ whereStr
+    			+ orderStr,
+    			whereArgs
+    		);
+		if (s.getCount() > 0) {
+			while (s.moveToNext()) {
+				Drink d = new Drink(s);
+				rv.add(d);
+			}
+		}
+		s.close();
 		
 		return rv;
 	}

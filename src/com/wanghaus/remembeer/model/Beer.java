@@ -15,11 +15,11 @@ public class Beer extends Model {
 	//
 	//** READ-WRITE PROPERTIES
 	//
-	public String getId()				{ return get("_id"); }
-	public void setId(String val)		{ put("_id", val); }
+	public int getId()					{ return getInt("_id"); }
+	public void setId(int val)			{ put("_id", String.valueOf(val)); }
 
 	public String getName()				{ return get("name"); }
-	public void setName(String val)	{ put("name", val); }
+	public void setName(String val)	    { put("name", val); }
 
 	public String getBrewery()			{ return get("brewery"); }
 	public void setBrewery(String val)	{ put("brewery", val); }
