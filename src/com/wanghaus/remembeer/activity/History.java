@@ -301,7 +301,6 @@ public class History extends BaseActivity {
         final Drink drink = getDrink(position);
         final Beer beer = dbs.getBeer(drink.getBeerId());
 		String beername = beer.getName();
-		final int drinkId = Integer.valueOf(drink.getId());
 		menu.setHeaderTitle(beername);
 
 		if (beername != null) {
@@ -335,8 +334,7 @@ public class History extends BaseActivity {
 									public void onClick(
 											DialogInterface arg0,
 											int arg1) {
-										dbs
-												.deleteDrink(drinkId);
+										dbs.deleteDrink(drink);
 										// Update the view
 										SimpleCursorAdapter listAdapter = (SimpleCursorAdapter) historyList
 												.getAdapter();

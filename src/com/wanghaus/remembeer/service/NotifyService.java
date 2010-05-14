@@ -14,6 +14,7 @@ import android.preference.PreferenceManager;
 import com.wanghaus.remembeer.R;
 import com.wanghaus.remembeer.activity.History;
 import com.wanghaus.remembeer.helper.BeerDbHelper;
+import com.wanghaus.remembeer.model.Drink;
 
 public class NotifyService extends Service {
 	private NotificationManager nm;
@@ -55,10 +56,11 @@ public class NotifyService extends Service {
     /**
      * Show a notification while this service is running.
      */
-    private void showNotification(long beerid) {
+    private void showNotification(int drinkId) {
     	BeerDbHelper dbs = new BeerDbHelper(this);
+    	Drink drink = dbs.getDrink(drinkId);
     	
-    	if (dbs.isBeerUnrated(beerid)) {
+    	if (drink != null && !drink.isRated()) {
     		int icon = R.drawable.beer_half_full;
     		CharSequence tickerText = getText(R.string.reminder_tickerText);
     		long when = System.currentTimeMillis();

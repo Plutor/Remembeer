@@ -14,6 +14,7 @@ import android.widget.TextView;
 
 import com.wanghaus.remembeer.R;
 import com.wanghaus.remembeer.helper.BeerDbHelper;
+import com.wanghaus.remembeer.model.Beer;
 
 public class Stats extends BaseActivity {
 	private List<BeerStat> stats = new ArrayList<BeerStat>();
@@ -45,6 +46,10 @@ public class Stats extends BaseActivity {
     	public BeerStat(CharSequence name, String value) {
     		this.name = name;
     		this.value = value;
+    	}
+    	public BeerStat(CharSequence name, Beer beer) {
+    		this.name = name;
+    		this.value = beer.getName();
     	}
     }
     

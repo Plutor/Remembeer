@@ -50,7 +50,9 @@ public class Drink extends Model {
 	//
 	//** READ ONLY PROPERTIES
 	//
-	public String getCount()			{ return get("count"); }
+	public boolean isRated() {
+		float rating = getRating();
 
-	
+		return (rating > 0);
+	}
 }

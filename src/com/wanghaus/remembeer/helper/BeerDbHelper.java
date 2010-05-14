@@ -9,10 +9,8 @@ import java.io.IOException;
 import java.io.PrintWriter;
 import java.util.ArrayList;
 import java.util.Date;
-import java.util.HashMap;
 import java.util.LinkedList;
 import java.util.List;
-import java.util.Map;
 
 import android.content.ContentValues;
 import android.content.Context;
@@ -63,7 +61,7 @@ public class BeerDbHelper {
 
         if (localCsvModifiedDate() > 0 && getDrinkCount() == 0) {
         	importHistoryFromCsvFile();
-        	// TODO - Remove csv?
+        	// Should we remove CSV once we import?
         }
     }
         
@@ -308,8 +306,9 @@ public class BeerDbHelper {
 		drink.setNotes(notes);
 		updateOrAddDrink(drink);
 	}
-
-	public void deleteDrink(long id) {
+    
+	public void deleteDrink(Drink drink) {
+		int id = drink.getId();
 		db.execSQL("DELETE FROM " + DB_TABLE_DRINKS + " WHERE ROWID = " + String.valueOf(id));
     }
     
@@ -322,7 +321,6 @@ public class BeerDbHelper {
     public Cursor getDrinkHistory(Integer limit) {
     	return getDrinkHistory(limit, "stamp DESC");
     }
-    
     public Cursor getDrinkHistoryAlphabetically() {
     	return getDrinkHistory(null, "beername ASC");
     }
@@ -402,99 +400,83 @@ public class BeerDbHelper {
     	return rv.toArray(new String[0]);
     }
     
-    public long getDrinkCount() {
+    public int getDrinkCount() {
     	Cursor beercountQuery = db.query(DB_TABLE_DRINKS, new String[] {"ROWID"}, null, null, null, null, null);
-    	long rv = beercountQuery.getCount();
+    	int rv = beercountQuery.getCount();
     	beercountQuery.close();
     	return rv;
     }
     
     // XXX - This doesn't do what it thinks it does
-    public long getDrinkCount(String querybeer) {
+    public int getDrinkCount(String querybeer) {
     	if (querybeer == null)
     		return getDrinkCount();
 
     	Cursor beercountQuery = getBeerNames(querybeer);
-    	long rv = beercountQuery.getCount();
+    	int rv = beercountQuery.getCount();
     	beercountQuery.close();
     	return rv;
     }
     
-    public long getDrinkCountThisYear() {
+    public int getDrinkCountThisYear() {
     	Cursor beercountQuery = db.query(DB_TABLE_DRINKS, new String[] {"ROWID"},
     			"STRFTIME('%Y', stamp) = STRFTIME('%Y', current_date)",
     			null, null, null, null);
-    	long rv = beercountQuery.getCount();
+    	int rv = beercountQuery.getCount();
     	beercountQuery.close();
     	return rv;
     }
     
-    public long getDrinkCountThisMonth() {
+    public int getDrinkCountThisMonth() {
     	Cursor beercountQuery = db.query(DB_TABLE_DRINKS, new String[] {"ROWID"},
     			"STRFTIME('%Y%m', stamp) = STRFTIME('%Y%m', current_date)",
     			null, null, null, null);
-    	long rv = beercountQuery.getCount();
+    	int rv = beercountQuery.getCount();
     	beercountQuery.close();
     	return rv;
     }
-
-    public long getDrinkCountLastDays(Integer count) {
+    
+    public int getDrinkCountLastDays(Integer count) {
     	Cursor beercountQuery = db.query(DB_TABLE_DRINKS, new String[] {"ROWID"},
     			"JULIANDAY(stamp) > JULIANDAY(current_date) - ? AND JULIANDAY(stamp) <= JULIANDAY(current_date) + 1", // I'm looking at you, DST
     			new String[] {count.toString()},
     			null, null, null);
-    	long rv = beercountQuery.getCount();
+    	int rv = beercountQuery.getCount();
     	beercountQuery.close();
     	return rv;
     }
     
-    public long getBeersCount() {
+    public int getBeersCount() {
     	Cursor beercountQuery = db.query(DB_TABLE_DRINKS, new String[] {"DISTINCT beer_id"},
     			null, null, null, null, null);
-    	long rv = beercountQuery.getCount();
+    	int rv = beercountQuery.getCount();
     	beercountQuery.close();
     	return rv;
     }
     
-    public String getFavoriteBeer() {
-    	// TODO - There's gotta be a better way to calculate this
-    	Cursor q = db.rawQuery(
-    			"SELECT b.name AS beername, AVG(d.rating) AS rating "
-    			+ "FROM " + DB_TABLE_DRINKS + " d, " + DB_TABLE_BEERS + " b "
-    			+ "WHERE d.beer_id = b.ROWID "
-    			+ "GROUP BY b.ROWID "
-    			+ "ORDER BY AVG(rating) DESC, COUNT(*) DESC, MAX(stamp) DESC "
-    			+ "LIMIT 1",
-    			null );
+    public Beer getFavoriteBeer() {
+    	// TODO - There's gotta be a better way to calculate this - issue #140    	
+    	List<Beer> topBeers = getBeers(null, null, "AVG(rating) DESC, COUNT(*) DESC, MAX(stamp) DESC");
     	
-    	if (q.getCount() == 0)
-    		return "-";
-    	
-    	q.moveToFirst();
-    	String favoriteBeer = q.getString(0);
-    	q.close();
-    	
-    	return favoriteBeer;
+    	if (topBeers == null || topBeers.size() == 0) {
+    		Beer beer = new Beer();
+    		beer.setName("-");
+    		return beer;
+    	} else {
+    		return topBeers.get(0);
+    	}
     }
     
-    public String getMostDrunkBeer() {
-    	Cursor q = db.rawQuery(
-    			"SELECT b.name AS beername, COUNT(*) AS count "
-    			+ "FROM " + DB_TABLE_DRINKS + " d, " + DB_TABLE_BEERS + " b "
-    			+ "WHERE d.beer_id = b.ROWID "
-    			+ "GROUP BY b.ROWID "
-    			+ "ORDER BY COUNT(*) DESC, MAX(stamp) DESC "
-    			+ "LIMIT 1",
-    			null );
-    	
-    	if (q.getCount() == 0)
-    		return "-";
-    	
-    	q.moveToFirst();
-    	String favoriteBeer = q.getString(0);
-    	q.close();
-    	
-    	return favoriteBeer;
+    public Beer getMostDrunkBeer() {
+    	List<Beer> topBeers = getBeers(null, null, "COUNT(*) DESC, MAX(stamp) DESC");
+
+    	if (topBeers == null || topBeers.size() == 0) {
+    		Beer beer = new Beer();
+    		beer.setName("-");
+    		return beer;
+    	} else {
+    		return topBeers.get(0);
+    	}
     }
     
     public String getFavoriteDrinkingHour() {
@@ -592,24 +574,18 @@ public class BeerDbHelper {
     	return Uri.parse("file://" + csvFile.getAbsolutePath());
     }
     
-    public boolean isBeerUnrated(long id) {
-    	Cursor q = db.query(DB_TABLE_DRINKS,
-    			new String[] {"ROWID"},
-    			"ROWID = ? and rating = 0", new String[] {String.valueOf(id)},
-    			null, null, null);
-    	int isUnrated = q.getCount();
-    	q.close();
-    	
-    	return (isUnrated > 0);
-	}
-
 	public List<Beer> getBeers(String whereStr, String[] whereArgs, String orderStr) {
 		List<Beer> rv = new ArrayList<Beer>();
 		
 		if (whereStr != null && !whereStr.equals(""))
 			whereStr = " AND " + whereStr + " ";
+		else
+			whereStr = "";
+		
 		if (orderStr != null && !orderStr.equals(""))
 			orderStr = " ORDER BY " + orderStr + " ";
+		else
+			orderStr = "";
 		
     	Cursor s = db.rawQuery(
     			"SELECT b.ROWID AS _id, b.*, COUNT(*) AS drink_count "
@@ -703,25 +679,17 @@ public class BeerDbHelper {
 		
 		return null;
 	}
+    
+	public Drink getDrink(int drinkId) {
+    	List<Drink> drinks = getDrinks(
+    			"ROWID = ?",
+    			new String[] { String.valueOf(drinkId) },
+    			null);
 
-	public Map<String, String> getDrinkInfo(int drinkId) {
-		Map<String, String> rv = new HashMap<String, String>();
+		if (drinks.size() > 0)
+			return drinks.get(0);
 		
-    	Cursor s = db.rawQuery(
-    			"SELECT ROWID AS _id, * "
-    			+ "FROM " + DB_TABLE_DRINKS + " "
-    			+ "WHERE ROWID = ?",
-    			new String[] { String.valueOf(drinkId) }
-    		);
-		if (s.getCount() > 0) {
-			s.moveToFirst();
-			for (int i=0; i<s.getColumnCount(); ++i) {
-				rv.put(s.getColumnName(i), s.getString(i));
-			}
-		}
-		s.close();
-		
-		return rv;
+		return null;
 	}
 
 	public int getDrinkCountWhen(String whenStamp) {
