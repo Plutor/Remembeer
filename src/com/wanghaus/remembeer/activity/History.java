@@ -88,6 +88,13 @@ public class History extends BaseActivity {
 
         /* Add Context menu listener to the ListView. */
         registerForContextMenu(historyList);
+        
+        /* If we were passed a drinkId (like from clicking a notification), show that beerinfo popup */
+        int drinkId = queryIntent.getIntExtra("drinkId", -1);
+        if (drinkId != -1) {
+        	Drink drink = dbs.getDrink(drinkId);
+        	getBeerInfo(drink);
+        }
     }
     
     private void initBeerList() {

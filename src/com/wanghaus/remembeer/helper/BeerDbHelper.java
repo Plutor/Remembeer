@@ -614,11 +614,16 @@ public class BeerDbHelper {
 		
 		if (whereStr != null && !whereStr.equals(""))
 			whereStr = " WHERE " + whereStr + " ";
+		else
+			whereStr = "";
+		
 		if (orderStr != null && !orderStr.equals(""))
 			orderStr = " ORDER BY " + orderStr + " ";
+		else
+			orderStr = "";
 		
     	Cursor s = db.rawQuery(
-    			"SELECT b.ROWID AS _id, b.* "
+    			"SELECT d.ROWID AS _id, d.* "
     			+ "FROM " + DB_TABLE_DRINKS + " d "
     			+ whereStr
     			+ orderStr,

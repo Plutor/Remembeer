@@ -359,7 +359,7 @@ public class AddBeer extends BaseActivity {
     private void saveBeer() {
         TextView beernameView = (TextView) findViewById(R.id.beername);
         final String beername = beernameView.getText().toString();
-        final int beerID;
+        final int drinkId;
         
         if (beernameView.getText().length() == 0) return;
         if (beer == null) performSearch();
@@ -390,7 +390,7 @@ public class AddBeer extends BaseActivity {
             newDrink.setContainer( container );
             newDrink.setStamp( dbs.datetimeString(specificTime.getTime()) );
             newDrink.setNotes( notes );
-            beerID = (int)dbs.updateOrAddDrink(newDrink);
+            drinkId = (int)dbs.updateOrAddDrink(newDrink);
             
             if ((int)drinkWhenSpinner.getSelectedItemPosition() == 0) {
                 SharedPreferences settings = PreferenceManager.getDefaultSharedPreferences(this);
@@ -402,7 +402,7 @@ public class AddBeer extends BaseActivity {
                 		int timeout = reminderDelay.intValue();
                 		
                    		Intent notifyServiceIntent = new Intent(this, NotifyService.class);
-                   		notifyServiceIntent.putExtra("beerid", beerID);
+                   		notifyServiceIntent.putExtra("drinkId", drinkId);
                    		notifyServiceIntent.putExtra("timeout", timeout);
                    		
                    		startService(notifyServiceIntent);

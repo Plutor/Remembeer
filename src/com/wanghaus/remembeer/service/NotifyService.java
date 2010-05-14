@@ -37,15 +37,15 @@ public class NotifyService extends Service {
 	public void onStart(Intent intent, int startId) {
 		super.onStart(intent, startId);
 		
-		final int beerid = intent.getIntExtra("beerid", -1);
+		final int drinkId = intent.getIntExtra("drinkId", -1);
 		int timeout = intent.getIntExtra("timeout", -1);
 		
-		if (beerid != -1 && timeout != -1) {
+		if (drinkId != -1 && timeout != -1) {
 			// Schedule the notification
 			final Handler handler = new Handler();
 			final Runnable rater = new Runnable() {
 				public void run() {
-					showNotification(beerid);
+					showNotification(drinkId);
 				}
 			};
 
@@ -78,6 +78,7 @@ public class NotifyService extends Service {
     		CharSequence contentTitle = getText(R.string.reminder_title);
     		CharSequence contentText = getText(R.string.reminder_text);
     		Intent notificationIntent = new Intent(this, History.class);
+    		notificationIntent.putExtra("drinkId", drinkId);
     		PendingIntent contentIntent = PendingIntent.getActivity(this, 0, notificationIntent, 0);
 
     		ratingsreminder.setLatestEventInfo(context, contentTitle, contentText, contentIntent);
