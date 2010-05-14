@@ -160,10 +160,11 @@ public class History extends BaseActivity {
 				row.setTag(cursor.getPosition());
 
 				Drink drink = new Drink(cursor);
-				Beer beer = dbs.getBeer(Integer.valueOf(drink.getBeerId()));
+				Beer beer = dbs.getBeer(drink.getBeerId());
 				
 				TextView beername = (TextView) row.findViewById(R.id.beername);
-				beername.setText(beer.getName());
+				if (beer != null)
+					beername.setText(beer.getName());
 
 				TextView details = (TextView) row.findViewById(R.id.details);
 				details.setText(drink.getContainer() + " at " + drink.getStamp());

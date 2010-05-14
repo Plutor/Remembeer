@@ -202,8 +202,9 @@ public class BeerDbHelper {
     				elements[i] = elements[i].replaceAll("^\"", "").replaceAll("\"$", "");
 
     			if (getDrinkCountWhen(elements[2]) == 0) {
-    				Beer beer = findBeerBySubstring(elements[0]);
+    				Beer beer = findBeerByName(elements[0]);
     				if (beer != null) {
+        				updateOrAddBeer(beer);
     			        Drink newDrink = new Drink( beer, elements[1], elements[2], null );
     			        newDrink.setRating(Integer.valueOf(elements[3]));
     					updateOrAddDrink(newDrink);
