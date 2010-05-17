@@ -16,6 +16,7 @@ import android.widget.Toast;
 
 import com.wanghaus.remembeer.R;
 import com.wanghaus.remembeer.helper.BeerDbHelper;
+import com.wanghaus.remembeer.helper.ImportExportHelper;
 
 public class ImportExport extends Activity {
 	private BeerDbHelper dbs;
@@ -29,14 +30,15 @@ public class ImportExport extends Activity {
     		dbs = new BeerDbHelper(this);
 
         context = this;
-        UpdateLastExported();
+        initLastExported();
         
         setTitle(R.string.import_title);
         
         Button exportEmail = (Button) findViewById(R.id.ExportEmail);
         exportEmail.setOnClickListener(new View.OnClickListener() {
             public void onClick(View view) {
-            	Uri csvFile = dbs.exportHistoryToCsvFile();
+            	ImportExportHelper ieh = new ImportExportHelper(context);
+            	Uri csvFile = ieh.exportHistoryToCsvFile();
             	if (csvFile == null) {
             		// TODO - Show an error message
             		Toast.makeText(context, getString(R.string.export_whoops), Toast.LENGTH_LONG).show();
@@ -45,7 +47,7 @@ public class ImportExport extends Activity {
             	
             	// Create an email
             	final Intent emailIntent = new Intent(android.content.Intent.ACTION_SEND);
-            	emailIntent.putExtra(android.content.Intent.EXTRA_SUBJECT, "Beer Log export");
+            	emailIntent.putExtra(android.content.Intent.EXTRA_SUBJECT, getText(R.string.app_name) + " export");
             	
             	// Attach the CSV
             	emailIntent.setType("plain/csv");
@@ -54,7 +56,7 @@ public class ImportExport extends Activity {
             	// Send
             	startActivity(Intent.createChooser(emailIntent, "Send export..."));
             	
-            	UpdateLastExported();
+            	initLastExported();
             }
         });
         Button exportLocal = (Button) findViewById(R.id.ExportLocal);
@@ -64,7 +66,8 @@ public class ImportExport extends Activity {
             	String success;
             	
             	//Store it
-            	destination = dbs.exportHistoryToCsvFile();
+            	ImportExportHelper ieh = new ImportExportHelper(context);
+            	destination = ieh.exportHistoryToCsvFile();
             	if (destination == null) {
             		Toast.makeText(context, getString(R.string.export_whoops), Toast.LENGTH_LONG).show();
             		return;
@@ -72,7 +75,7 @@ public class ImportExport extends Activity {
             	
             	success = new String(getString(R.string.export_success) + destination.toString());
             	Toast.makeText(context, success, Toast.LENGTH_LONG).show();
-            	UpdateLastExported();
+            	initLastExported();
             }
         });
         Button importLocal = (Button) findViewById(R.id.ImportLocal);
@@ -85,7 +88,8 @@ public class ImportExport extends Activity {
             	// Authorize out-of-thread so spinner can actually run
         	    Thread importThread = new Thread() {
         	        public void run() {
-        	        	dbs.importHistoryFromCsvFile();
+                    	ImportExportHelper ieh = new ImportExportHelper(context);
+        	        	ieh.importHistoryFromCsvFile();
         				throbber.dismiss();
         				//the way Toast fails, we probably need a message handler
         				//Toast.makeText(context, doneMsg, Toast.LENGTH_LONG).show();
@@ -102,7 +106,7 @@ public class ImportExport extends Activity {
         });
 	}
 
-	protected void UpdateLastExported() {
+	private void initLastExported() {
 		long when;
 		
 		when = BeerDbHelper.localCsvModifiedDate();

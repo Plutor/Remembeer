@@ -1,5 +1,8 @@
 package com.wanghaus.remembeer.model;
 
+import java.util.HashMap;
+import java.util.Map;
+
 import android.database.Cursor;
 
 public class Beer extends Model {	
@@ -12,6 +15,19 @@ public class Beer extends Model {
 		super(c);
 	}
 
+	public Map<String, String> getExportMap() { // export column name => db column name
+		Map<String, String> rv = new HashMap<String, String>();
+		
+		rv.put("beername", "name");
+		rv.put("brewery", "brewery");
+		rv.put("location", "location");
+		rv.put("abv", "abv");
+		rv.put("style", "style");
+		rv.put("about_this_beer", "notes");
+		
+		return rv;
+	}
+	
 	//
 	//** READ-WRITE PROPERTIES
 	//

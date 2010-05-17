@@ -1,12 +1,6 @@
 package com.wanghaus.remembeer.helper;
 
-import java.io.BufferedReader;
 import java.io.File;
-import java.io.FileNotFoundException;
-import java.io.FileOutputStream;
-import java.io.FileReader;
-import java.io.IOException;
-import java.io.PrintWriter;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.LinkedList;
@@ -18,7 +12,6 @@ import android.content.res.Resources;
 import android.database.Cursor;
 import android.database.sqlite.SQLiteDatabase;
 import android.database.sqlite.SQLiteOpenHelper;
-import android.net.Uri;
 import android.os.Environment;
 import android.util.Log;
 
@@ -60,7 +53,8 @@ public class BeerDbHelper {
         db = DBHelper.getWritableDatabase();
 
         if (localCsvModifiedDate() > 0 && getDrinkCount() == 0) {
-        	importHistoryFromCsvFile();
+        	ImportExportHelper ieh = new ImportExportHelper(this);
+        	ieh.importHistoryFromCsvFile();
         	// Should we remove CSV once we import?
         }
     }
@@ -170,55 +164,6 @@ public class BeerDbHelper {
     public void close() {
         DBHelper.close();
     }
-    
-    public int importHistoryFromCsvFile() {
-    	BufferedReader inFile;
-    	String iLine;
-    	Integer count = new Integer(0);
-    	
-    	try {
-    		inFile = new BufferedReader(new FileReader(DB_CSV));
-    	} catch(FileNotFoundException e) {
-    		return -1;
-    	}
-    	
-    	try {
-			if (!inFile.readLine().equalsIgnoreCase("\"beername\",\"container\",\"stamp\",\"rating\""))
-				// The header in the file wasn't right, so we're out of here
-				return -1;
-		} catch (IOException e) {
-			Log.e("importHistory", e.toString());
-		}
-
-    	try {    		
-    		iLine = inFile.readLine(); // read line from file
-    		while(iLine != null){
-    			Log.v("importLine", iLine);
-    			String[] elements = iLine.split(",");
-    			
-    			for (int i=0; i<elements.length; ++i)
-    				elements[i] = elements[i].replaceAll("^\"", "").replaceAll("\"$", "");
-
-    			if (getDrinkCountWhen(elements[2]) == 0) {
-    				Beer beer = findBeerByName(elements[0]);
-    				if (beer != null) {
-        				updateOrAddBeer(beer);
-    			        Drink newDrink = new Drink( beer, elements[1], elements[2], null );
-    			        newDrink.setRating(Integer.valueOf(elements[3]));
-    					updateOrAddDrink(newDrink);
-        				count++;
-    				}
-    			}
-    			iLine = inFile.readLine();
-    		}
-    		inFile.close();
-    	} catch(Exception e){
-    		Log.e("importHistory", "Failed to import history csv", e);
-    	}
-    	Log.d("ImportHistory", "Imported " + count.toString() + " Beers");
-    	
-		return count; 
-	}
 
     public String datetimeString(Date stamp) {
         Cursor stampCursor = db.rawQuery( "SELECT DATETIME(?, 'unixepoch', 'localtime')",
@@ -501,79 +446,6 @@ public class BeerDbHelper {
     	return favoriteHour;
     }
 
-    public Uri exportHistoryToCsvFile() {
-    	Cursor q = db.rawQuery(
-    			"SELECT b.name AS beername, container, stamp, rating "
-    			+ "FROM " + DB_TABLE_DRINKS + " d, " + DB_TABLE_BEERS + " b "
-    			+ "WHERE d.beer_id = b.ROWID ",
-    			null);
-    	
-    	if (q.getCount() == 0) {
-    		q.close();
-    		return null;
-    	}
-
-    	StringBuilder csvData = new StringBuilder();
-    	int numCols = q.getColumnCount();
-    	
-    	// Write the headers
-    	for (int col = 0; col < numCols; ++col) {
-    		String colname = q.getColumnName(col);
-			if (colname != null)
-				colname = colname.replaceAll("\"", "\\\""); // escape quotes
-			csvData.append("\"");
-			csvData.append(colname);
-			csvData.append("\"");
-			
-			if (col < numCols - 1)
-				csvData.append(",");
-    	}
-    	csvData.append("\n");
-    	
-    	// Write the data
-    	q.moveToFirst();
-    	do {
-    		for (int col = 0; col < numCols; ++col) {
-    			String val = q.getString(col);
-    			if (val != null)
-    				val = val.replaceAll("\"", "\\\""); // escape quotes
-    			csvData.append("\"");
-    			csvData.append(val);
-    			csvData.append("\"");
-
-    			if (col == numCols - 1)
-        			csvData.append("\n");
-    			else
-        			csvData.append(",");
-    		}
-    	} while (q.moveToNext());
-    	
-    	q.close();
-    	
-    	// Write the csv to a file on the external storage 
-    	File csvFile = new File(DB_CSV);
-    	try {
-			csvFile.createNewFile();
-		} catch (IOException e) {
-			// If it fails, we probably can't create a file there
-			e.printStackTrace();
-			return null;
-		}
-    	
-    	try {
-			FileOutputStream csvFileStream = new FileOutputStream(csvFile);
-			PrintWriter csvWriter = new PrintWriter(csvFileStream);
-			csvWriter.write(csvData.toString());
-			csvWriter.close();
-			csvFileStream.close();
-		} catch (Exception e) {
-			e.printStackTrace();
-			return null;
-		}
-		
-    	return Uri.parse("file://" + csvFile.getAbsolutePath());
-    }
-    
 	public List<Beer> getBeers(String whereStr, String[] whereArgs, String orderStr) {
 		List<Beer> rv = new ArrayList<Beer>();
 		

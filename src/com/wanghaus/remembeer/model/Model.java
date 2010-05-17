@@ -51,7 +51,13 @@ public abstract class Model implements Serializable {
 		}
 	}
 	
+	public Map<String, String> getAll() {
+		return stash;
+	}
+	
 	public int size() {
 		return stash.size();
 	}
+	
+	public abstract Map<String, String> getExportMap(); // export column name => db column name
 }

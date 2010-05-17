@@ -1,5 +1,8 @@
 package com.wanghaus.remembeer.model;
 
+import java.util.HashMap;
+import java.util.Map;
+
 import android.database.Cursor;
 
 public class Drink extends Model {
@@ -18,6 +21,18 @@ public class Drink extends Model {
 		setStamp(stamp);
 		setNotes(notes);
 	}
+
+	public Map<String, String> getExportMap() { // export column name => db column name
+		Map<String, String> rv = new HashMap<String, String>();
+		
+		rv.put("container", "container");
+		rv.put("stamp", "stamp");
+		rv.put("rating", "rating");
+		rv.put("tasting_notes", "notes");
+		
+		return rv;
+	}
+	
 
 	//
 	//** READ-WRITE PROPERTIES
