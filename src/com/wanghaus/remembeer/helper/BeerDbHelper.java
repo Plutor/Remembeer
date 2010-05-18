@@ -24,7 +24,6 @@ public class BeerDbHelper {
 	private static final String DB_TABLE_DRINKS = "drinks";
 	private static final String DB_TABLE_BEERS = "beers";
 	private static final int DB_VERSION = 4;
-	private static final String DB_CSV = new String(Environment.getExternalStorageDirectory() +  File.separator + "BeerLog_export.csv");
 
 	private static final String[] DB_CREATE = new String[] {
 			"CREATE TABLE IF NOT EXISTS " + DB_TABLE_DRINKS + "("
@@ -52,8 +51,8 @@ public class BeerDbHelper {
         DBHelper = new DatabaseHelper(context);
         db = DBHelper.getWritableDatabase();
 
-        if (localCsvModifiedDate() > 0 && getDrinkCount() == 0) {
-        	ImportExportHelper ieh = new ImportExportHelper(this);
+    	ImportExportHelper ieh = new ImportExportHelper(this);
+        if (ieh.localCsvModifiedDate() > 0 && getDrinkCount() == 0) {
         	ieh.importHistoryFromCsvFile();
         	// Should we remove CSV once we import?
         }
@@ -557,6 +556,18 @@ public class BeerDbHelper {
 		return null;
 	}
     
+	public Beer getBeer(String name) {
+    	List<Beer> beers = getBeers(
+    			"b.name = ?",
+    			new String[] { name },
+    			null);
+
+		if (beers.size() > 0)
+			return beers.get(0);
+		
+		return null;
+	}
+    
 	public Drink getDrink(int drinkId) {
     	List<Drink> drinks = getDrinks(
     			"ROWID = ?",
@@ -569,23 +580,10 @@ public class BeerDbHelper {
 		return null;
 	}
 
-	public int getDrinkCountWhen(String whenStamp) {
-		int count;
-		
-		Cursor q = db.query(DB_TABLE_DRINKS, new String[] {"ROWID"},
-				"stamp = ?", new String[] {whenStamp}, null, null, null);
- 	
-		count = q.getCount();
-    	q.close();
-		
-		return count;
-	}
-	
-	public static long localCsvModifiedDate() {
-		File localCsv = new File(DB_CSV);
-		if (localCsv.exists())
-			return localCsv.lastModified();
-		
-		return 0;
+	public List<Drink> getDrinksWhen(String whenStamp) {
+		return getDrinks(
+				"stamp = ?",
+				new String[] { whenStamp },
+				null);
 	}
 }

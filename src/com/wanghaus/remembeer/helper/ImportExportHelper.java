@@ -7,6 +7,7 @@ import java.io.FileOutputStream;
 import java.io.FileReader;
 import java.io.IOException;
 import java.io.PrintWriter;
+import java.util.Arrays;
 import java.util.List;
 import java.util.Map;
 
@@ -31,49 +32,121 @@ public class ImportExportHelper {
 	}
 	
     public int importHistoryFromCsvFile() {
-    	BufferedReader inFile;
-    	String iLine;
+    	BufferedReader csvFile;
+    	String line;
     	Integer count = new Integer(0);
     	
     	try {
-    		inFile = new BufferedReader(new FileReader(DB_CSV));
+    		csvFile = new BufferedReader(new FileReader(DB_CSV));
     	} catch(FileNotFoundException e) {
         	try {
-        		inFile = new BufferedReader(new FileReader(DB_CSV_LEGACY));
+        		csvFile = new BufferedReader(new FileReader(DB_CSV_LEGACY));
         	} catch(FileNotFoundException e2) {
         		return -1;
         	}
     	}
     	
-    	try {
-			if (!inFile.readLine().equalsIgnoreCase("\"beername\",\"container\",\"stamp\",\"rating\""))
+       	List<String> columns = null;
+		int stampcol = -1;
+		int beernamecol = -1;
+		int containercol = -1;
+		
+       	try {
+        	String columnline =  csvFile.readLine();
+        	columns = Arrays.asList( columnline.split(",", -1) ); // -1 means "don't strip trailing empty strings"
+           	
+        	for (int i=0; i<columns.size(); ++i) {
+        		String c = columns.get(i);
+        		c = dequote(c);
+        		columns.set(i, c);
+        		Log.i("import", "Got column: '" + c + "'");
+        	}
+        	
+    		stampcol = columns.indexOf("stamp");
+    		beernamecol = columns.indexOf("beername");
+    		containercol = columns.indexOf("container");
+    		Log.i("import", "Stamp is column: " + stampcol);
+    		Log.i("import", "Beer name is column: " + beernamecol);
+    		Log.i("import", "Container is column: " + containercol);
+    		
+        	if (beernamecol == -1 || stampcol == -1 || containercol == -1) {
 				// The header in the file wasn't right, so we're out of here
+        		Log.e("import", "Missing at least one of the required columns: beername, container, stamp");
 				return -1;
+        	}
 		} catch (IOException e) {
 			Log.e("importHistory", e.toString());
+			return -1;
 		}
 
-    	try {    		
-    		iLine = inFile.readLine(); // read line from file
-    		while(iLine != null){
-    			Log.v("importLine", iLine);
-    			String[] elements = iLine.split(",");
-    			
-    			for (int i=0; i<elements.length; ++i)
-    				elements[i] = elements[i].replaceAll("^\"", "").replaceAll("\"$", "");
+    	try {
+    		while( (line = csvFile.readLine()) != null ) {
+    			Log.v("importLine", line);
+    			List<String> elements = Arrays.asList(line.split(",", -1));
 
-    			if (dbs.getDrinkCountWhen(elements[2]) == 0) {
-    				Beer beer = dbs.findBeerBySubstring(elements[0]);
-    				if (beer != null) {
-    					Drink drink = new Drink(beer, elements[1], elements[2], null);
-    					drink.setRating(Integer.valueOf(elements[3]));
-    					dbs.updateOrAddDrink(drink);
-        				count++;
+            	for (int i=0; i<elements.size(); ++i) {
+            		String c = elements.get(i);
+            		elements.set(i, dequote(c));
+            	}
+    			
+    			Drink drink = new Drink();
+    			
+    			// See if there's a drink that matches this row
+    			List<Drink> drinksAtThisTime = dbs.getDrinksWhen( elements.get(stampcol) );
+    			for (Drink d : drinksAtThisTime) {
+    				Beer b = dbs.getBeer( d.getBeerId() );
+    				if (d.getContainer().equals(elements.get(containercol)) &&
+    						b.getName().equals(elements.get(beernamecol))) {
+    					drink = d;
+    					Log.i("import", "There's already a drink like this");
+    					break;
     				}
     			}
-    			iLine = inFile.readLine();
+    			
+    			// Update drink
+    			Map<String, String> exportMap = drink.getExportMap();
+    			for (String column : exportMap.keySet()) {
+    				String attr = exportMap.get(column);
+    				int col = columns.indexOf(column);
+    				String val = "";
+    				if (col != -1)
+    					val = elements.get(col);
+    				if (val != null && !val.equals(""))
+    					drink.put(attr, elements.get(col));
+    			}
+
+    			// Build/update beer
+    			Beer beer = null;
+    			if (drink.getBeerId() > 0)
+    				beer = dbs.getBeer(drink.getBeerId());
+    			else
+    				beer = dbs.getBeer(elements.get(beernamecol));
+    			
+    			if (beer == null)
+    				beer = new Beer();
+    			
+    			exportMap = beer.getExportMap();
+    			for (String column : exportMap.keySet()) {
+    				String attr = exportMap.get(column);
+    				int col = columns.indexOf(column);
+    				String val = "";
+    				if (col != -1)
+    					val = elements.get(col);
+    				if (val != null && !val.equals(""))
+    					beer.put(attr, elements.get(col));
+    			}
+
+    			// First, write the beer
+    			int beerId = dbs.updateOrAddBeer(beer);
+    			Log.i("import", "Added or updated beer " + beerId);
+
+    			drink.setBeerId(beerId);
+    			int drinkId = dbs.updateOrAddDrink(drink);
+    			Log.i("import", "Added or updated drink " + drinkId);
+
+    			count++;
     		}
-    		inFile.close();
+    		csvFile.close();
     	} catch(Exception e){
     		Log.e("importHistory", "Failed to import history csv", e);
     	}
@@ -82,7 +155,25 @@ public class ImportExportHelper {
 		return count; 
 	}
 
+    private String enquote(String str) {
+		if (str != null)
+			str = str.replaceAll("\"", "\\\""); // escape quotes
+		else
+			str = "";
+		
+		return "\"" + str + "\"";
+    }
 
+    private String dequote(String str) {
+    	// Strip leading and trailing quotes
+		str = str.replaceAll("^\"", "").replaceAll("\"$", "");
+		
+		// convert escaped quotes
+		str = str.replaceAll("\\\"", "\"");
+		
+		return str;
+    }
+    
     public Uri exportHistoryToCsvFile() {
     	List<Drink> allDrinks = dbs.getDrinks(null, null, null);
     	Map<String, String> beerColumns;
@@ -106,11 +197,7 @@ public class ImportExportHelper {
     		numCols += drinkColumns.size();
     		
 	    	for (String colname: drinkColumns.keySet()) {
-        		if (colname != null)
-					colname = colname.replaceAll("\"", "\\\""); // escape quotes
-				csvData.append("\"");
-				csvData.append(colname);
-				csvData.append("\"");
+				csvData.append( enquote(colname) );
 				csvData.append(",");
 			}
     	} else {
@@ -125,11 +212,7 @@ public class ImportExportHelper {
     		numCols += beerColumns.size();
     		
 	    	for (String colname: beerColumns.keySet()) {
-        		if (colname != null)
-					colname = colname.replaceAll("\"", "\\\""); // escape quotes
-				csvData.append("\"");
-				csvData.append(colname);
-				csvData.append("\"");
+				csvData.append( enquote(colname) );
 				
 				if (++col < numCols)
 					csvData.append(",");
@@ -148,13 +231,8 @@ public class ImportExportHelper {
         	for (String colname: drinkColumns.keySet()) {
         		String attr = drinkColumns.get(colname);
     			String val = drink.get(attr);
-    			if (val != null)
-    				val = val.replaceAll("\"", "\\\""); // escape quotes
-    			else
-    				val = "";
-    			csvData.append("\"");
-    			csvData.append(val);
-    			csvData.append("\"");
+
+    			csvData.append( enquote(val) );
     			csvData.append(",");
     			
     			++col;
@@ -169,13 +247,8 @@ public class ImportExportHelper {
     	    	for (String colname: beerColumns.keySet()) {
     	    		String attr = beerColumns.get(colname);
     	    		String val = beer.get(attr);
-	    			if (val != null)
-	    				val = val.replaceAll("\"", "\\\""); // escape quotes
-	    			else
-	    				val = "";
-	    			csvData.append("\"");
-	    			csvData.append(val);
-	    			csvData.append("\"");
+
+	    			csvData.append( enquote(val) );
 	
 	    			if (++col < numCols)
 	        			csvData.append(",");

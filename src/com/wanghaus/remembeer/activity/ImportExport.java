@@ -109,7 +109,8 @@ public class ImportExport extends Activity {
 	private void initLastExported() {
 		long when;
 		
-		when = BeerDbHelper.localCsvModifiedDate();
+    	ImportExportHelper ieh = new ImportExportHelper(context);
+		when = ieh.localCsvModifiedDate();
 		if (when > 0) {
 			Date date = new Date(when);
 			
