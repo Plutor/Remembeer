@@ -1,6 +1,5 @@
 package com.wanghaus.remembeer.helper;
 
-import java.io.File;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.LinkedList;
@@ -12,7 +11,6 @@ import android.content.res.Resources;
 import android.database.Cursor;
 import android.database.sqlite.SQLiteDatabase;
 import android.database.sqlite.SQLiteOpenHelper;
-import android.os.Environment;
 import android.util.Log;
 
 import com.wanghaus.remembeer.R;
@@ -266,10 +264,10 @@ public class BeerDbHelper {
     	return getDrinkHistory(limit, "stamp DESC");
     }
     public Cursor getDrinkHistoryAlphabetically() {
-    	return getDrinkHistory(null, "beername ASC");
+    	return getDrinkHistory(null, "b.name ASC");
     }
     public Cursor getDrinkHistoryAlphabetically(Integer limit) {
-    	return getDrinkHistory(limit, "beername ASC");
+    	return getDrinkHistory(limit, "b.name ASC");
     }
     public Cursor getDrinkHistory(Integer limit, String sortBy) {
     	// This really should return a Cursor, not a list.  Don't change it.
@@ -278,8 +276,9 @@ public class BeerDbHelper {
     		strLimit = " LIMIT " + limit.toString();
     	
     	return db.rawQuery(
-    			"SELECT ROWID AS _id, * "
-    			+ "FROM " + DB_TABLE_DRINKS + " "
+    			"SELECT d.ROWID AS _id, d.* "
+    			+ "FROM " + DB_TABLE_DRINKS + " d, " + DB_TABLE_BEERS + " b "
+    			+ "WHERE d.beer_id = b.ROWID "
     			+ strLimit
     			+ " ORDER BY " + sortBy,
     			null);
