@@ -246,8 +246,7 @@ public class History extends BaseActivity {
         // Map Cursor columns to views defined in simple_list_item_2.xml
         historyAdapter = new HistoryCursorAdapter(this,
                 R.layout.history_row, recentDrinks, 
-                new String[] { "beername", "details" }, 
-                new int[] { R.id.beername, R.id.details });
+                new String[] {}, new int[] {});
 
         historyList.setAdapter(historyAdapter);
 	}

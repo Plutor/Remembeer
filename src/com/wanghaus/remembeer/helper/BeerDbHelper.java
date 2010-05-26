@@ -286,7 +286,7 @@ public class BeerDbHelper {
 
 	public Cursor searchDrinkHistory(String queryString) {
     	return db.rawQuery(
-    			"SELECT d.ROWID AS _id, b.name AS beername, container || ' at ' || stamp AS details, rating, container "
+    			"SELECT d.ROWID AS _id, d.* "
     			+ "FROM " + DB_TABLE_DRINKS + " d, " + DB_TABLE_BEERS + " b "
     			+ "WHERE d.beer_id = b.ROWID "
     			+ "AND b.name LIKE ? ",
