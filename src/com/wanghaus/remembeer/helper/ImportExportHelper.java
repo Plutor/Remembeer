@@ -2,10 +2,12 @@ package com.wanghaus.remembeer.helper;
 
 import java.io.BufferedReader;
 import java.io.File;
+import java.io.FileInputStream;
 import java.io.FileNotFoundException;
 import java.io.FileOutputStream;
-import java.io.FileReader;
 import java.io.IOException;
+import java.io.InputStream;
+import java.io.InputStreamReader;
 import java.io.PrintWriter;
 import java.util.Arrays;
 import java.util.List;
@@ -32,20 +34,26 @@ public class ImportExportHelper {
 	}
 	
     public int importHistoryFromCsvFile() {
-    	BufferedReader csvFile;
-    	String line;
-    	Integer count = new Integer(0);
+    	InputStream ins;
     	
     	try {
-    		csvFile = new BufferedReader(new FileReader(DB_CSV));
+    		ins = new FileInputStream(DB_CSV);
     	} catch(FileNotFoundException e) {
         	try {
-        		csvFile = new BufferedReader(new FileReader(DB_CSV_LEGACY));
+        		ins = new FileInputStream(DB_CSV_LEGACY);
         	} catch(FileNotFoundException e2) {
         		return -1;
         	}
     	}
     	
+		return importHistoryFromCsvFile(ins);
+    }
+    
+    public int importHistoryFromCsvFile( InputStream ins ) {
+    	BufferedReader csvFile = new BufferedReader(new InputStreamReader(ins));
+    	String line;
+    	Integer count = new Integer(0);
+    
        	List<String> columns = null;
 		int stampcol = -1;
 		int beernamecol = -1;
