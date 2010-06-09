@@ -35,6 +35,7 @@
         <item>Eisbock</item>
         <item>English Bitter</item>
         <item>English Brown Ale</item>
+        <item>ESB</item>
         <item>European Dark Lager</item>
         <item>European Pale Lager</item>
         <item>European Strong Lager</item>
@@ -55,6 +56,7 @@
         <item>Herbed Beer</item>
         <item>Imperial Pilsner</item>
         <item>Imperial Stout</item>
+        <item>Imperial IPA</item>
         <item>IPA</item>
         <item>Irish Dry Stout</item>
         <item>Irish Red Ale</item>
@@ -68,6 +70,7 @@
         <item>Maibock</item>
         <item>Malt Liquor</item>
         <item>Märzen</item>
+        <item>Mild Ale</item>
         <item>Milk Stout</item>
         <item>Munich Dunkel Lager</item>
         <item>Munich Helles Lager</item>
@@ -100,6 +103,7 @@
         <item>Strong Ale</item>
         <item>Strong Dark Ale</item>
         <item>Strong Pale Ale</item>
+        <item>Summer Pilsner</item>
         <item>Sweet Stout</item>
         <item>Tripel</item>
         <item>Vegetable Beer</item>
