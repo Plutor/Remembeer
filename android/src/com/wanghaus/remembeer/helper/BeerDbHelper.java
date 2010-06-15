@@ -19,6 +19,7 @@ import com.wanghaus.remembeer.model.Drink;
 
 public class BeerDbHelper {
 	private static final String DB_NAME = "Remembeer";
+	private static final String TESTDB_NAME = "Remembeer_test";
 	private static final String DB_TABLE_DRINKS = "drinks";
 	private static final String DB_TABLE_BEERS = "beers";
 	private static final int DB_VERSION = 4;
@@ -40,25 +41,36 @@ public class BeerDbHelper {
 					+ "notes TEXT "
 					+ ")", };
 
-    private final Context context; 
+    protected final Context context; 
 	private SQLiteDatabase db;
     private DatabaseHelper DBHelper;
 
     public BeerDbHelper(Context ctx) {
+    	this(ctx, false);
+    }
+    public BeerDbHelper(Context ctx, boolean testdb) {
         this.context = ctx;
-        DBHelper = new DatabaseHelper(context);
+        
+        if (testdb)
+        	DBHelper = new DatabaseHelper(context, TESTDB_NAME);
+        else
+        	DBHelper = new DatabaseHelper(context, DB_NAME);
+        
         db = DBHelper.getWritableDatabase();
 
-    	ImportExportHelper ieh = new ImportExportHelper(this);
-        if (ieh.localCsvModifiedDate() > 0 && getDrinkCount() == 0) {
-        	ieh.importHistoryFromCsvFile();
-        	// Should we remove CSV once we import?
+        if (!testdb) {
+        	// Auto-import if this isn't a test and there are no drinks in the db and there's a csv
+	    	ImportExportHelper ieh = new ImportExportHelper(this);
+	        if (ieh.localCsvModifiedDate() > 0 && getDrinkCount() == 0) {
+	        	ieh.importHistoryFromCsvFile();
+	        	// Should we remove CSV once we import?
+	        }
         }
     }
         
     private static class DatabaseHelper extends SQLiteOpenHelper {
-        DatabaseHelper(Context context) {
-            super(context, DB_NAME, null, DB_VERSION);
+        DatabaseHelper(Context context, String dbName) {
+            super(context, dbName, null, DB_VERSION);
         }
 
         @Override
@@ -252,6 +264,15 @@ public class BeerDbHelper {
 	public void deleteDrink(Drink drink) {
 		int id = drink.getId();
 		db.execSQL("DELETE FROM " + DB_TABLE_DRINKS + " WHERE ROWID = " + String.valueOf(id));
+    }
+	public void deleteBeer(Beer beer) {
+		// Don't do it if there are any drinks for this beer
+		List<Drink> drinks = this.getDrinks("beerId = ?", new String[] { String.valueOf(beer.getId()) }, null);
+		if (drinks != null && drinks.size() > 0)
+			return;
+		
+		int id = beer.getId();
+		db.execSQL("DELETE FROM " + DB_TABLE_BEERS + " WHERE ROWID = " + String.valueOf(id));
     }
     
     /*
