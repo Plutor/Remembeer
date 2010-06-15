@@ -176,10 +176,14 @@
 	<string name="reminder_title">How\'s that beer?</string>
 	<string name="reminder_text">Take a moment and rate your beer.</string>
 
-	<string name="stat_beerCount">Number of beers drunk</string>
+	<string name="stat_drinksCount">Number of beers drunk</string>
+	<string name="stat_beersCount">Number of different beers drunk</string>
 	<string name="stat_favoriteBeer">Favorite beer</string>
 	<string name="stat_mostDrunkBeer">Most drunk beer</string>
 	<string name="stat_favoriteDrinkingHour">Favorite drinking hour</string>
+	<string name="stat_drinksLast7days">Drinks in the last 7 days</string>
+	<string name="stat_drinksThisMonth">Drinks so far this month</string>
+	<string name="stat_drinksThisYear">Drinks so far this year</string>
 	
 	<string name="addbeerdone_prefix_small">That was your</string>
 	<string name="addbeerdone_num_eq1">first</string>

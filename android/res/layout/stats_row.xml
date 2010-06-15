@@ -3,16 +3,18 @@
 	android:layout_width="fill_parent"
 	android:layout_height="wrap_content"
 	android:orientation="vertical"
-	android:padding="4sp" >
+	android:padding="4dip" >
 	<TextView
 		android:id="@+id/label"
 		android:layout_width="fill_parent"
 		android:layout_height="wrap_content"
+		android:paddingLeft="8dip"
 		android:textAppearance="?android:attr/textAppearanceSmall" />
 	<TextView
 		android:id="@+id/value"
 		android:layout_width="fill_parent"
 		android:layout_height="wrap_content"
+		android:paddingRight="8dip"
 		android:gravity="right"
 		android:textAppearance="?android:attr/textAppearanceLarge" />
 </LinearLayout>

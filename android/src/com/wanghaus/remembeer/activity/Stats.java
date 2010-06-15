@@ -25,10 +25,15 @@ public class Stats extends BaseActivity {
         setContentView(R.layout.stats);
         
         BeerDbHelper dbs = new BeerDbHelper(this);
-        stats.add( new BeerStat( getText(R.string.stat_beerCount), String.valueOf(dbs.getDrinkCount())) );
+        stats.add( new BeerStat( getText(R.string.stat_drinksCount), dbs.getDrinkCount()) );
+        stats.add( new BeerStat( getText(R.string.stat_beersCount), dbs.getBeersCount()) );
         stats.add( new BeerStat( getText(R.string.stat_favoriteBeer), dbs.getFavoriteBeer().getName()) );
         stats.add( new BeerStat( getText(R.string.stat_mostDrunkBeer), dbs.getMostDrunkBeer()) );
         stats.add( new BeerStat( getText(R.string.stat_favoriteDrinkingHour), dbs.getFavoriteDrinkingHour()) );
+        stats.add( new BeerStat( getText(R.string.stat_drinksLast7days), dbs.getDrinkCountLastDays(7)) );
+        stats.add( new BeerStat( getText(R.string.stat_drinksThisMonth), dbs.getDrinkCountThisMonth()) );
+        stats.add( new BeerStat( getText(R.string.stat_drinksThisYear), dbs.getDrinkCountThisYear()) );
+
         dbs.close();
         
         ListView statList = (ListView) findViewById(R.id.stats_list);
@@ -46,6 +51,10 @@ public class Stats extends BaseActivity {
     	public BeerStat(CharSequence name, String value) {
     		this.name = name;
     		this.value = value;
+    	}
+    	public BeerStat(CharSequence name, int value) {
+    		this.name = name;
+    		this.value = String.valueOf(value);
     	}
     	public BeerStat(CharSequence name, Beer beer) {
     		this.name = name;
