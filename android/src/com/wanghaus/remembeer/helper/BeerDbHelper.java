@@ -2,8 +2,10 @@ package com.wanghaus.remembeer.helper;
 
 import java.util.ArrayList;
 import java.util.Date;
+import java.util.HashMap;
 import java.util.LinkedList;
 import java.util.List;
+import java.util.Map;
 
 import android.content.ContentValues;
 import android.content.Context;
@@ -419,15 +421,65 @@ public class BeerDbHelper {
     }
     
     public Beer getFavoriteBeer() {
-    	// TODO - There's gotta be a better way to calculate this - issue #140    	
-    	List<Beer> topBeers = getBeers(null, null, "AVG(rating) DESC, COUNT(*) DESC, MAX(stamp) DESC");
+    	// This is a kinda clunky implementation of Dirichlet priors and expected value:
+    	// <http://all-thing.net/how-to-rank-products-based-on-user-input>
     	
-    	if (topBeers == null || topBeers.size() == 0) {
+    	Cursor ratings = db.rawQuery("select beer_id, rating, count(*) from drinks group by beer_id, rating;", null);
+    	if (ratings == null || ratings.getCount() < 1) {
     		Beer beer = new Beer();
     		beer.setName("-");
     		return beer;
+    	}
+
+    	// The prior will have to change if we ever implement half-ratings
+    	Map<Double, Integer> prior = new HashMap<Double, Integer>();
+    	prior.put(1.0, 2); prior.put(2.0, 2); prior.put(3.0, 2); prior.put(4.0, 2); prior.put(5.0, 2); 
+
+    	int topBeerId=0, lastBeerId=0;
+    	Double topRating=0.0;
+    	Map<Double, Integer> posterior = new HashMap<Double, Integer>(prior);    	
+    	
+    	ratings.moveToFirst();
+    	do {
+    		int beerId = ratings.getInt(0);
+    		double rating = ratings.getDouble(1);
+    		int count = ratings.getInt(2);
+    		
+    		if (beerId != lastBeerId) {
+    			// Figure out the val for the last beer
+    			int totalRatings = 0;
+    			Double score = 0.0;
+    			for (Double i : posterior.keySet()) {
+    				int val = posterior.get(i);
+    				score += (i + 1) * val;
+    				totalRatings += val;
+    			}
+    			
+    			Log.d("favoriteBeer", "beer " + beerId + " has " + totalRatings + " ratings and a score of " + score + " = " + (score/totalRatings) );
+    			
+    			// Is this the new biggest one?
+    			if (totalRatings > 0 && score/totalRatings > topRating) {
+    				topRating = score/totalRatings;
+    				topBeerId = lastBeerId;
+    			}
+    			
+    			// Reset
+    	    	posterior = new HashMap<Double, Integer>(prior);    	
+    			lastBeerId = beerId;
+    		}
+
+    		int v = posterior.get(rating);
+    		posterior.put(rating, v + count);
+    	} while (ratings.moveToNext());
+
+    	// Return the beer
+    	if (topBeerId > 0) {
+    		Beer beer = getBeer(topBeerId);
+    		return beer;
     	} else {
-    		return topBeers.get(0);
+    		Beer beer = new Beer();
+    		beer.setName("-");
+    		return beer;    		
     	}
     }
     
