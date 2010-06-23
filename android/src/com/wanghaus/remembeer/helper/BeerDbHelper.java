@@ -468,8 +468,10 @@ public class BeerDbHelper {
     			lastBeerId = beerId;
     		}
 
-    		int v = posterior.get(rating);
-    		posterior.put(rating, v + count);
+    		if (rating > 0) {
+	    		int v = posterior.get(rating);
+	    		posterior.put(rating, v + count);
+    		}
     	} while (ratings.moveToNext());
 
     	// Return the beer
