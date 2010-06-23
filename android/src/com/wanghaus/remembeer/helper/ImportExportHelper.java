@@ -1,6 +1,5 @@
 package com.wanghaus.remembeer.helper;
 
-import java.io.BufferedReader;
 import java.io.File;
 import java.io.FileInputStream;
 import java.io.FileNotFoundException;
@@ -17,6 +16,7 @@ import android.content.Context;
 import android.net.Uri;
 import android.os.Environment;
 import android.util.Log;
+import au.com.bytecode.opencsv.CSVReader;
 
 import com.wanghaus.remembeer.model.Beer;
 import com.wanghaus.remembeer.model.Drink;
@@ -50,8 +50,7 @@ public class ImportExportHelper {
     }
     
     public int importHistoryFromCsvFile( InputStream ins ) {
-    	BufferedReader csvFile = new BufferedReader(new InputStreamReader(ins));
-    	String line;
+    	InputStreamReader csvFile = new InputStreamReader(ins);
     	Integer count = new Integer(0);
     
        	List<String> columns = null;
@@ -59,9 +58,11 @@ public class ImportExportHelper {
 		int beernamecol = -1;
 		int containercol = -1;
 		
+	    CSVReader reader = new CSVReader(csvFile);
+	    String [] nextLine;
+	    
        	try {
-        	String columnline =  csvFile.readLine();
-        	columns = Arrays.asList( columnline.split(",", -1) ); // -1 means "don't strip trailing empty strings"
+        	columns = Arrays.asList( reader.readNext() );
            	
         	for (int i=0; i<columns.size(); ++i) {
         		String c = columns.get(i);
@@ -88,9 +89,8 @@ public class ImportExportHelper {
 		}
 
     	try {
-    		while( (line = csvFile.readLine()) != null ) {
-    			Log.v("importLine", line);
-    			List<String> elements = Arrays.asList(line.split(",", -1));
+    	    while ((nextLine = reader.readNext()) != null) {
+    			List<String> elements = Arrays.asList(nextLine);
 
             	for (int i=0; i<elements.size(); ++i) {
             		String c = elements.get(i);
