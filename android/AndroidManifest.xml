@@ -2,8 +2,8 @@
 <manifest
 	xmlns:android="http://schemas.android.com/apk/res/android"
 	android:sharedUserId="com.wanghaus.remembeer"
-	android:versionCode="25"
-	android:versionName="1.1.2"
+	android:versionCode="26"
+	android:versionName="1.1.3-alpha1"
 	package="com.wanghaus.remembeer">
 	<application
 		android:icon="@drawable/beer_and_scroll"
