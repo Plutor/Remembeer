@@ -163,7 +163,8 @@
 			android:layout_marginLeft="6dip"
 			android:layout_marginRight="6dip"
 			android:minLines="2"
-			android:gravity="top" />
+			android:gravity="top"
+			android:capitalize="sentences" />
 
 		<Button
 			android:id="@+id/beerinfo_saveInfo"

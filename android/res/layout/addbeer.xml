@@ -21,7 +21,8 @@
 			android:id="@+id/beername"
 			android:layout_width="fill_parent"
 			android:layout_height="wrap_content"
-			android:inputType="textCapWords" />
+			android:inputType="textCapWords"
+			android:imeOptions="actionDone" />
 
 		<FrameLayout
 			android:layout_width="wrap_content"
@@ -72,7 +73,9 @@
 			android:id="@+id/addbeer_notes"
 			android:layout_width="fill_parent"
 			android:layout_height="wrap_content"
-			android:gravity="top" />
+			android:gravity="top"
+			android:imeOptions="actionDone"
+			android:capitalize="sentences" />
 
 		<Button
 			android:id="@+id/save"
