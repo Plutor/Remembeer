@@ -119,11 +119,11 @@ public class AddBeer extends BaseActivity {
         // When something is typed, schedule a lookup for 200ms later
         beernameView.addTextChangedListener( new TextWatcher() {
 			public void afterTextChanged(Editable s) { }
-			public void beforeTextChanged(CharSequence s, int start, int count, int after) { 	}
+			public void beforeTextChanged(CharSequence s, int start, int count, int after) { }
 			public void onTextChanged(CharSequence currentBeername, int start, int before, int count) {
 		        if ( currentBeername != null && !currentBeername.equals(beernameWhenLookupScheduled) ) {
 			        handler.removeCallbacks(beerInfoLookupRunnable);
-			        beernameWhenLookupScheduled = currentBeername;
+			        beernameWhenLookupScheduled = currentBeername.toString();
 		            handler.postDelayed(beerInfoLookupRunnable, 200);
 		        }
 			}
