@@ -3,6 +3,8 @@ package com.wanghaus.remembeer.model;
 import java.util.HashMap;
 import java.util.Map;
 
+import org.json.JSONObject;
+
 import android.database.Cursor;
 
 public class Beer extends Model {	
@@ -13,6 +15,9 @@ public class Beer extends Model {
 	}
 	public Beer(Cursor c) {
 		super(c);
+	}
+	public Beer(JSONObject j) {
+		super(j);
 	}
 
 	public Map<String, String> getExportMap() { // export column name => db column name

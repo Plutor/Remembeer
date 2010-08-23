@@ -549,8 +549,6 @@ public class BeerDbHelper {
 		}
 		s.close();
 		
-		// XXX - If we got no reply, this is where the web service comes in
-		
 		return rv;
 	}
 
@@ -613,9 +611,7 @@ public class BeerDbHelper {
 		if (beers.size() > 0)
 			return beers.get(0);
 		
-		Beer newbeer = new Beer();
-		newbeer.setName(beername);
-		return newbeer;
+		return null;
 	}
 	
 	public Beer getBeer(int beerId) {

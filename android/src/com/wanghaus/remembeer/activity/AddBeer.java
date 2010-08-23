@@ -38,6 +38,7 @@ import com.wanghaus.remembeer.R;
 import com.wanghaus.remembeer.app.DatePickerCancellableDialog;
 import com.wanghaus.remembeer.app.TimePickerCancellableDialog;
 import com.wanghaus.remembeer.helper.BeerDbHelper;
+import com.wanghaus.remembeer.helper.WebServiceHelper;
 import com.wanghaus.remembeer.helper.TwitterHelper;
 import com.wanghaus.remembeer.model.Beer;
 import com.wanghaus.remembeer.model.Drink;
@@ -48,9 +49,12 @@ public class AddBeer extends BaseActivity {
 	private static final int TIME_DIALOG_ID = 1;
 	private static final int BEERINFO_DIALOG_ID = 2;
 	
+	private final int BEERLOOKUP_WAIT_MSEC = 200;
+	
 	private Spinner drinkWhenSpinner;
 	private Calendar specificTime = Calendar.getInstance();
 	private BeerDbHelper dbs;
+	private WebServiceHelper wsh;
 	private Handler handler;
 	
 	private Beer beer = null;
@@ -63,6 +67,7 @@ public class AddBeer extends BaseActivity {
         setContentView(R.layout.addbeer);
         
         dbs = new BeerDbHelper(this);
+        wsh = new WebServiceHelper(this);
         handler = new Handler();
 
         initBeernameAutoComplete();
@@ -124,7 +129,7 @@ public class AddBeer extends BaseActivity {
 		        if ( currentBeername != null && !currentBeername.equals(beernameWhenLookupScheduled) ) {
 			        handler.removeCallbacks(beerInfoLookupRunnable);
 			        beernameWhenLookupScheduled = currentBeername.toString();
-		            handler.postDelayed(beerInfoLookupRunnable, 200);
+		            handler.postDelayed(beerInfoLookupRunnable, BEERLOOKUP_WAIT_MSEC);
 		        }
 			}
         });
@@ -207,7 +212,7 @@ public class AddBeer extends BaseActivity {
 			showBeerPreviewLoading();
 			
 			// Actual lookup
-			beer = dbs.findBeerByName(searchBeerName);
+			beer = wsh.findBeerByName(searchBeerName);
 			
 			if (beer != null)
 				showBeerPreview(beer);

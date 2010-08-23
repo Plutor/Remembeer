@@ -2,7 +2,11 @@ package com.wanghaus.remembeer.model;
 
 import java.io.Serializable;
 import java.util.HashMap;
+import java.util.Iterator;
 import java.util.Map;
+
+import org.json.JSONException;
+import org.json.JSONObject;
 
 import android.database.Cursor;
 
@@ -17,6 +21,18 @@ public abstract class Model implements Serializable {
 	public Model(Cursor c) {
 		this();
 		putAll(c);
+	}
+	@SuppressWarnings("unchecked")
+	public Model(JSONObject json) {
+		this();
+		
+		Iterator<String> keys = json.keys();
+		while (keys.hasNext()) {
+			String key = keys.next();
+			try {
+				put(key, json.getString(key));
+			} catch (JSONException e) {	}
+		}
 	}
 	
 	public void put(String key, String value) {
@@ -53,6 +69,12 @@ public abstract class Model implements Serializable {
 	
 	public Map<String, String> getAll() {
 		return stash;
+	}
+	
+	public JSONObject toJSONObject() {
+		JSONObject rv = new JSONObject(stash);
+		
+		return rv;
 	}
 	
 	public int size() {
