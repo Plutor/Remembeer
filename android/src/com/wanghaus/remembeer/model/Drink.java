@@ -3,6 +3,8 @@ package com.wanghaus.remembeer.model;
 import java.util.HashMap;
 import java.util.Map;
 
+import org.json.JSONObject;
+
 import android.database.Cursor;
 
 public class Drink extends Model {
@@ -14,6 +16,10 @@ public class Drink extends Model {
 	public Drink(Cursor c) {
 		super(c);
 	}
+	public Drink(JSONObject j) {
+		super(j);
+	}
+
 	public Drink(Beer beer, String container, String stamp, String notes) {
 		this();
 		setBeerId(beer.getId());

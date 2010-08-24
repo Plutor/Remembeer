@@ -14,6 +14,7 @@ import android.content.Context;
 import android.util.Log;
 
 import com.wanghaus.remembeer.model.Beer;
+import com.wanghaus.remembeer.model.Drink;
 
 public class WebServiceHelper {
 	public static String webserviceRoot = "http://remembeer.info:8000/w/";
@@ -42,14 +43,8 @@ public class WebServiceHelper {
 		
 		return beer;
 	}
-	
-	public Beer sendWebServiceRequest(Beer beer, boolean search) {
-		// Build JSON
-		JSONObject json = beer.toJSONObject();
-		try {
-			json.put("search", String.valueOf(search));
-		} catch (JSONException e) {}
-		
+
+	public JSONObject sendWebServiceRequest(JSONObject json) {
 		// Send it
 		String response = "";
 		try {
@@ -82,12 +77,56 @@ public class WebServiceHelper {
 			Log.d("WebServiceHelper", "Got response: " + response);
 			try {
 				JSONObject responseJSON = new JSONObject(response);
+				return responseJSON;
+			} catch (Exception e) {
+				Log.e("WebServiceHelper", "Unable to parse JSON response", e);
+			}
+		}
+		
+		return null;
+	}
+	
+	public Beer sendWebServiceRequest(Beer beer, boolean search) {
+		// Build JSON
+		JSONObject json = beer.toJSONObject();
+		try {
+			json.put("search", String.valueOf(search));
+		} catch (JSONException e) {}
+		
+		// Send it
+		JSONObject responseJSON = sendWebServiceRequest(json);
+		
+		// Extract beer object from response
+		if (responseJSON != null) {
+			try {
 				Beer responseBeer = new Beer(responseJSON);
 				return responseBeer;
 			} catch (Exception e) {
 				Log.e("WebServiceHelper", "Unable to parse JSON response", e);
 			}
 		}
+		
+		return null;
+	}
+	
+	public Drink sendWebServiceRequest(Drink drink) {
+		// Build JSON
+		JSONObject json = drink.toJSONObject();
+		
+		// Send it
+		JSONObject responseJSON = sendWebServiceRequest(json);
+		
+		// Extract beer object from response
+		if (responseJSON != null) {
+			try {
+				Drink responseDrink = new Drink(responseJSON);
+				return responseDrink;
+			} catch (Exception e) {
+				Log.e("WebServiceHelper", "Unable to parse JSON response", e);
+			}
+		}
+		
+		// TODO - Update the original drink in the db
 		
 		return null;
 	}
