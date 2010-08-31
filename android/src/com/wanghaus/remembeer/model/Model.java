@@ -2,8 +2,8 @@ package com.wanghaus.remembeer.model;
 
 import java.io.Serializable;
 import java.util.HashMap;
-import java.util.Iterator;
 import java.util.Map;
+import java.util.Set;
 
 import org.json.JSONException;
 import org.json.JSONObject;
@@ -22,15 +22,15 @@ public abstract class Model implements Serializable {
 		this();
 		putAll(c);
 	}
-	@SuppressWarnings("unchecked")
 	public Model(JSONObject json) {
 		this();
 		
-		Iterator<String> keys = json.keys();
-		while (keys.hasNext()) {
-			String key = keys.next();
+		Map<String, String> exportMap = getExportMap();
+		Set<String> keys = exportMap.keySet();
+		for (String jsonKey : keys) {
+			String modelKey = exportMap.get(jsonKey);
 			try {
-				put(key, json.getString(key));
+				put(modelKey, json.getString(jsonKey));
 			} catch (JSONException e) {	}
 		}
 	}
