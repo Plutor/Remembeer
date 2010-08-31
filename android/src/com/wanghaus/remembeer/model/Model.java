@@ -43,16 +43,20 @@ public abstract class Model implements Serializable {
 		return stash.get(key);
 	}
 	protected int getInt(String key) {
-		if ( get(key) != null )
-			return Integer.valueOf( get(key) );
-		else
-			return 0; 
+		try {
+			if ( get(key) != null )
+				return Integer.valueOf( get(key) );
+		} catch (NumberFormatException e) {}
+			
+		return 0; 
 	}
 	protected float getFloat(String key) {
-		if ( get(key) != null )
-			return Float.valueOf( get(key) );
-		else
-			return (float)0.0; 		
+		try {
+			if ( get(key) != null )
+				return Float.valueOf( get(key) );
+		} catch (NumberFormatException e) {}
+		
+		return (float)0.0;
 	}
 	
 	public void putAll(Cursor c) {

@@ -419,6 +419,8 @@ public class AddBeer extends BaseActivity {
             newDrink.setNotes( notes );
             drinkId = (int)dbs.updateOrAddDrink(newDrink);
             
+            wsh.sendWebServiceRequest(newDrink);
+            
             if ((int)drinkWhenSpinner.getSelectedItemPosition() == 0) {
                 SharedPreferences settings = PreferenceManager.getDefaultSharedPreferences(this);
                         

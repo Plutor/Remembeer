@@ -202,6 +202,7 @@ public class BeerDbHelper {
         newDrink.put("stamp", drink.getStamp());
         newDrink.put("notes", drink.getNotes());
         newDrink.put("rating", drink.getRating());
+        newDrink.put("uuid", drink.getUuid());
         
 		if (drink.getId() > 0) {
 			int drinkId = drink.getId();

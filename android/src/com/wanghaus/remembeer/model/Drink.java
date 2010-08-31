@@ -35,6 +35,7 @@ public class Drink extends Model {
 		rv.put("stamp", "stamp");
 		rv.put("rating", "rating");
 		rv.put("tasting_notes", "notes");
+		rv.put("uuid", "uuid");
 		
 		return rv;
 	}
@@ -61,6 +62,10 @@ public class Drink extends Model {
 	public int getBeerId()				{ return getInt("beer_id"); }
 	public void setBeerId(int val)		{ put("beer_id", String.valueOf(val)); }
 	
+	public String getUuid()				{ return get("uuid"); }
+	public void setUuid(String val)		{ put("uuid", val); }
+	
+
 	/*public Beer getBeer() {
 		// TODO - How do we encapsulate this?
 		//Giving Drink an Intent is a bad way to do this, because it makes drinks unserializable.
