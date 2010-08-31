@@ -72,8 +72,17 @@ public abstract class Model implements Serializable {
 	}
 	
 	public JSONObject toJSONObject() {
-		JSONObject rv = new JSONObject(stash);
+		JSONObject rv = new JSONObject();
 		
+		Map<String, String> exportMap = getExportMap();
+		Set<String> keys = exportMap.keySet();
+		for (String jsonKey : keys) {
+			String modelKey = exportMap.get(jsonKey);
+			try {
+				rv.put(jsonKey, get(modelKey));
+			} catch (JSONException e) {	}
+		}
+
 		return rv;
 	}
 	
