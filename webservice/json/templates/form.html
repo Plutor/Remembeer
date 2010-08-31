@@ -1,0 +1,176 @@
+<html>
+<head>
+    <title>Remembeer webservice testing form</title>
+    <script type="text/javascript" src="http://remembeer.info/webservice/jquery-1.4.2.min.js"></script>
+    <script type="text/javascript" src="http://remembeer.info/webservice/json2.js"></script>
+
+    <script type="text/javascript">
+        $(document).ready( function() {
+            $("form#theform").submit( function(event) {
+                event.preventDefault();
+
+                // Build json
+                var j = new Object();
+                $("form#theform input, form#theform select").each( function() {
+                    var name = $(this).attr("name");
+                    var value = $(this).val();
+
+                    if (value && value != "")
+                        j[name] = value;
+                } );
+
+                try {
+                    var jtxt = JSON.stringify(j, null, 4);
+
+                    // Send request
+                    $("#request-content").html("<pre>" + jtxt + "</pre>");
+                    $.ajax({
+                        url: "/w/",
+                        dataType: 'json',
+                        data: 'q=' + escape(jtxt),
+                        type: 'POST',
+                        success: showresponse,
+                        error: showerror
+                    });
+                } catch(e) {
+                    $("#request-content").html(e);
+                }
+            } );
+         } );
+
+        function showresponse(data, textStatus, XMLHttpRequest) {
+            try {
+                var jtxt = JSON.stringify(data, null, 4);
+                $("#response-content").html("<pre>" + jtxt + "</pre>");
+            } catch(e) {
+                $("#response-content").html(e);
+            }
+        }
+
+        function showerror(XMLHttpRequest, textStatus, errorThrown) {
+            //var jtxt = JSON.stringify(data, null, 4);
+            $("#response-content").html("<pre>" + XMLHttpRequest.responseText + "</pre>");
+        }
+    </script>
+
+    <style type="text/css">
+        #theform p {
+            margin: 0.4em 0;
+        }
+        #theform label {
+            display: inline;
+            float: left;
+            width: 10em;
+            text-align: right;
+        }
+        #theform input {
+            margin-left: 1em;
+            width: 20em;
+        }
+        #theform select {
+            margin-left: 1em;
+        }
+        #theform button {
+            margin-left: 15em;
+        }
+
+        pre {
+            color: #006;
+            background: #eee;
+            margin-left: 2em;
+            padding: 1em;
+        }
+    </style>
+</head>
+<body>
+    <h1>Remembeer webservice test</h1>
+
+    <div id="form">
+        <form id="theform">
+            <p>
+                <label for="beername">Beer name:</label>
+                <input id="beername" name="beername" />
+            </p>
+
+            <p>
+                <label for="brewery">Brewery:</label>
+                <input id="brewery" name="brewery" />
+            </p>
+
+            <p>
+                <label for="location">Brewery Location:</label>
+                <input id="location" name="location" />
+            </p>
+
+            <p>
+                <label for="abv">ABV:</label>
+                <input id="abv" name="abv" />
+            </p>
+
+            <p>
+                <label for="style">Style:</label>
+                <input id="style" name="style" />
+            </p>
+
+            <p>
+                <label for="beernotes">Beer notes:</label>
+                <input id="beernotes" name="beernotes" />
+            </p>
+
+            <p>
+                <label for="user">User:</label>
+                <input id="user" name="user" />
+            </p>
+
+            <p>
+                <label for="container">Container:</label>
+                <input id="container" name="container" />
+            </p>
+
+            <p>
+                <label for="stamp">Stamp:</label>
+                <input id="stamp" name="stamp" />
+            </p>
+
+            <p>
+                <label for="drinknotes">Drink notes:</label>
+                <input id="drinknotes" name="drinknotes" />
+            </p>
+
+            <p>
+                <label for="rating">Rating:</label>
+                <input id="rating" name="rating" />
+            </p>
+
+            <p>
+                <label for="rating">Search:</label>
+                <select id="search" name="search">
+                    <option value="">(null)</option>
+                    <option value="true">true</option>
+                    <option value="false">false</option>
+                </select>
+            </p>
+
+            <p>
+                <button id="sendrequest">Send request</button>
+            </p>
+        </form>
+    </div>
+
+    <div id="request">
+        <h2>Request</h2>
+        <p id="request-content">
+            (No request sent yet)
+        </p>
+    </div>
+
+    <div id="response">
+        <h2>Response</h2>
+        <p id="response-content">
+            (No response received yet)
+        </p>
+    </div>
+</body>
+</head>
+</html>
+
