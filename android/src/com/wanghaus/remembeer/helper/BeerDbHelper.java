@@ -24,11 +24,12 @@ public class BeerDbHelper {
 	private static final String TESTDB_NAME = "Remembeer_test";
 	private static final String DB_TABLE_DRINKS = "drinks";
 	private static final String DB_TABLE_BEERS = "beers";
-	private static final int DB_VERSION = 4;
+	private static final int DB_VERSION = 5;
 
 	private static final String[] DB_CREATE = new String[] {
 			"CREATE TABLE IF NOT EXISTS " + DB_TABLE_DRINKS + "("
 					+ "beer_id INT NOT NULL, " // foreign key
+					+ "uuid CHAR(36), "
 					+ "container TEXT NOT NULL, "
 					+ "stamp DATETIME NOT NULL, "
 					+ "rating REAL NOT NULL DEFAULT 0, "
@@ -164,6 +165,10 @@ public class BeerDbHelper {
 				db.execSQL("INSERT INTO " + DB_TABLE_DRINKS + " " + 
 						"SELECT beer_id, container, stamp, rating, notes FROM " + DB_TABLE_DRINKS + "_temp");
 				db.execSQL("DROP TABLE " + DB_TABLE_DRINKS + "_temp");
+
+			case 4:
+				db.execSQL("ALTER TABLE " + DB_TABLE_DRINKS + " "
+						+ "ADD COLUMN uuid CHAR(36)");
 
 			// XXX - future cases go here
 			default:
