@@ -12,6 +12,8 @@ import org.json.JSONException;
 import org.json.JSONObject;
 
 import android.content.Context;
+import android.content.SharedPreferences;
+import android.preference.PreferenceManager;
 import android.util.Log;
 
 import com.wanghaus.remembeer.model.Beer;
@@ -46,6 +48,11 @@ public class WebServiceHelper {
 	}
 
 	public JSONObject sendWebServiceRequest(JSONObject json) {
+		// Don't do anything if web service is off
+        SharedPreferences settings = PreferenceManager.getDefaultSharedPreferences(dbs.context);
+        if (!settings.getBoolean("useWebService", false))
+        	return null;
+        
 		// Send it
 		String response = "";
 		try {

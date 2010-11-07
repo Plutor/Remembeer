@@ -227,4 +227,6 @@
 	<string name="history_clear_search">Show all History</string>
 	
 	<string name="search_label">Search your Beers</string>
+<string name="pref_useWebService">Use the Remembeer library</string>
+<string name="pref_useWebService_summary">Contribute to and get information from the beer library</string>
 </resources>

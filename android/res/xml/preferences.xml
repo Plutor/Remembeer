@@ -10,6 +10,11 @@
 			android:key="addBeerDoneActivity"
 			android:entries="@array/pref_addBeerDoneActivityChoices"
 			android:entryValues="@array/pref_addBeerDoneActivityValues" />
+		<CheckBoxPreference
+			android:title="@string/pref_useWebService"
+			android:summary="@string/pref_useWebService_summary"
+			android:defaultValue="false"
+			android:key="useWebService" />
 	</PreferenceCategory>
 	
 	<PreferenceCategory
