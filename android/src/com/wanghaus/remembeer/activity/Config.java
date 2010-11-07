@@ -4,10 +4,12 @@ import android.app.AlertDialog;
 import android.content.Context;
 import android.content.DialogInterface;
 import android.content.Intent;
+import android.content.SharedPreferences;
 import android.os.Bundle;
 import android.preference.CheckBoxPreference;
 import android.preference.Preference;
 import android.preference.PreferenceActivity;
+import android.preference.PreferenceManager;
 import android.preference.Preference.OnPreferenceChangeListener;
 import android.util.Log;
 
@@ -15,9 +17,11 @@ import com.wanghaus.remembeer.R;
 import com.wanghaus.remembeer.helper.TwitterHelper;
 
 public class Config extends PreferenceActivity {
-	private int TWITTER_CONFIG_DIALOG = 1;
+	private int CONFIG_TWITTER_DIALOG = 1;
+	private int CONFIG_WEBSERVICE_DIALOG = 2;
 	
-	private CheckBoxPreference twitEnabled;
+	private CheckBoxPreference twitterCheckbox;
+	private CheckBoxPreference webServiceCheckbox;
 	private Context cContext;
 	
     @Override
@@ -28,8 +32,8 @@ public class Config extends PreferenceActivity {
     	addPreferencesFromResource(R.xml.preferences);
 
     	// Setup a listener for twitter Enabled to popup ConfigureTwitter
-        twitEnabled = (CheckBoxPreference) getPreferenceScreen().findPreference("twitterEnabled");
-		twitEnabled.setOnPreferenceChangeListener(new OnPreferenceChangeListener() {
+        twitterCheckbox = (CheckBoxPreference) getPreferenceScreen().findPreference("twitterEnabled");
+		twitterCheckbox.setOnPreferenceChangeListener(new OnPreferenceChangeListener() {
 			public boolean onPreferenceChange(Preference preference,
 					Object newValue) {
 				if (newValue.equals(false)) {
@@ -42,7 +46,7 @@ public class Config extends PreferenceActivity {
 		    		           public void onClick(DialogInterface dialog, int id) {
 		    		                // clear the stored tokens
 		    		        	   TwitterHelper.clearTokens(cContext);
-		    		        	   twitEnabled.setChecked(false);
+		    		        	   twitterCheckbox.setChecked(false);
 		    		        	   Log.d("Teardown", "Cleared stored Twitter tokens");
 		    		           }
 		    		       })
@@ -64,7 +68,29 @@ public class Config extends PreferenceActivity {
 					Intent configure;
 					configure = new Intent(cContext,
 							ConfigureTwitter.class);
-					startActivityForResult(configure, TWITTER_CONFIG_DIALOG);
+					startActivityForResult(configure, CONFIG_TWITTER_DIALOG);
+				}
+
+				return false;
+			}
+		});
+		
+		// Setup a listener for twitter Enabled to popup ConfigureTwitter
+		webServiceCheckbox = (CheckBoxPreference) getPreferenceScreen().findPreference("useWebService");
+		webServiceCheckbox.setOnPreferenceChangeListener(new OnPreferenceChangeListener() {
+			public boolean onPreferenceChange(Preference preference,
+					Object newValue) {
+				if (newValue.equals(false)) {
+					// Don't ask to confirm on unchecking
+					webServiceCheckbox.setChecked(false);
+					return false;
+				}
+
+				if (newValue.equals(true)) {
+					// Call ConfigureWebService
+					Intent configure;
+					configure = new Intent(cContext, ConfigureWebService.class);
+					startActivityForResult(configure, CONFIG_WEBSERVICE_DIALOG);
 				}
 
 				return false;
@@ -74,11 +100,14 @@ public class Config extends PreferenceActivity {
 
 	@Override
 	protected void onActivityResult(int requestCode, int resultCode, Intent data) {
-		if (requestCode == TWITTER_CONFIG_DIALOG) {
+		if (requestCode == CONFIG_TWITTER_DIALOG) {
 			Log.d("twitter", "isConfigured = " + TwitterHelper.isConfigured(cContext));
 			 
 			if (TwitterHelper.isConfigured(cContext))
-				twitEnabled.setChecked(true);
+				twitterCheckbox.setChecked(true);
+		} else if (requestCode == CONFIG_WEBSERVICE_DIALOG) {
+			if (resultCode == 1)
+				webServiceCheckbox.setChecked(true);
 		} else {
 			super.onActivityResult(requestCode, resultCode, data);
 		}

@@ -83,6 +83,23 @@ public class AddBeer extends BaseActivity {
             	saveBeer();
             }
         });
+    	
+    	// If webservice setting is unset, ask
+        SharedPreferences settings = PreferenceManager.getDefaultSharedPreferences(this);
+        if (!settings.contains("useWebService")) {
+            // This weird handler/postDelayed thing is to fix a 1.6 bug
+            // <http://groups.google.com/group/android-developers/browse_thread/thread/d3c076e7a0165e64/f553df5324bf5da4>
+            final Context context = this;
+        	Handler webServiceDialogHandler = new Handler();
+			Runnable webServiceDialogThread = new Runnable() {
+				public void run() {
+					Intent configure;
+					configure = new Intent(context, ConfigureWebService.class);
+					startActivity(configure);
+				}
+			};
+			webServiceDialogHandler.postDelayed(webServiceDialogThread, 250);
+        }
     }
     
     private void initBeerinfoPreview() {

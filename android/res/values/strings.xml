@@ -227,6 +227,11 @@
 	<string name="history_clear_search">Show all History</string>
 	
 	<string name="search_label">Search your Beers</string>
-<string name="pref_useWebService">Use the Remembeer library</string>
-<string name="pref_useWebService_summary">Contribute to and get information from the beer library</string>
+
+	<string name="pref_useWebService">Use the Remembeer library</string>
+	<string name="pref_useWebService_summary">Contribute to and get information from the beer library</string>
+	<string name="webService_warning_title">Remembeer Library</string>
+	<string name="webService_warning_text">By using the Remembeer library, you will get information about beers you drink from our centralized database, and will also send information you collect to share with our other users.</string>
+	<string name="webService_warning_yes">Yes!</string>
+	<string name="webService_warning_no">No, thanks</string>
 </resources>

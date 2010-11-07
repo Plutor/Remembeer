@@ -34,6 +34,9 @@
 		<activity
 			android:name=".activity.ConfigureTwitter"
 			android:theme="@android:style/Theme.Dialog"></activity>
+		<activity
+			android:name=".activity.ConfigureWebService"
+			android:theme="@android:style/Theme.Dialog"></activity>
 
 		<activity
 			android:name=".activity.History">
