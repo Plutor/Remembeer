@@ -1,0 +1,30 @@
+- DONE replace missing menu items with popSceneTo code.
+- DONE Beer add next screen option in preferences
+- DONE switch tap and hold operations in history page
+- DONE when all beers with one name have been deleted from history, do not count as a drunk beer in statistics
+- DONE add About display
+- DONE make sort order persistent
+- DONE Twitter posting
+- DONE Import data/Export to Email (body only)
+- DONE initialize preferences
+- DONE notifications - notification dashboard (undo alarms (undo calendar postings))
+- DONE key and secret for Twitter access from Remembeer for Android?
+
+- implement Export to File (webOS 2.0)
+- Facebook posting
+- what are criteria for "Favorite Beer" and "Most Drunk" in statistics?
+- internationalization?
+- preference defaults?
+
+(consumer key for twitter: HW6MSCVzjkWM1MBugM8s6A)
+(consumer secret for twitter: iWDII0E1wTCKvDP1GqddlHzmSgQKZwAaPY3SNxdDU)
+key and secret for Remembeer
+(consumer key for twitter: D3iN6bOTkA7SF1oAl1wgrA)
+(consumer secret for twitter: VyKlwVckeFps6befs6kRHa4YGrbDHMfknq14VvwWo)
+
+https://api.twitter.com/oauth/request_token
+https://api.twitter.com/oauth/access_token
+https://api.twitter.com/oauth/authenticate
+-
+(App ID for Facebook: 121240771264125)
+(App Secret:	b0f061f28d5b1466a87ddae7fa30af43)

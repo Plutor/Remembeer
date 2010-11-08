@@ -1,0 +1,22 @@
+{
+	"id": "com.gelbintergalactic.remembeer",
+	"version": "1.1.0",
+	"vendor": "Remembeer for Android",
+	"vendorurl": "http://Remembeer.info",
+	"copyright": "Ported from Android and developed under license from the originators.",
+	"type": "web",
+	"theme": "light",
+	"main": "index.html",
+	"noWindow": true,
+	"title": "Remembeer",
+	"icon": "icon.png",
+	"smallicon": "icon32.png",
+	"miniicon": "icon24.png",
+	"support": {"url": "http://Remembeer.info",
+		"resources": [{
+			"type": "web",
+			"label": "Discussion Blog",
+			"url": "http://Remembeer.info/blog"
+		}]
+	}
+}

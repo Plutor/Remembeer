@@ -1,0 +1,293 @@
+[
+    {
+        "source": "app/assistants/stage-assistant.js"
+    }, 
+    {
+        "source": "app/javascripts/BeerDB.js"
+    }, 
+    {
+        "source": "app/assistants/app-assistant.js"
+    }, 
+    {
+        "source": "app/javascripts/oauth.js"
+    }, 
+    {
+        "source": "app/javascripts/sha1.js"
+    }, 
+    {
+        "source": "app/assistants/pickTimeDate-assistant.js", 
+        "scenes": [
+            "AddBeer", 
+            "AddBeerBW"
+        ]
+    }, 
+    {
+        "source": "app/views/pickTimeDate/pickTimeDate-chrome.js", 
+        "scenes": [
+            "AddBeer", 
+            "AddBeerBW"
+        ]
+    }, 
+    {
+        "source": "app/assistants/First/FirstBase.js", 
+        "scenes": [
+            "First", 
+            "FirstBW"
+        ]
+    }, 
+    {
+        "source": "app/assistants/First/First-assistant.js", 
+        "scenes": "First"
+    }, 
+    {
+        "source": "app/assistants/First/FirstBW-assistant.js", 
+        "scenes": "FirstBW"
+    }, 
+    {
+        "source": "app/views/First/First-chrome.js", 
+        "scenes": "First"
+    }, 
+    {
+        "source": "app/views/FirstBW/FirstBW-chrome.js", 
+        "scenes": "FirstBW"
+    }, 
+    {
+        "source": "app/assistants/beerInfoDialog-assistant.js", 
+        "scenes": [
+            "First", 
+            "FirstBW"
+        ]
+    }, 
+    {
+        "source": "app/views/beerInfoDialog/beerInfoDialog-chrome.js", 
+        "scenes": [
+            "First", 
+            "FirstBW"
+        ]
+    }, 
+    {
+        "source": "app/assistants/BeerInfo/BeerInfoBase.js", 
+        "scenes": [
+            "BeerInfo", 
+            "BeerInfoBW"
+        ]
+    }, 
+    {
+        "source": "app/assistants/BeerInfo/BeerInfo-assistant.js", 
+        "scenes": "BeerInfo"
+    }, 
+    {
+        "source": "app/views/BeerInfoBW/BeerInfoBW-chrome.js", 
+        "scenes": "BeerInfoBW"
+    }, 
+    {
+        "source": "app/assistants/BeerInfo/BeerInfoBW-assistant.js", 
+        "scenes": "BeerInfoBW"
+    }, 
+    {
+        "source": "app/views/BeerInfo/BeerInfo-chrome.js", 
+        "scenes": "BeerInfo"
+    }, 
+    {
+        "source": "app/assistants/Statistics/StatsBase.js", 
+        "scenes": [
+            "Statistics", 
+            "StatisticsBW"
+        ]
+    }, 
+    {
+        "source": "app/assistants/Statistics/Statistics-assistant.js", 
+        "scenes": "Statistics"
+    }, 
+    {
+        "source": "app/views/StatisticsBW/StatisticsBW-chrome.js", 
+        "scenes": "StatisticsBW"
+    }, 
+    {
+        "source": "app/assistants/Statistics/StatisticsBW-assistant.js", 
+        "scenes": "StatisticsBW"
+    }, 
+    {
+        "source": "app/views/Statistics/Statistics-chrome.js", 
+        "scenes": "Statistics"
+    }, 
+    {
+        "source": "app/assistants/Preferences/PrefsBase.js", 
+        "scenes": [
+            "Preferences", 
+            "PreferencesBW"
+        ]
+    }, 
+    {
+        "source": "app/assistants/Preferences/Preferences-assistant.js", 
+        "scenes": "Preferences"
+    }, 
+    {
+        "source": "app/views/Preferences/Preferences-chrome.js", 
+        "scenes": "Preferences"
+    }, 
+    {
+        "source": "app/assistants/Preferences/PreferencesBW-assistant.js", 
+        "scenes": "PreferencesBW"
+    }, 
+    {
+        "source": "app/views/PreferencesBW/PreferencesBW-chrome.js", 
+        "scenes": "PreferencesBW"
+    }, 
+    {
+        "source": "app/assistants/twitterLogin-assistant.js", 
+        "scenes": "twitterLogin"
+    }, 
+    {
+        "source": "app/views/twitterLogin/twitterLogin-chrome.js", 
+        "scenes": "twitterLogin"
+    }, 
+    {
+        "source": "app/assistants/fbUserDialog-assistant.js", 
+        "scenes": [
+            "Preferences", 
+            "PreferencesBW"
+        ]
+    }, 
+    {
+        "source": "app/views/fbUserDialog/fbUserDialog-chrome.js", 
+        "scenes": [
+            "Preferences", 
+            "PreferencesBW"
+        ]
+    }, 
+    {
+        "source": "app/assistants/importExportDialog-assistant.js", 
+        "scenes": [
+            "First", 
+            "FirstBW"
+        ]
+    }, 
+    {
+        "source": "app/views/importExportDialog/importExportDialog-chrome.js", 
+        "scenes": [
+            "First", 
+            "FirstBW"
+        ]
+    }, 
+    {
+        "source": "app/assistants/MyPopup/MyPopupBase.js", 
+        "scenes": [
+            "myPopup", 
+            "myPopupBW"
+        ]
+    }, 
+    {
+        "source": "app/assistants/MyPopup/myPopup-assistant.js", 
+        "scenes": "myPopup"
+    }, 
+    {
+        "source": "app/assistants/MyPopup/myPopupBW-assistant.js", 
+        "scenes": "myPopupBW"
+    }, 
+    {
+        "source": "app/views/myPopup/myPopup-chrome.js", 
+        "scenes": "myPopup"
+    }, 
+    {
+        "source": "app/views/myPopupBW/myPopupBW-chrome.js", 
+        "scenes": "myPopupBW"
+    }, 
+    {
+        "source": "app/assistants/AddBeer/AddBeerBase.js", 
+        "scenes": [
+            "AddBeer", 
+            "AddBeerBW"
+        ]
+    }, 
+    {
+        "source": "app/assistants/AddBeer/AddBeer-assistant.js", 
+        "scenes": "AddBeer"
+    }, 
+    {
+        "source": "app/views/AddBeer/AddBeer-chrome.js", 
+        "scenes": "AddBeer"
+    }, 
+    {
+        "source": "app/assistants/AddBeer/AddBeerBW-assistant.js", 
+        "scenes": "AddBeerBW"
+    }, 
+    {
+        "source": "app/views/AddBeerBW/AddBeerBW-chrome.js", 
+        "scenes": "AddBeerBW"
+    }, 
+    {
+        "source": "app/assistants/dashboard-assistant.js", 
+        "scenes": "dashboard"
+    }, 
+    {
+        "source": "app/views/dashboard/dashboard-chrome.js", 
+        "scenes": "dashboard"
+    }, 
+    {
+        "source": "app/assistants/Help/HelpBase.js", 
+        "scenes": [
+            "Help", 
+            "HelpBW"
+        ]
+    }, 
+    {
+        "source": "app/assistants/Help/Help-assistant.js", 
+        "scenes": "Help"
+    }, 
+    {
+        "source": "app/views/Help/Help-chrome.js", 
+        "scenes": "Help"
+    }, 
+    {
+        "source": "app/assistants/Help/HelpBW-assistant.js", 
+        "scenes": "HelpBW"
+    }, 
+    {
+        "source": "app/views/HelpBW/HelpBW-chrome.js", 
+        "scenes": "HelpBW"
+    }, 
+    {
+        "source": "app/assistants/About/AboutBase.js", 
+        "scenes": [
+            "About", 
+            "AboutBW"
+        ]
+    }, 
+    {
+        "source": "app/assistants/About/About-assistant.js", 
+        "scenes": "About"
+    }, 
+    {
+        "source": "app/assistants/About/AboutBW-assistant.js", 
+        "scenes": "AboutBW"
+    }, 
+    {
+        "source": "app/views/About/About-chrome.js", 
+        "scenes": "About"
+    }, 
+    {
+        "source": "app/views/AboutBW/AboutBW-chrome.js", 
+        "scenes": "AboutBW"
+    },
+    {
+        "source": "app/assistants/twitterAuthorize/twitAuthBase.js",
+        "scenes": ["twitterAuthorize", "twitterAuthorizeBW"]
+    },
+    {
+        "source": "app/assistants/twitterAuthorize/twitterAuthorize-assistant.js", 
+        "scenes": "twitterAuthorize"
+    }, 
+    {
+        "source": "app/views/twitterAuthorize/twitterAuthorize-chrome.js", 
+        "scenes": "twitterAuthorize"
+    }, 
+    {
+        "source": "app/assistants/twitterAuthorize/twitterAuthorizeBW-assistant.js", 
+        "scenes": "twitterAuthorizeBW"
+    }, 
+    {
+        "source": "app/views/twitterAuthorizeBW/twitterAuthorizeBW-chrome.js", 
+        "scenes": "twitterAuthorizeBW"
+    }
+]
