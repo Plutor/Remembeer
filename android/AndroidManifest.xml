@@ -2,8 +2,8 @@
 <manifest
 	xmlns:android="http://schemas.android.com/apk/res/android"
 	android:sharedUserId="com.wanghaus.remembeer"
-	android:versionCode="34"
-	android:versionName="1.1.6"
+	android:versionCode="35"
+	android:versionName="1.2.0-alpha1"
 	package="com.wanghaus.remembeer">
 	<application
 		android:icon="@drawable/beer_and_scroll"
@@ -36,7 +36,7 @@
 			android:theme="@android:style/Theme.Dialog"></activity>
 		<activity
 			android:name=".activity.ConfigureWebService"
-			android:theme="@android:style/Theme.Dialog"></activity>
+			android:theme="@style/WorkaroundDialog"></activity>
 
 		<activity
 			android:name=".activity.History">
@@ -63,7 +63,8 @@
 	</application>
 	
 	<uses-sdk
-		android:minSdkVersion="3" />
+		android:minSdkVersion="4"
+		android:targetSdkVersion="4" />
 
 	<uses-permission
 		android:name="android.permission.INTERNET"></uses-permission>

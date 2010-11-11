@@ -7,4 +7,12 @@
     <style name="AddBeerDoneStatNumber" parent="@style/AddBeerDoneStat">
         <item name="android:textSize">35sp</item>
     </style>
+    
+	<!--
+		This weird style is to fix a 1.6 bug
+           <http://groups.google.com/group/android-developers/browse_thread/thread/d3c076e7a0165e64/f553df5324bf5da4>
+	-->
+	<style name="WorkaroundDialog" parent="android:Theme.Dialog">
+		<item name="android:windowAnimationStyle">@null</item>
+	</style>
 </resources>
