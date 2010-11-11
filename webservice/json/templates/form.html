@@ -25,7 +25,7 @@
                     // Send request
                     $("#request-content").html("<pre>" + jtxt + "</pre>");
                     $.ajax({
-                        url: "/w/",
+                        url: "/",
                         dataType: 'json',
                         data: 'q=' + escape(jtxt),
                         type: 'POST',

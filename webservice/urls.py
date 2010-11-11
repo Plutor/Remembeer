@@ -4,9 +4,9 @@ from django.contrib import admin
 admin.autodiscover()
 
 urlpatterns = patterns('',
-    (r'^w/form', 'webservice.json.views.form'),
+    (r'^form', 'webservice.json.views.form'),
 
-    (r'^w/', 'webservice.json.views.query'),
+    (r'', 'webservice.json.views.query'),
 
     # Uncomment the admin/doc line below and add 'django.contrib.admindocs' 
     # to INSTALLED_APPS to enable admin documentation:

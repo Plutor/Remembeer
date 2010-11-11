@@ -20,7 +20,7 @@ import com.wanghaus.remembeer.model.Beer;
 import com.wanghaus.remembeer.model.Drink;
 
 public class WebServiceHelper {
-	public static String webserviceRoot = "http://remembeer.info:8000/w/";
+	public static String webserviceRoot = "http://api.remembeer.info/";
 	private BeerDbHelper dbs;
 	
 	public WebServiceHelper(Context context) {
