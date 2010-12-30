@@ -234,4 +234,6 @@
 	<string name="webService_warning_text">By using the Remembeer library, you will get information about beers you drink from our centralized database, and will also send information you collect to share with our other users.</string>
 	<string name="webService_warning_yes">Yes!</string>
 	<string name="webService_warning_no">No, thanks</string>
+	
+	<string name="webService_publish_text">Upload your existing beers into the database now?</string>
 </resources>
