@@ -209,7 +209,7 @@ public class AddBeer extends BaseActivity {
         String beername = beernameView.getText().toString();
 		performSearch(beername);
     }
-    private void performSearch(String searchBeerName) {
+    private void performSearch(final String searchBeerName) {
     	if (searchBeerName == null || searchBeerName.equals("")) {
     		showBeerPreviewNone();
     	} else {
@@ -219,12 +219,26 @@ public class AddBeer extends BaseActivity {
 			showBeerPreviewLoading();
 			
 			// Actual lookup
-			beer = wsh.findBeerByName(searchBeerName);
-			
-			if (beer != null)
-				showBeerPreview(beer);
+            // This is potentially expensive. Fire off a thread to do it.
+            Thread t = new Thread() {
+                public void run() {
+        			beer = wsh.findBeerByName(searchBeerName);
+        			
+        			if (beer != null) {
+        				// Tell the UI thread to do something
+        				handler.post(showBeerPreviewRunnable);
+        			}
+                }
+            };
+            t.start();
     	}
     }
+    private Runnable showBeerPreviewRunnable = new Runnable() {
+    	public void run() {
+			if (beer != null)
+				showBeerPreview(beer);
+		}
+    };
 
     private void showBeerPreviewNone() {
 		View beerInfoNoneView = findViewById(R.id.beerInfoNone);
