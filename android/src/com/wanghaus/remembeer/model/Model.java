@@ -30,7 +30,8 @@ public abstract class Model implements Serializable {
 		for (String jsonKey : keys) {
 			String modelKey = exportMap.get(jsonKey);
 			try {
-				put(modelKey, json.getString(jsonKey));
+				if (!json.isNull(jsonKey))
+					put(modelKey, json.getString(jsonKey));
 			} catch (JSONException e) {	}
 		}
 	}

@@ -12,13 +12,12 @@
 	<ProgressBar
 		android:indeterminate="true"
 		android:layout_width="32dip"
-		android:layout_height="32dip"
-		android:paddingRight="10dip" />
+		android:layout_height="32dip" />
 
 	<TextView
 		android:layout_width="wrap_content"
 		android:layout_height="wrap_content"
-
+		android:paddingLeft="10dip"
 		android:text="@string/loadingBeerInfo"
 		android:layout_gravity="center" />
 
