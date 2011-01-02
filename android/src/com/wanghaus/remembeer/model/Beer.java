@@ -42,16 +42,16 @@ public class Beer extends Model {
 	public String getName()				{ return get("name"); }
 	public void setName(String val)	    { put("name", val); }
 
-	public String getBrewery()			{ return get("brewery"); }
+	public String getBrewery()			{ if (get("brewery") != "null") return get("brewery"); else return ""; }
 	public void setBrewery(String val)	{ put("brewery", val); }
 
-	public String getLocation()			{ return get("location"); }
+	public String getLocation()			{ if (get("location") != "null") return get("location"); else return ""; }
 	public void setLocation(String val)	{ put("location", val); }
 
 	public String getABV()				{ return get("abv"); }
 	public void setABV(String val)		{ put("abv", val); }
 
-	public String getStyle()			{ return get("style"); }
+	public String getStyle()			{ if (get("style") != "null") return get("style"); else return ""; }
 	public void setStyle(String val)	{ put("style", val); }
 
 	public String getNotes()			{ return get("notes"); }
