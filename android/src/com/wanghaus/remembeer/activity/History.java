@@ -30,6 +30,7 @@ import android.widget.AdapterView.OnItemClickListener;
 
 import com.wanghaus.remembeer.R;
 import com.wanghaus.remembeer.helper.BeerDbHelper;
+import com.wanghaus.remembeer.helper.WebServiceHelper;
 import com.wanghaus.remembeer.model.Beer;
 import com.wanghaus.remembeer.model.Drink;
 
@@ -44,6 +45,7 @@ public class History extends BaseActivity {
 	private BeerDbHelper dbs;
 	private ListAdapter historyAdapter;
 	private boolean isSearch;
+	private WebServiceHelper wsh;
 	
 	private OnItemClickListener clickListener;
 	
@@ -54,6 +56,9 @@ public class History extends BaseActivity {
         
         final Intent queryIntent = getIntent();
         final String queryAction = queryIntent.getAction();
+        
+    	if (wsh == null)
+    		wsh = new WebServiceHelper(this);
         
 		if (Intent.ACTION_SEARCH.equals(queryAction)) {
 			isSearch = true;
@@ -240,6 +245,8 @@ public class History extends BaseActivity {
         
     	if (dbs == null)
     		dbs = new BeerDbHelper(this);
+    	if (wsh == null)
+    		wsh = new WebServiceHelper(this);
     	
         recentDrinks = dbs.searchDrinkHistory(queryString);
     	
@@ -268,18 +275,29 @@ public class History extends BaseActivity {
 		case BEERINFO_DIALOG_ID:
 			// We get a beer object back, remember it here for later
 			if (resultCode == RESULT_OK && data != null) {
-				Drink returnDrink = (Drink) data.getSerializableExtra("drink");
-				Beer returnBeer = (Beer) data.getSerializableExtra("beer");
+				final Drink returnDrink = (Drink) data.getSerializableExtra("drink");
+				final Beer returnBeer = (Beer) data.getSerializableExtra("beer");
 
 				if (returnBeer != null) {
 					// Update it
 					dbs.updateOrAddBeer(returnBeer);
 				}
-
+				
 				if (returnDrink != null) {
 					// Save the drink
 					dbs.updateOrAddDrink(returnDrink);
 
+	        		// Update the webservice if we're using it
+	                SharedPreferences settings = PreferenceManager.getDefaultSharedPreferences(this);
+	                if (settings.getBoolean("useWebService", false)) {
+	                	Thread t = new Thread() {
+	                		public void run() {
+	                			wsh.sendWebServiceRequest(returnDrink);
+	    	                	Log.v("History Return", "sent WebServiceRequest");
+	                		}
+	                	};
+	                	t.run();
+	                }
 					// Update the list
 					SimpleCursorAdapter listAdapter = (SimpleCursorAdapter) historyList.getAdapter();
 					listAdapter.getCursor().requery();

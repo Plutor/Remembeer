@@ -28,19 +28,15 @@ public class BeerInfo extends BaseActivity {
 	private String beername;
 	private Beer beer;
 	private Drink drink;
-	private Context cContext;
 	
 	private BeerDbHelper dbs;
-	private WebServiceHelper wsh;
 	
 	@Override
 	public void onCreate(Bundle savedInstanceState) {
 		super.onCreate(savedInstanceState);
 		setContentView(R.layout.beerinfo);
 
-		cContext = this;
 		dbs = new BeerDbHelper(this);
-		wsh = new WebServiceHelper(this);
 
 		beer = (Beer) getIntent().getSerializableExtra("beer");
 		drink = (Drink) getIntent().getSerializableExtra("drink");
@@ -117,14 +113,6 @@ public class BeerInfo extends BaseActivity {
 	    		}
 				
         		setResult(RESULT_OK, resultData);
-
-        		// Update the webservice if we're using it
-                SharedPreferences settings = PreferenceManager.getDefaultSharedPreferences(cContext);
-                if (settings.getBoolean("useWebService", false)) {
-                	wsh.sendWebServiceRequest(drink);
-                	Log.v("Updating Beerinfo", "sent WebServiceRequest");
-                }
-
         		dbs.close();
         		finish();
 			}
