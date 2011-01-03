@@ -2,6 +2,7 @@ package com.wanghaus.remembeer.activity;
 
 import android.app.Activity;
 import android.content.Context;
+import android.content.Intent;
 import android.content.SharedPreferences;
 import android.content.SharedPreferences.Editor;
 import android.os.Bundle;
@@ -20,7 +21,6 @@ public class ConfigureWebService extends Activity {
 		setTitle(R.string.webService_warning_title);
 		setContentView(R.layout.configure_webservice);
 		
-        // Login
         Button yesButton = (Button) findViewById(R.id.webService_warning_yes);
         yesButton.setOnClickListener(new View.OnClickListener() {
             public void onClick(View view) {
@@ -29,6 +29,10 @@ public class ConfigureWebService extends Activity {
         		Editor editor = settings.edit();
         		editor.putBoolean("useWebService", true);
         		editor.commit();
+        		
+        		// Okay so they're up for using the cloud, add their beers now?
+    			Intent publish = new Intent(context, PublishToWebService.class);
+    			startActivity(publish);
         		
         		setResult(1);
             	finish();
