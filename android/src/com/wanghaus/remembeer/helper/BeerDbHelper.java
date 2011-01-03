@@ -418,6 +418,14 @@ public class BeerDbHelper {
     	return rv;
     }
     
+    public int getDrinkCountUnPublished() {
+    	Cursor beercountQuery = db.query(DB_TABLE_DRINKS, new String[] {"ROWID"},
+    			"uuid = null", null, null, null, null);
+    	int rv = beercountQuery.getCount();
+    	beercountQuery.close();
+    	return rv;
+    }
+    
     public int getBeersCount() {
     	Cursor beercountQuery = db.query(DB_TABLE_DRINKS, new String[] {"DISTINCT beer_id"},
     			null, null, null, null, null);

@@ -117,6 +117,7 @@ public class WebServiceHelper {
 		return null;
 	}
 	
+	@SuppressWarnings("unchecked")
 	public Drink sendWebServiceRequest(Drink drink) {
 		// Build JSON
 		JSONObject json = drink.toJSONObject();
