@@ -1,6 +1,5 @@
 package com.wanghaus.remembeer.activity;
 
-import android.app.Activity;
 import android.content.Context;
 import android.os.Bundle;
 import android.view.View;
@@ -10,7 +9,7 @@ import android.widget.Toast;
 import com.wanghaus.remembeer.R;
 import com.wanghaus.remembeer.helper.BeerDbHelper;
 
-public class PublishToWebService extends Activity {
+public class PublishToWebService extends BaseActivity {
 
 	protected void onCreate(Bundle savedInstanceState) {
 	    super.onCreate(savedInstanceState);
