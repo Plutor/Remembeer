@@ -420,7 +420,7 @@ public class BeerDbHelper {
     
     public int getDrinkCountUnPublished() {
     	Cursor beercountQuery = db.query(DB_TABLE_DRINKS, new String[] {"ROWID"},
-    			"uuid = null", null, null, null, null);
+    			"uuid is null", null, null, null, null);
     	int rv = beercountQuery.getCount();
     	beercountQuery.close();
     	return rv;
