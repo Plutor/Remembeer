@@ -22,8 +22,9 @@ import com.wanghaus.remembeer.model.Beer;
 import com.wanghaus.remembeer.model.Drink;
 
 public class ImportExportHelper {
-	private String DB_CSV = new String(Environment.getExternalStorageDirectory() +  File.separator + "Remembeer_export.csv");
-	private String DB_CSV_LEGACY = new String(Environment.getExternalStorageDirectory() +  File.separator + "BeerLog_export.csv");
+	private String EXTERNAL_STORAGE_DIR = Environment.getExternalStorageDirectory().getAbsolutePath();
+	private String DB_CSV = "Remembeer_export.csv";
+	private String DB_CSV_LEGACY = "BeerLog_export.csv";
 	private BeerDbHelper dbs;
 	
 	public ImportExportHelper(Context context) {
@@ -37,10 +38,12 @@ public class ImportExportHelper {
     	InputStream ins;
     	
     	try {
-    		ins = new FileInputStream(DB_CSV);
+    		File insfile = new File(EXTERNAL_STORAGE_DIR, DB_CSV);
+    		ins = new FileInputStream(insfile);
     	} catch(FileNotFoundException e) {
         	try {
-        		ins = new FileInputStream(DB_CSV_LEGACY);
+        		File insfile = new File(EXTERNAL_STORAGE_DIR, DB_CSV_LEGACY);
+        		ins = new FileInputStream(insfile);
         	} catch(FileNotFoundException e2) {
         		return -1;
         	}
@@ -271,7 +274,7 @@ public class ImportExportHelper {
 
     private Uri writeCsvDataToFile(String csvData) {
     	// Write the csv to a file on the external storage 
-    	File csvFile = new File(DB_CSV);
+    	File csvFile = new File(EXTERNAL_STORAGE_DIR, DB_CSV);
     	try {
 			csvFile.createNewFile();
 		} catch (IOException e) {
@@ -295,7 +298,7 @@ public class ImportExportHelper {
     }
     
 	public long localCsvModifiedDate() {
-		File localCsv = new File(DB_CSV);
+		File localCsv = new File(EXTERNAL_STORAGE_DIR, DB_CSV);
 		if (localCsv.exists())
 			return localCsv.lastModified();
 		
