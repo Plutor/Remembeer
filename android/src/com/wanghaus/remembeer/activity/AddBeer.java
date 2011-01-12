@@ -12,6 +12,7 @@ import android.content.DialogInterface;
 import android.content.Intent;
 import android.content.SharedPreferences;
 import android.content.DialogInterface.OnClickListener;
+import android.content.res.Configuration;
 import android.database.Cursor;
 import android.os.Bundle;
 import android.os.Handler;
@@ -38,8 +39,8 @@ import com.wanghaus.remembeer.R;
 import com.wanghaus.remembeer.app.DatePickerCancellableDialog;
 import com.wanghaus.remembeer.app.TimePickerCancellableDialog;
 import com.wanghaus.remembeer.helper.BeerDbHelper;
-import com.wanghaus.remembeer.helper.WebServiceHelper;
 import com.wanghaus.remembeer.helper.TwitterHelper;
+import com.wanghaus.remembeer.helper.WebServiceHelper;
 import com.wanghaus.remembeer.model.Beer;
 import com.wanghaus.remembeer.model.Drink;
 import com.wanghaus.remembeer.service.NotifyService;
@@ -71,6 +72,11 @@ public class AddBeer extends BaseActivity {
         wsh = new WebServiceHelper(this);
         handler = new Handler();
 
+        if (savedInstanceState != null) {
+        	beernameWhenLookupScheduled = savedInstanceState.getString("beernameWhenLookupScheduled");
+        	beer = (Beer) savedInstanceState.getSerializable("beer");
+        }
+        
         initSaveButton();
         initBeernameAutoComplete();
         initBeerinfoPreview();
@@ -137,7 +143,10 @@ public class AddBeer extends BaseActivity {
 			public void afterTextChanged(Editable s) { }
 			public void beforeTextChanged(CharSequence s, int start, int count, int after) { }
 			public void onTextChanged(CharSequence currentBeername, int start, int before, int count) {
-		        if ( currentBeername != null && !currentBeername.equals(beernameWhenLookupScheduled) ) {
+				String oldbeername = (beernameWhenLookupScheduled == null) ? null : beernameWhenLookupScheduled.toString();
+				String nowbeername = (currentBeername == null) ? null : currentBeername.toString();
+				
+		        if ( nowbeername != null && !nowbeername.equals(oldbeername) ) {
 			        handler.removeCallbacks(beerInfoLookupRunnable);
 			        beernameWhenLookupScheduled = currentBeername.toString();
 		            handler.postDelayed(beerInfoLookupRunnable, BEERLOOKUP_WAIT_MSEC);
@@ -157,8 +166,12 @@ public class AddBeer extends BaseActivity {
 			}
         });
         
-        // Lookup at init, in case we're "drinking another"
-        performSearch();
+        if (beer != null)
+        	// We already have a beer, this is probably a reorientation
+        	showBeerPreview(beer);
+        else
+        	// Lookup at init, in case we're "drinking another"
+        	performSearch();
     }
     
     private class BeerNameAutocompleteAdapter extends CursorAdapter {
@@ -546,5 +559,14 @@ public class AddBeer extends BaseActivity {
 		default:
 			super.onActivityResult(requestCode, resultCode, data);
 		}
+	}
+
+	@Override
+	protected void onSaveInstanceState(Bundle outState) {
+		// TODO Auto-generated method stub
+		super.onSaveInstanceState(outState);
+		
+		outState.putCharSequence("beernameWhenLookupScheduled", beernameWhenLookupScheduled);
+		outState.putSerializable("beer", beer);
 	}
 }
