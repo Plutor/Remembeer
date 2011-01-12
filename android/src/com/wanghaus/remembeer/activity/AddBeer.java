@@ -59,6 +59,7 @@ public class AddBeer extends BaseActivity {
 	
 	private Beer beer = null;
 	private CharSequence beernameWhenLookupScheduled = null;
+	private Button saveButton = null;
 	
     /** Called when the activity is first created. */
     @Override
@@ -70,26 +71,29 @@ public class AddBeer extends BaseActivity {
         wsh = new WebServiceHelper(this);
         handler = new Handler();
 
+        initSaveButton();
         initBeernameAutoComplete();
         initBeerinfoPreview();
         initContainerSpinner();
         initDrinkWhenSpinner();
         
-        // Save button
-        Button saveButton = (Button) findViewById(R.id.save);
-        
-        saveButton.setOnClickListener(new View.OnClickListener() {
-            public void onClick(View view) {
-            	saveBeer();
-            }
-        });
-    	
     	// If webservice setting is unset, ask
         SharedPreferences settings = PreferenceManager.getDefaultSharedPreferences(this);
         if (!settings.contains("useWebService")) {
 			Intent configure = new Intent(this, ConfigureWebService.class);
 			startActivity(configure);
         }
+    }
+    
+    private void initSaveButton() {
+        // Save button
+        saveButton = (Button) findViewById(R.id.save);
+        saveButton.setOnClickListener(new View.OnClickListener() {
+            public void onClick(View view) {
+            	saveBeer();
+            }
+        });
+        saveButton.setClickable(false);
     }
     
     private void initBeerinfoPreview() {
@@ -248,6 +252,8 @@ public class AddBeer extends BaseActivity {
 		beerInfoNoneView.setVisibility(View.VISIBLE);
 		beerInfoPreviewView.setVisibility(View.INVISIBLE);
 		beerInfoLoadingView.setVisibility(View.INVISIBLE);
+
+		saveButton.setClickable(false);
     }
     
     private void showBeerPreviewLoading() {
@@ -258,6 +264,8 @@ public class AddBeer extends BaseActivity {
 		beerInfoNoneView.setVisibility(View.INVISIBLE);
 		beerInfoPreviewView.setVisibility(View.INVISIBLE);
 		beerInfoLoadingView.setVisibility(View.VISIBLE);
+		
+		saveButton.setClickable(false);
     }
     
     private void showBeerPreview(Beer beer) {
@@ -270,6 +278,8 @@ public class AddBeer extends BaseActivity {
 		beerInfoPreviewView.setVisibility(View.VISIBLE);
 		beerInfoLoadingView.setVisibility(View.INVISIBLE);
 		
+		saveButton.setClickable(true);
+
 		TextView previewBrewery = (TextView) findViewById(R.id.previewBrewery);
 		String previewBreweryVal = getText(R.string.beerInfoBrewery).toString();
 		if (beer.getBrewery() != null && !beer.getBrewery().equals("")) {
@@ -288,7 +298,6 @@ public class AddBeer extends BaseActivity {
 		else
 			previewStyleVal += getText(R.string.unknownBeerInfo).toString();
 		previewStyle.setText(previewStyleVal);
-
     }
 
     private void initContainerSpinner() {
@@ -345,7 +354,6 @@ public class AddBeer extends BaseActivity {
 				case 2: // last night (lets say 9pm)
 					specificTime.setTime( new Date() );
 					specificTime.add( Calendar.DATE, -1 );
-					specificTime.set( Calendar.HOUR_OF_DAY, 21 );
 					specificTime.set( Calendar.MINUTE, 0 );
 					specificTime.set( Calendar.SECOND, 0 );
 					removeSpecificTime();
