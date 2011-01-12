@@ -314,12 +314,24 @@ public class BeerDbHelper {
     }
 
 	public Cursor searchDrinkHistory(String queryString) {
-    	return db.rawQuery(
+		Cursor results;
+		
+		// Try beername first
+    	results = db.rawQuery(
     			"SELECT d.ROWID AS _id, d.* "
     			+ "FROM " + DB_TABLE_DRINKS + " d, " + DB_TABLE_BEERS + " b "
     			+ "WHERE d.beer_id = b.ROWID "
     			+ "AND b.name LIKE ? ",
     			new String[] {"%" + queryString + "%"});
+    	
+    	// If that wasn't it, check to see if the user supplied a brewery
+    	if (results.getCount() == 0)
+    		results = db.rawQuery("SELECT d.ROWID AS _id, d.* "
+    			+ "FROM " + DB_TABLE_DRINKS + " d, " + DB_TABLE_BEERS + " b "
+    			+ "WHERE d.beer_id = b.ROWID "
+    			+ "AND b.brewery LIKE ? ",
+    			new String[] {"%" + queryString + "%"});
+    	return results;
 	}	
 
     public Cursor getBeerNames() {
