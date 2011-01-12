@@ -1,14 +1,18 @@
 package com.wanghaus.remembeer.activity;
 
+import android.content.Context;
 import android.content.Intent;
+import android.database.Cursor;
 import android.os.Bundle;
 import android.util.Log;
+import android.view.LayoutInflater;
 import android.view.View;
-import android.view.ViewGroup;
 import android.view.View.OnClickListener;
+import android.view.ViewGroup;
 import android.widget.ArrayAdapter;
 import android.widget.AutoCompleteTextView;
 import android.widget.Button;
+import android.widget.CursorAdapter;
 import android.widget.EditText;
 import android.widget.RatingBar;
 import android.widget.TextView;
@@ -80,6 +84,11 @@ public class BeerInfo extends BaseActivity {
             String[] known_styles = getResources().getStringArray(R.array.beer_styles_list);
             ArrayAdapter<String> styleArray = new ArrayAdapter<String>(this, R.layout.list_item, known_styles);
             styleInput.setAdapter(styleArray);
+            
+            AutoCompleteTextView breweryView = (AutoCompleteTextView) findViewById(R.id.beerinfo_brewery);
+            Cursor cursor = dbs.getBreweryNames();
+            BreweryNameAutocompleteAdapter list = new BreweryNameAutocompleteAdapter(this, cursor);
+            breweryView.setAdapter(list); 
         }
         
         // Init save button
@@ -138,4 +147,39 @@ public class BeerInfo extends BaseActivity {
     	
     	return null;
 	}
+	
+    private class BreweryNameAutocompleteAdapter extends CursorAdapter {
+        public BreweryNameAutocompleteAdapter(Context context, Cursor c) {
+                super(context, c);
+        }
+
+        @Override
+        public void bindView(View view, Context context, Cursor cursor) {
+                int columnIndex = cursor.getColumnIndexOrThrow("brewery");
+                ((TextView) view).setText(cursor.getString(columnIndex));
+        }
+
+        @Override
+        public String convertToString(Cursor cursor) {
+                int columnIndex = cursor.getColumnIndexOrThrow("brewery");
+                return cursor.getString(columnIndex);
+        }
+
+        @Override
+        public View newView(Context context, Cursor cursor, ViewGroup parent) {
+                final LayoutInflater inflater = LayoutInflater.from(context);
+                final TextView view = (TextView) inflater.inflate(android.R.layout.simple_dropdown_item_1line, parent, false);
+                int columnIndex = cursor.getColumnIndexOrThrow("brewery");
+                view.setText(cursor.getString(columnIndex));
+                return view;
+        }
+
+        @Override
+        public Cursor runQueryOnBackgroundThread(CharSequence constraint) {
+        	if (constraint == null)
+        		return dbs.getBreweryNames();
+
+            return dbs.getBreweryNames( constraint.toString() );
+        }
+    }
 }

@@ -354,6 +354,25 @@ public class BeerDbHelper {
     			new String[] { "%" + substr + "%"}
     		);
     }
+
+    public Cursor getBreweryNames() {
+        return db.query(DB_TABLE_BEERS,
+        		new String[] {"ROWID AS _id", "brewery"},
+        		null, null, null, null, null);
+    }
+    
+	public Cursor getBreweryNames(String substr) {
+		if (substr == null)
+    		return getBeerNames();
+    	
+    	return db.rawQuery(
+    			"SELECT ROWID AS _id, brewery "
+    			+ "FROM " + DB_TABLE_BEERS + " "
+    			+ "WHERE brewery LIKE ?"
+    			+ "GROUP BY brewery ",
+    			new String[] { "%" + substr + "%"}
+    		);
+	}
     
     public String[] getContainers() {
     	LinkedList<String> rv = new LinkedList<String>();
@@ -682,4 +701,5 @@ public class BeerDbHelper {
 				new String[] { whenStamp },
 				null);
 	}
+
 }
