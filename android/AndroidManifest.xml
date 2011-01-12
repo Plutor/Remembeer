@@ -37,6 +37,9 @@
 		<activity
 			android:name=".activity.ConfigureWebService"
 			android:theme="@style/WorkaroundDialog"></activity>
+		<activity
+			android:name=".activity.PublishToWebService"
+			android:theme="@style/WorkaroundDialog"></activity>
 
 		<activity
 			android:name=".activity.History">
