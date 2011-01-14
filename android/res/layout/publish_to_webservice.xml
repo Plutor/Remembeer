@@ -5,20 +5,28 @@
   android:layout_width="fill_parent"
   android:layout_height="wrap_content">
    	<TextView
-		android:id="@+id/webService_publish_text"
+		android:id="@+id/webService_upload_text"
 		android:layout_width="wrap_content"
 		android:layout_height="wrap_content"
 		android:paddingLeft="8dip"
 		android:paddingRight="8dip"
 		android:paddingBottom="16dip"
-		android:text="@string/webService_publish_text"
 		android:textSize="16sp"></TextView>
+   	<TextView
+		android:id="@+id/webService_estimate_text"
+		android:layout_width="wrap_content"
+		android:layout_height="wrap_content"
+		android:layout_below="@+id/webService_upload_text"
+		android:paddingLeft="8dip"
+		android:paddingRight="8dip"
+		android:paddingBottom="16dip"
+		android:textSize="18sp"></TextView>
 
 	<Button
 		android:id="@+id/webService_warning_yes"
 		android:layout_width="wrap_content"
 		android:layout_height="wrap_content"
-		android:layout_below="@+id/webService_publish_text"
+		android:layout_below="@+id/webService_estimate_text"
 		android:layout_alignParentLeft="true"
 		android:text="@string/webService_warning_yes"
 		android:textSize="24sp"></Button>
@@ -26,7 +34,7 @@
 		android:id="@+id/webService_warning_no"
 		android:layout_width="wrap_content"
 		android:layout_height="wrap_content"
-		android:layout_below="@+id/webService_publish_text"
+		android:layout_below="@+id/webService_estimate_text"
 		android:layout_alignParentRight="true"
 		android:text="@string/webService_warning_no"
 		android:textSize="16sp"></Button>

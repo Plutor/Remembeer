@@ -235,5 +235,10 @@
 	<string name="webService_warning_yes">Yes!</string>
 	<string name="webService_warning_no">No, thanks</string>
 	
-	<string name="webService_publish_text">Upload your existing beers into the database now?</string>
+	<string name="webService_upload_prefix">Upload your existing beers(</string>
+	<string name="webService_upload_suffix">) into the database now?</string>
+	<string name="webService_publish_prefix">This should take </string>
+	<string name="webService_publish_1m">no time at all.</string>
+	<string name="webService_publish_3m">a moment or so, order a beer.</string>
+	<string name="webService_publish_5m">a couple minutes, order a few beers.</string>
 </resources>
