@@ -200,11 +200,18 @@ public class History extends BaseActivity {
     public boolean onPrepareOptionsMenu(Menu menu) {
     	MenuItem sortItem = menu.findItem(R.id.optionsmenu_history_sort);
     	
-        SharedPreferences settings = PreferenceManager.getDefaultSharedPreferences(this);
-        if (settings.getString("sortBy", "date").equals("alpha")) {
-        	sortItem.setTitle(R.string.optionsmenu_history_sort_date);
+        if (isSearch) {
+			menu.findItem(R.id.optionsmenu_export)
+				.setVisible(false);
+			
+			sortItem.setVisible(false);
         } else {
-        	sortItem.setTitle(R.string.optionsmenu_history_sort_alpha);
+            SharedPreferences settings = PreferenceManager.getDefaultSharedPreferences(this);
+            if (settings.getString("sortBy", "date").equals("alpha")) {
+            	sortItem.setTitle(R.string.optionsmenu_history_sort_date);
+            } else {
+            	sortItem.setTitle(R.string.optionsmenu_history_sort_alpha);
+            }
         }
         
 		return super.onPrepareOptionsMenu(menu);
@@ -234,6 +241,10 @@ public class History extends BaseActivity {
 	    	return true;
 	    }
 
+	    // We don't want search results to stay in the stack
+	    if (isSearch)
+	    	finish();
+	    
 		return super.onOptionsItemSelected(item);
 	}
 
