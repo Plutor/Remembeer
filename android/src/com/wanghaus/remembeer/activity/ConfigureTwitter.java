@@ -8,6 +8,7 @@ import android.app.Activity;
 import android.app.ProgressDialog;
 import android.content.Context;
 import android.os.Bundle;
+import android.os.Handler;
 import android.util.Log;
 import android.view.View;
 import android.widget.Button;
@@ -18,7 +19,20 @@ import com.wanghaus.remembeer.R;
 import com.wanghaus.remembeer.helper.TwitterHelper;
 
 public class ConfigureTwitter extends Activity {
-	
+    final Handler mHandler = new Handler();
+
+    final Runnable mShowError = new Runnable() {
+            public void run() {
+                showError();
+            }
+        };
+
+    private void showError() {
+        final Context context = this;
+        Toast.makeText(context, getText(R.string.twitter_whoops),
+                       Toast.LENGTH_LONG).show();
+    }
+
 	protected void onCreate(Bundle savedInstanceState) {
 	    super.onCreate(savedInstanceState);
 		final Context context = this;
@@ -48,25 +62,23 @@ public class ConfigureTwitter extends Activity {
         	    Thread authorizeThread = new Thread() {
         	        public void run() {
                         try {
-                        	Twitter twitter = new TwitterFactory().getInstance(username, password); 
+                               Twitter twitter = new TwitterFactory().getInstance(username, password);
                             AccessToken accessToken = twitter.getOAuthAccessToken();
         	                TwitterHelper.setupTwitter(context, accessToken);
         					Log.d("ConfigureTwitter", "Got access token: " + accessToken.toString());
-        					throbber.dismiss();
-        	                finish();
+                              finish();
         				} catch (TwitterException e) {
-        					Toast.makeText(context, getText(R.string.twitter_whoops), Toast.LENGTH_LONG);
-        					Log.d("ConfigureTwitter", e.getMessage());
-        					throbber.dismiss();
-        					return;
-        				}
+                            Log.d("ConfigureTwitter", e.getMessage());
+                            mHandler.post(mShowError);
+                        } finally {
+                            throbber.dismiss();
+                        }
 
         				Log.d("ConfigureTwitter", "ConfigureTwitter thread ending");
         	        }
         	    };
         	    authorizeThread.start();
             }
-            
         });
 		Button cancelButton = (Button) findViewById(R.id.twitCancel);
 		cancelButton.setOnClickListener(new View.OnClickListener() {
