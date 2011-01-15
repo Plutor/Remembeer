@@ -14,6 +14,7 @@ import org.json.JSONObject;
 import android.content.Context;
 import android.content.SharedPreferences;
 import android.preference.PreferenceManager;
+import android.provider.Settings;
 import android.util.Log;
 
 import com.wanghaus.remembeer.model.Beer;
@@ -52,7 +53,14 @@ public class WebServiceHelper {
         SharedPreferences settings = PreferenceManager.getDefaultSharedPreferences(dbs.context);
         if (!settings.getBoolean("useWebService", false))
         	return null;
-        
+
+        // Add the user id
+		try {
+			json.put("user", getUniqueUserId());
+		} catch (JSONException e) {
+			Log.w("WebServiceHelper", "Problem building drink JSON", e);
+		}
+
 		// Send it
 		String response = "";
 		try {
@@ -138,7 +146,7 @@ public class WebServiceHelper {
 				Log.w("WebServiceHelper", "Problem building drink JSON", e);
 			}
 		}
-
+		
 		// Send it
 		JSONObject responseJSON = sendWebServiceRequest(json);
 		
@@ -165,5 +173,10 @@ public class WebServiceHelper {
 		}
 		
 		return null;
+	}
+	
+	private String getUniqueUserId() {
+		Log.d("getUniqueUserId", "user = " + Settings.Secure.ANDROID_ID);
+		return Settings.Secure.ANDROID_ID;
 	}
 }
