@@ -65,9 +65,11 @@ public class WebServiceHelper {
 		String response = "";
 		try {
 			URL url = new URL(webserviceRoot);
-			String data = URLEncoder.encode("q", "UTF-8") + "=" + URLEncoder.encode(json.toString(), "UTF-8");
+			String data = json.toString();
 			
 			Log.d("WebServiceHelper", "Sending data: " + data);
+
+			data = URLEncoder.encode("q", "UTF-8") + "=" + URLEncoder.encode(data, "UTF-8");
 
 			URLConnection conn = url.openConnection(); 
 			conn.setDoOutput(true);
