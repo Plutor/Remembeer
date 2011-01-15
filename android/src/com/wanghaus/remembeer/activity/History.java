@@ -307,8 +307,9 @@ public class History extends BaseActivity {
 	    	                	Log.v("History Return", "sent WebServiceRequest");
 	                		}
 	                	};
-	                	t.run();
+	                	t.start();
 	                }
+	                
 					// Update the list
 					SimpleCursorAdapter listAdapter = (SimpleCursorAdapter) historyList.getAdapter();
 					listAdapter.getCursor().requery();
