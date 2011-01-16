@@ -64,8 +64,8 @@ public class PublishToWebService extends BaseActivity {
             	// properly with a throbber in a new context view
             	/// XXX Put in strings
             	final ProgressDialog progress = new ProgressDialog(cContext);
-            	progress.setTitle("Publishing");
-            	progress.setMessage("Publishing all beers to library");
+            	progress.setTitle(getText(R.string.webService_publish_dialog_title));
+            	progress.setMessage(getText(R.string.webService_publish_dialog_message));
             	progress.setProgressStyle(ProgressDialog.STYLE_HORIZONTAL);
             	progress.show();
             	

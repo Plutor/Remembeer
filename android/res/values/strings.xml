@@ -241,4 +241,7 @@
 	<string name="webService_publish_1m">no time at all.</string>
 	<string name="webService_publish_3m">a moment or so, order a beer.</string>
 	<string name="webService_publish_5m">a couple minutes, order a few beers.</string>
+	
+	<string name="webService_publish_dialog_title">Publishing</string>
+	<string name="webService_publish_dialog_message">Publishing all beers to library</string>	
 </resources>
