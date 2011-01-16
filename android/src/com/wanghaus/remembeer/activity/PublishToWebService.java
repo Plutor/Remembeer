@@ -2,8 +2,12 @@ package com.wanghaus.remembeer.activity;
 
 import java.util.List;
 
+import android.app.ProgressDialog;
 import android.content.Context;
 import android.os.Bundle;
+import android.os.Handler;
+import android.os.Message;
+import android.util.Log;
 import android.view.View;
 import android.widget.Button;
 import android.widget.TextView;
@@ -21,7 +25,7 @@ public class PublishToWebService extends BaseActivity {
 		final BeerDbHelper dbs;
 		final WebServiceHelper wsh;
 		final Context cContext;
-		final Integer Count;
+		final Integer toPublishCount;
 		
 		setTitle(R.string.webService_warning_title);
 		setContentView(R.layout.publish_to_webservice);
@@ -29,20 +33,20 @@ public class PublishToWebService extends BaseActivity {
 		cContext = this;
 		dbs = new BeerDbHelper(this);
 		wsh = new WebServiceHelper(this);
-		Count = dbs.getDrinkCountUnPublished();
+		toPublishCount = dbs.getDrinkCountUnPublished();
 
 		TextView webServiceUploadText = (TextView) findViewById(R.id.webService_upload_text);
 		String webServiceUploadStr = getText(R.string.webService_upload_prefix).toString();
-		webServiceUploadStr += Count.toString();
+		webServiceUploadStr += toPublishCount.toString();
 		webServiceUploadStr += getText(R.string.webService_upload_suffix).toString();
 		webServiceUploadText.setText(webServiceUploadStr);
 		
 		TextView webServiceEstimateText = (TextView) findViewById(R.id.webService_estimate_text);
 		String webServiceEstimateStr = getText(R.string.webService_publish_prefix).toString();
 		webServiceEstimateStr += " ";
-		if (Count > 99) {
+		if (toPublishCount > 99) {
 			webServiceEstimateStr += getText(R.string.webService_publish_5m).toString();
-		} else if (Count > 60) {
+		} else if (toPublishCount > 60) {
 			webServiceEstimateStr += getText(R.string.webService_publish_3m).toString();
 		} else
 			webServiceEstimateStr += getText(R.string.webService_publish_1m).toString();
@@ -54,19 +58,52 @@ public class PublishToWebService extends BaseActivity {
         yesButton.setOnClickListener(new View.OnClickListener() {
             public void onClick(View view) {
             	// Yes
+            	final List<Drink> listOfDrinks = dbs.getDrinks("uuid is null", null, null);
         		
             	// We should really do this
             	// properly with a throbber in a new context view
-
-            	List<Drink> ListOfDrinks = dbs.getDrinks("uuid is null", null, null);
-            	for (int i = 0; i < Count; i++) {
-            		wsh.sendWebServiceRequest(ListOfDrinks.get(i));
-            	}
+            	/// XXX Put in strings
+            	final ProgressDialog progress = new ProgressDialog(cContext);
+            	progress.setTitle("Publishing");
+            	progress.setMessage("Publishing all beers to library");
+            	progress.setProgressStyle(ProgressDialog.STYLE_HORIZONTAL);
+            	progress.show();
             	
-            	Toast.makeText(cContext, "Published " + Count.toString() + " Beers", Toast.LENGTH_LONG).show();
+            	final Handler handler = new Handler() {
+            		public void handleMessage(Message m) {
+            			int i = m.getData().getInt("total");
+            			if (progress != null)
+            				progress.setProgress(i+1);
+            			
+            			if (i == toPublishCount-1) {
+                        	Toast.makeText(cContext, "Published " + toPublishCount.toString() + " Beers", Toast.LENGTH_LONG).show();
 
-        		setResult(1);
-            	finish();
+                        	progress.dismiss();
+                    		setResult(1);
+                        	finish();
+            			}
+            		}
+            	};
+
+            	progress.setMax(toPublishCount);
+
+            	Thread t = new Thread() {
+                    public void run() {
+                    	for (int i = 0; i < toPublishCount; i++) {
+                    		wsh.sendWebServiceRequest(listOfDrinks.get(i));
+                    		
+                    		// Build a message
+                            Message msg = handler.obtainMessage();
+                            Bundle b = new Bundle();
+                            b.putInt("total", i);
+                            msg.setData(b);
+
+                            // Send it back to the thread
+                        	handler.sendMessage(msg);
+                    	}                    	
+                    }
+                };
+                t.start();
             }
             
         });
