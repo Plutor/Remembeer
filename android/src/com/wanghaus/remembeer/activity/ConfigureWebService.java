@@ -11,16 +11,21 @@ import android.view.View;
 import android.widget.Button;
 
 import com.wanghaus.remembeer.R;
+import com.wanghaus.remembeer.helper.BeerDbHelper;
 
 public class ConfigureWebService extends Activity {
 	
 	protected void onCreate(Bundle savedInstanceState) {
 	    super.onCreate(savedInstanceState);
 		final Context context = this;
-		
+		final BeerDbHelper dbs;
+		final Integer toPublishCount;
+
 		setTitle(R.string.webService_warning_title);
 		setContentView(R.layout.configure_webservice);
-		
+		dbs = new BeerDbHelper(this);
+		toPublishCount = dbs.getDrinkCountUnPublished();
+
         Button yesButton = (Button) findViewById(R.id.webService_warning_yes);
         yesButton.setOnClickListener(new View.OnClickListener() {
             public void onClick(View view) {
@@ -30,9 +35,11 @@ public class ConfigureWebService extends Activity {
         		editor.putBoolean("useWebService", true);
         		editor.commit();
         		
-        		// Okay so they're up for using the cloud, add their beers now?
-    			Intent publish = new Intent(context, PublishToWebService.class);
-    			startActivity(publish);
+        		if (toPublishCount > 0) {
+        			// Okay so they're up for using the cloud, add their beers now?
+        			Intent publish = new Intent(context, PublishToWebService.class);
+        			startActivity(publish);
+        		}
         		
         		setResult(1);
             	finish();
