@@ -12,7 +12,6 @@ import android.content.DialogInterface;
 import android.content.Intent;
 import android.content.SharedPreferences;
 import android.content.DialogInterface.OnClickListener;
-import android.content.res.Configuration;
 import android.database.Cursor;
 import android.os.Bundle;
 import android.os.Handler;
@@ -147,9 +146,7 @@ public class AddBeer extends BaseActivity {
 				String nowbeername = (currentBeername == null) ? null : currentBeername.toString();
 				
 		        if ( nowbeername != null && !nowbeername.equals(oldbeername) ) {
-			        handler.removeCallbacks(beerInfoLookupRunnable);
-			        beernameWhenLookupScheduled = currentBeername.toString();
-		            handler.postDelayed(beerInfoLookupRunnable, BEERLOOKUP_WAIT_MSEC);
+			        scheduleLookup(currentBeername.toString(), BEERLOOKUP_WAIT_MSEC);
 		        }
 			}
         });
@@ -161,7 +158,7 @@ public class AddBeer extends BaseActivity {
 		        	TextView tv = (TextView) v;
 		        	
 			        String selectedBeername = tv.getText().toString();
-			        performSearch(selectedBeername);
+			        scheduleLookup(selectedBeername, 0);
 		        }
 			}
         });
@@ -173,6 +170,11 @@ public class AddBeer extends BaseActivity {
         	// Lookup at init, in case we're "drinking another"
         	performSearch();
     }
+	
+	private String getCurrentBeerName() {
+		TextView beernameView = (TextView) findViewById(R.id.beername);
+		return beernameView.getText().toString();
+	}
     
     private class BeerNameAutocompleteAdapter extends CursorAdapter {
             public BeerNameAutocompleteAdapter(Context context, Cursor c) {
@@ -209,6 +211,12 @@ public class AddBeer extends BaseActivity {
             }
     } 
 
+    private void scheduleLookup(String beername, int msec) {
+        handler.removeCallbacks(beerInfoLookupRunnable);
+        beernameWhenLookupScheduled = beername.toString();
+        handler.postDelayed(beerInfoLookupRunnable, msec);
+    }
+    
     private Runnable beerInfoLookupRunnable = new Runnable() {
 		public void run() {
 			TextView beernameView = (TextView) findViewById(R.id.beername);
@@ -239,11 +247,17 @@ public class AddBeer extends BaseActivity {
             // This is potentially expensive. Fire off a thread to do it.
             Thread t = new Thread() {
                 public void run() {
-        			beer = wsh.findBeerByName(searchBeerName);
-        			
-        			if (beer != null) {
-        				// Tell the UI thread to do something
-        				handler.post(showBeerPreviewRunnable);
+                	String fieldValue = getCurrentBeerName();
+        			Beer beerFound = wsh.findBeerByName(searchBeerName);
+
+        			if (beerFound != null) {
+                    	// We don't want to change anything if the field has changed in the meantime
+        				if (beerFound.getName().equals(fieldValue)) {
+        					beer = beerFound;
+
+        					// Tell the UI thread to update now
+            				handler.post(showBeerPreviewRunnable);
+        				}
         			}
                 }
             };
