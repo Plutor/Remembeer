@@ -14,7 +14,7 @@ def query(request):
         # Build object with known fields
         d = Drink()
         candidates_where = Q()
-        for key in Drink.publicfields:
+        for key in ['beername']:
             if q.has_key(key):
                 setattr(d, key, q[key])
                 candidates_where  = candidates_where | Q( **{'%s' % key: q[key]} )
