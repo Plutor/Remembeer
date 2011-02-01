@@ -13,10 +13,12 @@ import org.json.JSONObject;
 
 import android.content.Context;
 import android.content.SharedPreferences;
+import android.content.pm.PackageManager.NameNotFoundException;
 import android.preference.PreferenceManager;
 import android.provider.Settings;
 import android.util.Log;
 
+import com.wanghaus.remembeer.R;
 import com.wanghaus.remembeer.model.Beer;
 import com.wanghaus.remembeer.model.Drink;
 
@@ -54,9 +56,10 @@ public class WebServiceHelper {
         if (!settings.getBoolean("useWebService", false))
         	return null;
 
-        // Add the user id
+        // Add the user id and client version
 		try {
 			json.put("user", getUniqueUserId());
+			json.put("clientVersion", getClientVersion());
 		} catch (JSONException e) {
 			Log.w("WebServiceHelper", "Problem building drink JSON", e);
 		}
@@ -180,5 +183,22 @@ public class WebServiceHelper {
 	private String getUniqueUserId() {
 		Log.d("getUniqueUserId", "user = " + Settings.Secure.ANDROID_ID);
 		return Settings.Secure.ANDROID_ID;
+	}
+	
+	private String getClientVersion() {
+		Context ctx = dbs.context;
+		String rv = "?";
+		
+		try {
+            String pkg = ctx.getPackageName();
+            String name = ctx.getText(R.string.app_name).toString();
+            String version = ctx.getPackageManager().getPackageInfo(pkg, 0).versionName;
+            if (name != null && !name.equals("") && version != null && !version.equals(""))
+            	rv = name + " " + version;
+        } catch (NameNotFoundException e) {
+        	Log.e("getClientVersion", "Can't determine client version");
+        }
+        
+        return rv;
 	}
 }
