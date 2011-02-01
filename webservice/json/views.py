@@ -35,6 +35,8 @@ def query(request):
 
                     if (confidence > 0.75):
                         setattr(d, key, mostlikely[key])
+            else:
+                setattr(d, key, q[key])
 
         # If search is false
         if q.has_key('search') and (q['search'] == "false"):

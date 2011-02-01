@@ -23,17 +23,17 @@ class Drink(models.Model):
     location = models.CharField(max_length=255, blank=True, null=True)
     abv = models.FloatField(blank=True, null=True)
     style = models.CharField(max_length=255, blank=True, null=True)
-    beernotes = models.TextField(blank=True, null=True)
+    about_this_beer = models.TextField(blank=True, null=True, db_column='beernotes')
     user = models.CharField(max_length=20)
     container = models.CharField(max_length=32)
     stamp = models.DateTimeField()
-    drinknotes = models.TextField(blank=True, null=True)
+    tasting_notes = models.TextField(blank=True, null=True, db_column='drinknotes')
     rating = models.FloatField(blank=True, null=True)
     created = models.DateTimeField(auto_now_add=True)
     updated = models.DateTimeField(auto_now=True)
 
-    privatefields = [ 'uuid', 'beernotes', 'user', 'container',
-                     'stamp', 'drinknotes', 'rating', 'created', 'updated' ]
+    privatefields = [ 'uuid', 'about_this_beer', 'user', 'container',
+                     'stamp', 'tasting_notes', 'rating', 'created', 'updated' ]
     publicfields = [ 'beername', 'brewery', 'location', 'abv', 'style' ]
 
     def __str__(self):
@@ -49,13 +49,13 @@ class Drink(models.Model):
                                       'location': self.location,
                                       'abv': self.abv,
                                       'style': self.style,
-                                      'beernotes': self.beernotes,
+                                      'about_this_beer': self.about_this_beer,
                                       
                                       'uuid': self.uuid,
                                       'user': self.user,
                                       'container': self.container,
                                       'stamp': self.stamp,
-                                      'drinknotes': self.drinknotes,
+                                      'tasting_notes': self.tasting_notes,
                                       'rating': self.rating} )
         else:
             return simplejson.dumps( {'beername': self.beername,
