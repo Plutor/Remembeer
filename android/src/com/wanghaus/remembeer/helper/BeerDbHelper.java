@@ -334,27 +334,16 @@ public class BeerDbHelper {
     	return results;
 	}	
 
-    public Cursor getBeerNames() {
-        return db.query(DB_TABLE_BEERS,
-        		new String[] {"ROWID AS _id", "name"},
-        		null, null, null, null, null);
-    }
-
-    public Cursor getBeerNames(String substr) {
+    public List<Beer> getBeers(String substr) {
     	if (substr == null)
-    		return getBeerNames();
+    		return null;
     	
-    	return db.rawQuery(
-    			"SELECT b.ROWID AS _id, b.name AS beername "
-    			+ "FROM " + DB_TABLE_DRINKS + " d, " + DB_TABLE_BEERS + " b "
-    			+ "WHERE d.beer_id = b.ROWID "
-    			+ "AND b.name LIKE ?"
-    			+ "GROUP BY b.name "
-    			+ "ORDER BY COUNT(*) DESC",
-    			new String[] { "%" + substr + "%"}
-    		);
+    	return getBeers("b.name LIKE ?",
+    				new String[] { "%" + substr + "%" },
+    				""
+    			);
     }
-
+    
     public Cursor getBreweryNames() {
         return db.query(DB_TABLE_BEERS,
         		new String[] {"ROWID AS _id", "brewery"},
@@ -363,7 +352,7 @@ public class BeerDbHelper {
     
 	public Cursor getBreweryNames(String substr) {
 		if (substr == null)
-    		return getBeerNames();
+    		return null;
     	
     	return db.rawQuery(
     			"SELECT ROWID AS _id, brewery "
@@ -405,17 +394,6 @@ public class BeerDbHelper {
     
     public int getDrinkCount() {
     	Cursor beercountQuery = db.query(DB_TABLE_DRINKS, new String[] {"ROWID"}, null, null, null, null, null);
-    	int rv = beercountQuery.getCount();
-    	beercountQuery.close();
-    	return rv;
-    }
-    
-    // XXX - This doesn't do what it thinks it does
-    public int getDrinkCount(String querybeer) {
-    	if (querybeer == null)
-    		return getDrinkCount();
-
-    	Cursor beercountQuery = getBeerNames(querybeer);
     	int rv = beercountQuery.getCount();
     	beercountQuery.close();
     	return rv;

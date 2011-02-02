@@ -1,9 +1,11 @@
 package com.wanghaus.remembeer.widget;
 
+import java.util.ArrayList;
+import java.util.List;
+
 import android.app.Activity;
 import android.content.Context;
 import android.content.Intent;
-import android.database.Cursor;
 import android.os.Handler;
 import android.text.Editable;
 import android.text.TextWatcher;
@@ -14,7 +16,10 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.AdapterView;
 import android.widget.AutoCompleteTextView;
-import android.widget.CursorAdapter;
+import android.widget.BaseAdapter;
+import android.widget.Filter;
+import android.widget.Filterable;
+import android.widget.ImageView;
 import android.widget.LinearLayout;
 import android.widget.TextView;
 import android.widget.AdapterView.OnItemClickListener;
@@ -78,43 +83,53 @@ public class BeerSearchView extends LinearLayout {
         // Beer name autocomplete text field
         AutoCompleteTextView beernameView = (AutoCompleteTextView) findViewById(R.id.beername);
         
-        Cursor cursor = dbs.getBeerNames();
-        
-        BeerNameAutocompleteAdapter list = new BeerNameAutocompleteAdapter(context, cursor);
+        final BeerNameAutocompleteAdapter list = new BeerNameAutocompleteAdapter();
         beernameView.setAdapter(list); 
-
+        
         // When something is typed, schedule a lookup for 200ms later
         beernameView.addTextChangedListener( new TextWatcher() {
 			public void afterTextChanged(Editable s) { }
 			public void beforeTextChanged(CharSequence s, int start, int count, int after) { }
 			public void onTextChanged(CharSequence currentBeername, int start, int before, int count) {
-				String oldbeername = (beernameWhenLookupScheduled == null) ? null : beernameWhenLookupScheduled.toString();
-				String nowbeername = (currentBeername == null) ? null : currentBeername.toString();
+				// clear adapter
+				list.clear();
 				
-		        if ( nowbeername != null && !nowbeername.equals(oldbeername) ) {
-			        scheduleLookup(currentBeername.toString(), BEERLOOKUP_WAIT_MSEC);
-		        }
+				// Add beers that match this text right now
+				List<Beer> localBeers = dbs.getBeers( currentBeername.toString() );
+				// TODO if there's no beer with this exact name, add one first
+				for (Beer b : localBeers) {
+					if (list.getCount() > 5) break;
+					list.add(b);
+					Log.d("ontextchanged", "Added " + b.getName() + " to autocomplete - now there are " + list.getCount());
+				}
+				list.notifyDataSetChanged();
+		        
+				// TODO Schedule a future library search
+				//String oldbeername = (beernameWhenLookupScheduled == null) ? null : beernameWhenLookupScheduled.toString();
+				//String nowbeername = (currentBeername == null) ? null : currentBeername.toString();
+				//
+		        //if ( nowbeername != null && !nowbeername.equals(oldbeername) ) {
+			    //    scheduleLookup(currentBeername.toString(), BEERLOOKUP_WAIT_MSEC);
+		        //}
 			}
         });
         
-        // When an autocomplete item is chosen, search right away
+        // TODO - When an autocomplete item is chosen, remember it
         beernameView.setOnItemClickListener( new OnItemClickListener() {
 			public void onItemClick(AdapterView<?> parent, View v, int position, long id) {
 		        if (v instanceof TextView) {
 		        	TextView tv = (TextView) v;
 		        	
-			        String selectedBeername = tv.getText().toString();
-			        scheduleLookup(selectedBeername, 0);
+			        //String selectedBeername = tv.getText().toString();
+			        //scheduleLookup(selectedBeername, 0);
 		        }
 			}
         });
         
-        if (beer != null)
-        	// We already have a beer, this is probably a reorientation
-        	showBeerPreview(beer);
-        else
-        	// Lookup at init, in case we're "drinking another"
-        	performSearch();
+        //if (beer != null)
+        	// TODO - We already have a beer, this is probably a reorientation
+        	// TODO - Also handle "drink another"
+        	//showBeerPreview(beer);
     }
 
     private void initBeerinfoPreview() {
@@ -134,42 +149,82 @@ public class BeerSearchView extends LinearLayout {
 			}
     	});
     }
-
-    private class BeerNameAutocompleteAdapter extends CursorAdapter {
-        public BeerNameAutocompleteAdapter(Context context, Cursor c) {
-                super(context, c);
-        }
-
-        @Override
-        public void bindView(View view, Context context, Cursor cursor) {
-                int columnIndex = cursor.getColumnIndexOrThrow("beername");
-                ((TextView) view).setText(cursor.getString(columnIndex));
-        }
-
-        @Override
-        public String convertToString(Cursor cursor) {
-                int columnIndex = cursor.getColumnIndexOrThrow("beername");
-                return cursor.getString(columnIndex);
-        }
-
-        @Override
-        public View newView(Context context, Cursor cursor, ViewGroup parent) {
-                final LayoutInflater inflater = LayoutInflater.from(context);
-                final TextView view = (TextView) inflater.inflate(android.R.layout.simple_dropdown_item_1line, parent, false);
-                int columnIndex = cursor.getColumnIndexOrThrow("beername");
-                view.setText(cursor.getString(columnIndex));
-                return view;
-        }
-
-        @Override
-        public Cursor runQueryOnBackgroundThread(CharSequence constraint) {
-        	if (constraint == null)
-        		return dbs.getBeerNames();
-
-            return dbs.getBeerNames( constraint.toString() );
-        }
-    } 
 	
+    private class BeerNameAutocompleteAdapter extends BaseAdapter implements Filterable {
+    	List<Beer> beerList;
+    	
+		public BeerNameAutocompleteAdapter() {
+			super();
+			beerList = new ArrayList<Beer>();
+		}
+
+		@Override
+		public View getView(int position, View convertView, ViewGroup parent) {
+			View view = convertView;
+			if (view == null) {
+	            LayoutInflater inflater = LayoutInflater.from(context);
+	            view = inflater.inflate(R.layout.beer_search_result, parent, false);
+			}
+			
+            Beer thisBeer = getItem(position);
+            Log.d("getView", "Trying to show beer autocomplete " + thisBeer.getName());
+            
+            TextView text1 = (TextView) view.findViewById(R.id.text1); 
+            text1.setText(thisBeer.getName());
+            
+            TextView text2 = (TextView) view.findViewById(R.id.text2); 
+            text2.setText(thisBeer.getStyle());
+            
+            ImageView icon = (ImageView) view.findViewById(R.id.icon);
+            icon.setImageDrawable( getResources().getDrawable(R.drawable.beer_half_full) );
+            
+            return view;
+		}
+
+		@Override
+		public int getCount() {
+			return beerList.size();
+		}
+
+		@Override
+		public Beer getItem(int position) {
+			return beerList.get(position);
+		}
+
+		@Override
+		public long getItemId(int position) {
+			return 0;
+		}
+
+		public void clear() {
+			beerList.clear();
+		}
+		
+		public void add(Beer b) {
+			beerList.add(b);
+		}
+
+		@Override
+		public Filter getFilter() {
+			return new NullFilter();
+		}
+		
+		private class NullFilter extends Filter {
+			@Override
+			protected FilterResults performFiltering(CharSequence constraint) {
+				FilterResults rv = new FilterResults();
+				rv.values = beerList;
+				rv.count = beerList.size();
+				return rv;
+			}
+
+			@Override
+			protected void publishResults(CharSequence constraint, FilterResults results) {
+				notifyDataSetChanged();
+			}
+		}
+	}
+    
 	private void scheduleLookup(String beername, int msec) {
 	    handler.removeCallbacks(beerInfoLookupRunnable);
 	    beernameWhenLookupScheduled = beername.toString();
@@ -223,6 +278,7 @@ public class BeerSearchView extends LinearLayout {
 	        t.start();
 		}
 	}
+
 	private Runnable showBeerPreviewRunnable = new Runnable() {
 		public void run() {
 			if (beer != null)
