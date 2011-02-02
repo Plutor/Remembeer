@@ -7,8 +7,6 @@ import android.app.Activity;
 import android.content.Context;
 import android.content.Intent;
 import android.os.Handler;
-import android.text.Editable;
-import android.text.TextWatcher;
 import android.util.AttributeSet;
 import android.util.Log;
 import android.view.LayoutInflater;
@@ -67,7 +65,14 @@ public class BeerSearchView extends LinearLayout {
 	}
 	
 	public void setBeer(Beer beer) {
-		// TODO
+		this.beer = beer;
+        
+		if (beer != null) {
+			AutoCompleteTextView beernameView = (AutoCompleteTextView) findViewById(R.id.beername);
+			beernameView.setText(beer.getName());
+			
+			showBeerPreview(beer);
+		}
 	}
 	
 	public Beer getBeer() {
@@ -83,46 +88,15 @@ public class BeerSearchView extends LinearLayout {
         // Beer name autocomplete text field
         AutoCompleteTextView beernameView = (AutoCompleteTextView) findViewById(R.id.beername);
         
-        final BeerNameAutocompleteAdapter list = new BeerNameAutocompleteAdapter();
-        beernameView.setAdapter(list); 
-        
-        // When something is typed, schedule a lookup for 200ms later
-        beernameView.addTextChangedListener( new TextWatcher() {
-			public void afterTextChanged(Editable s) { }
-			public void beforeTextChanged(CharSequence s, int start, int count, int after) { }
-			public void onTextChanged(CharSequence currentBeername, int start, int before, int count) {
-				// clear adapter
-				list.clear();
-				
-				// Add beers that match this text right now
-				List<Beer> localBeers = dbs.getBeers( currentBeername.toString() );
-				// TODO if there's no beer with this exact name, add one first
-				for (Beer b : localBeers) {
-					if (list.getCount() > 5) break;
-					list.add(b);
-					Log.d("ontextchanged", "Added " + b.getName() + " to autocomplete - now there are " + list.getCount());
-				}
-				list.notifyDataSetChanged();
-		        
-				// TODO Schedule a future library search
-				//String oldbeername = (beernameWhenLookupScheduled == null) ? null : beernameWhenLookupScheduled.toString();
-				//String nowbeername = (currentBeername == null) ? null : currentBeername.toString();
-				//
-		        //if ( nowbeername != null && !nowbeername.equals(oldbeername) ) {
-			    //    scheduleLookup(currentBeername.toString(), BEERLOOKUP_WAIT_MSEC);
-		        //}
-			}
-        });
+        final BeerAutoCompleteAdapter autoCompleter = new BeerAutoCompleteAdapter();
+        beernameView.setAdapter(autoCompleter); 
         
         // TODO - When an autocomplete item is chosen, remember it
         beernameView.setOnItemClickListener( new OnItemClickListener() {
 			public void onItemClick(AdapterView<?> parent, View v, int position, long id) {
-		        if (v instanceof TextView) {
-		        	TextView tv = (TextView) v;
-		        	
-			        //String selectedBeername = tv.getText().toString();
-			        //scheduleLookup(selectedBeername, 0);
-		        }
+				Beer selected = autoCompleter.getItem(position);
+				if (selected != null)
+					setBeer(selected);
 			}
         });
         
@@ -150,10 +124,10 @@ public class BeerSearchView extends LinearLayout {
     	});
     }
 	
-    private class BeerNameAutocompleteAdapter extends BaseAdapter implements Filterable {
-    	List<Beer> beerList;
+    private class BeerAutoCompleteAdapter extends BaseAdapter implements Filterable {
+    	private List<Beer> beerList;
     	
-		public BeerNameAutocompleteAdapter() {
+		public BeerAutoCompleteAdapter() {
 			super();
 			beerList = new ArrayList<Beer>();
 		}
@@ -167,16 +141,18 @@ public class BeerSearchView extends LinearLayout {
 			}
 			
             Beer thisBeer = getItem(position);
-            Log.d("getView", "Trying to show beer autocomplete " + thisBeer.getName());
-            
-            TextView text1 = (TextView) view.findViewById(R.id.text1); 
-            text1.setText(thisBeer.getName());
-            
-            TextView text2 = (TextView) view.findViewById(R.id.text2); 
-            text2.setText(thisBeer.getStyle());
-            
-            ImageView icon = (ImageView) view.findViewById(R.id.icon);
-            icon.setImageDrawable( getResources().getDrawable(R.drawable.beer_half_full) );
+            if (thisBeer != null) {
+	            Log.d("getView", "Trying to show beer autocomplete " + thisBeer.getName());
+	            
+	            TextView text1 = (TextView) view.findViewById(R.id.text1); 
+	            text1.setText(thisBeer.getName());
+	            
+	            TextView text2 = (TextView) view.findViewById(R.id.text2); 
+	            text2.setText(thisBeer.getStyle());
+	            
+	            ImageView icon = (ImageView) view.findViewById(R.id.icon);
+	            icon.setImageDrawable( getResources().getDrawable(R.drawable.beer_half_full) );
+            }
             
             return view;
 		}
@@ -188,20 +164,16 @@ public class BeerSearchView extends LinearLayout {
 
 		@Override
 		public Beer getItem(int position) {
-			return beerList.get(position);
+			try {
+				return beerList.get(position);
+			} catch (Exception e) {
+				return null;
+			}
 		}
 
 		@Override
 		public long getItemId(int position) {
 			return 0;
-		}
-
-		public void clear() {
-			beerList.clear();
-		}
-		
-		public void add(Beer b) {
-			beerList.add(b);
 		}
 
 		@Override
@@ -212,14 +184,47 @@ public class BeerSearchView extends LinearLayout {
 		private class NullFilter extends Filter {
 			@Override
 			protected FilterResults performFiltering(CharSequence constraint) {
+				// clear adapter
+				List<Beer> results = new ArrayList<Beer>();
+				
+				// Add beers that match this text right now
+				List<Beer> localBeers = dbs.getBeers( constraint.toString() );
+				boolean exactMatch = false;
+				for (Beer b : localBeers) {
+					if (results.size() >= 5) break;
+					if (b.getName().equalsIgnoreCase(constraint.toString())) {
+						exactMatch = true;
+						results.add(0, b);
+					} else {
+						results.add(b);
+					}
+				}
+
+				// If none of them are exactly the text, add it first
+				if (!exactMatch) {
+					Beer perfectBeer = new Beer();
+					perfectBeer.setName(constraint.toString());
+					results.add(0, perfectBeer);
+				}
+				
+				// TODO Schedule a future library search
+				//String oldbeername = (beernameWhenLookupScheduled == null) ? null : beernameWhenLookupScheduled.toString();
+				//String nowbeername = (currentBeername == null) ? null : currentBeername.toString();
+				//
+		        //if ( nowbeername != null && !nowbeername.equals(oldbeername) ) {
+			    //    scheduleLookup(currentBeername.toString(), BEERLOOKUP_WAIT_MSEC);
+		        //}
+
 				FilterResults rv = new FilterResults();
-				rv.values = beerList;
-				rv.count = beerList.size();
+				rv.values = results;
+				rv.count = results.size();
 				return rv;
 			}
 
+			@SuppressWarnings("unchecked")
 			@Override
 			protected void publishResults(CharSequence constraint, FilterResults results) {
+				beerList = (List<Beer>) results.values;
 				notifyDataSetChanged();
 			}
 		}
