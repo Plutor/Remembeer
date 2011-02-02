@@ -11,34 +11,11 @@
 		android:paddingLeft="6dip"
 		android:paddingRight="6dip">
 
-		<TextView
-			android:id="@+id/beernameCaption"
+		<com.wanghaus.remembeer.widget.BeerSearchView
 			android:layout_width="fill_parent"
 			android:layout_height="wrap_content"
-			android:text="@string/beername" />
-
-		<AutoCompleteTextView
-			android:id="@+id/beername"
-			android:layout_width="fill_parent"
-			android:layout_height="wrap_content"
-			android:inputType="textCapWords"
-			android:imeOptions="actionDone" />
-
-		<FrameLayout
-			android:layout_width="wrap_content"
-			android:layout_height="80dip"
-			android:layout_marginLeft="10dip"
-			android:layout_marginRight="10dip"
-			android:padding="6dip"
-			android:background="#333">
-			<include
-				layout="@layout/addbeer_beerinfonone" />
-			<include
-				layout="@layout/addbeer_beerinfoloading" />
-			<include
-				layout="@layout/addbeer_beerinfopreview" />
-		</FrameLayout>
-
+			android:id="@+id/beersearch" />
+			
 		<TextView
 			android:layout_width="fill_parent"
 			android:layout_height="wrap_content"
