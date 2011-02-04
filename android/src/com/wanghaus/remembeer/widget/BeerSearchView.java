@@ -1,17 +1,20 @@
 package com.wanghaus.remembeer.widget;
 
 import java.util.ArrayList;
+import java.util.Collection;
 import java.util.List;
 
-import android.app.Activity;
 import android.content.Context;
-import android.content.Intent;
+import android.os.Bundle;
 import android.os.Handler;
+import android.os.Message;
+import android.os.SystemClock;
 import android.util.AttributeSet;
 import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.view.animation.AnimationUtils;
 import android.widget.AdapterView;
 import android.widget.AutoCompleteTextView;
 import android.widget.BaseAdapter;
@@ -23,19 +26,26 @@ import android.widget.TextView;
 import android.widget.AdapterView.OnItemClickListener;
 
 import com.wanghaus.remembeer.R;
-import com.wanghaus.remembeer.activity.BeerInfo;
 import com.wanghaus.remembeer.helper.BeerDbHelper;
 import com.wanghaus.remembeer.helper.WebServiceHelper;
 import com.wanghaus.remembeer.model.Beer;
 
 public class BeerSearchView extends LinearLayout {
-	private static final int BEERINFO_DIALOG_ID = 2;
-
-	private final int BEERLOOKUP_WAIT_MSEC = 200;
+	private final int BEERINFO_DIALOG_ID = 2;
+	private final int MAX_RESULTS = 10;
+	private final int MAX_RESULTS_TO_SEARCH_LIBRARY = 3;
+	private final int BEERLOOKUP_WAIT_MSEC = 1000;
+	
+	private final int START_SEARCH = 7;
+	private final int SEARCH_COMPLETE = 8;
+	
 	private WebServiceHelper wsh;
 	private Handler handler;
 	private BeerDbHelper dbs;	
-	private CharSequence beernameWhenLookupScheduled = null;
+
+    private BeerAutoCompleteAdapter autoCompleter;
+    private AutoCompleteTextView beernameView;
+
 	private Context context;
 	private Beer beer;
 	
@@ -58,20 +68,16 @@ public class BeerSearchView extends LinearLayout {
 
 		dbs = new BeerDbHelper(context);
         wsh = new WebServiceHelper(context);
-        handler = new Handler();
+        handler = getHandler();
         
         initBeerAutocomplete();
-        initBeerinfoPreview();
 	}
 	
 	public void setBeer(Beer beer) {
 		this.beer = beer;
         
 		if (beer != null) {
-			AutoCompleteTextView beernameView = (AutoCompleteTextView) findViewById(R.id.beername);
 			beernameView.setText(beer.getName());
-			
-			showBeerPreview(beer);
 		}
 	}
 	
@@ -79,16 +85,15 @@ public class BeerSearchView extends LinearLayout {
 		return beer;
 	}
 
-	private String getCurrentBeerName() {
-		TextView beernameView = (TextView) findViewById(R.id.beername);
+	private String getCurrentSearchText() {
 		return beernameView.getText().toString();
 	}
     
 	private void initBeerAutocomplete() {
         // Beer name autocomplete text field
-        AutoCompleteTextView beernameView = (AutoCompleteTextView) findViewById(R.id.beername);
+	    autoCompleter = new BeerAutoCompleteAdapter();
+	    beernameView = (AutoCompleteTextView) findViewById(R.id.beername);
         
-        final BeerAutoCompleteAdapter autoCompleter = new BeerAutoCompleteAdapter();
         beernameView.setAdapter(autoCompleter); 
         
         // TODO - When an autocomplete item is chosen, remember it
@@ -106,30 +111,16 @@ public class BeerSearchView extends LinearLayout {
         	//showBeerPreview(beer);
     }
 
-    private void initBeerinfoPreview() {
-    	View beerinfoPreview = findViewById(R.id.beerInfoPreview);
-    	final Context context = this.context;
-    	
-    	beerinfoPreview.setOnClickListener( new View.OnClickListener() {
-			public void onClick(View arg0) {
-		    	Intent beerInfoPopupIntent = new Intent(context, BeerInfo.class);
-		    	if (beer != null)
-		    		beerInfoPopupIntent.putExtra("beer", beer);
-		    	else {
-		            AutoCompleteTextView beernameView = (AutoCompleteTextView) findViewById(R.id.beername);
-		            beerInfoPopupIntent.putExtra("beername", beernameView.getText().toString());
-		    	}
-		    	((Activity) context).startActivityForResult(beerInfoPopupIntent, BEERINFO_DIALOG_ID);
-			}
-    	});
-    }
-	
     private class BeerAutoCompleteAdapter extends BaseAdapter implements Filterable {
     	private List<Beer> beerList;
+    	private BeerSearchFilter filter;
+    	private Beer throbber;
     	
 		public BeerAutoCompleteAdapter() {
 			super();
 			beerList = new ArrayList<Beer>();
+			filter = new BeerSearchFilter();
+			throbber = null;
 		}
 
 		@Override
@@ -150,8 +141,16 @@ public class BeerSearchView extends LinearLayout {
 	            TextView text2 = (TextView) view.findViewById(R.id.text2); 
 	            text2.setText(thisBeer.getStyle());
 	            
-	            ImageView icon = (ImageView) view.findViewById(R.id.icon);
-	            icon.setImageDrawable( getResources().getDrawable(R.drawable.beer_half_full) );
+            	ImageView icon = (ImageView) view.findViewById(R.id.icon);
+	            if (thisBeer == throbber) {
+	            	icon.setImageDrawable( getResources().getDrawable(R.drawable.library_loading) );
+	            	icon.startAnimation( 
+	            		    AnimationUtils.loadAnimation(context, R.anim.rotate_indefinitely) );
+	            } else {
+	            	// XXX - Do this better
+	            	icon.setImageDrawable( getResources().getDrawable(R.drawable.beer_half_full) );
+	            	icon.clearAnimation();
+	            }
             }
             
             return view;
@@ -176,46 +175,72 @@ public class BeerSearchView extends LinearLayout {
 			return 0;
 		}
 
-		@Override
-		public Filter getFilter() {
-			return new NullFilter();
+		public void setSearching() {
+			if (throbber == null)
+				throbber = new Beer();
+			
+			throbber.setName("Searching library");
+			beerList.add(throbber);
+			notifyDataSetChanged();
 		}
 		
-		private class NullFilter extends Filter {
+		public void doneSearching() {
+			if (throbber != null) {
+				beerList.remove(throbber);
+				notifyDataSetChanged();
+			}
+		}
+		
+		public void addAll(Collection<Beer> list) {
+			// TODO - We don't want to add library results that are already
+			// on the list.
+			for (Beer b : list)
+				if (beerList.size() < MAX_RESULTS)
+					beerList.add(b);
+			notifyDataSetChanged();
+		}
+		
+		@Override
+		public Filter getFilter() {
+			return filter;
+		}
+		
+		private class BeerSearchFilter extends Filter {
 			@Override
 			protected FilterResults performFiltering(CharSequence constraint) {
-				// clear adapter
+				FilterResults rv = new FilterResults();
 				List<Beer> results = new ArrayList<Beer>();
-				
-				// Add beers that match this text right now
-				List<Beer> localBeers = dbs.getBeers( constraint.toString() );
-				boolean exactMatch = false;
-				for (Beer b : localBeers) {
-					if (results.size() >= 5) break;
-					if (b.getName().equalsIgnoreCase(constraint.toString())) {
-						exactMatch = true;
-						results.add(0, b);
-					} else {
-						results.add(b);
+
+				if (constraint != null) {
+					// Add beers that match this text right now
+					List<Beer> localBeers = dbs.getBeers( constraint.toString() );
+					boolean exactMatch = false;
+					for (Beer b : localBeers) {
+						if (results.size() >= MAX_RESULTS) break;
+						if (b.getName().equalsIgnoreCase(constraint.toString())) {
+							exactMatch = true;
+							results.add(0, b);
+						} else {
+							results.add(b);
+						}
+					}
+	
+					// If none of them are exactly the text, add it first
+					if (!exactMatch) {
+						Beer perfectBeer = new Beer();
+						perfectBeer.setName(constraint.toString());
+						results.add(0, perfectBeer);
+	
+						while (results.size() > MAX_RESULTS)
+							results.remove( results.size()-1 );					
+					}
+					
+					// Schedule a future library search
+					if (results.size() < MAX_RESULTS_TO_SEARCH_LIBRARY) {
+				        scheduleLibraryLookup(constraint.toString(), BEERLOOKUP_WAIT_MSEC);
 					}
 				}
-
-				// If none of them are exactly the text, add it first
-				if (!exactMatch) {
-					Beer perfectBeer = new Beer();
-					perfectBeer.setName(constraint.toString());
-					results.add(0, perfectBeer);
-				}
 				
-				// TODO Schedule a future library search
-				//String oldbeername = (beernameWhenLookupScheduled == null) ? null : beernameWhenLookupScheduled.toString();
-				//String nowbeername = (currentBeername == null) ? null : currentBeername.toString();
-				//
-		        //if ( nowbeername != null && !nowbeername.equals(oldbeername) ) {
-			    //    scheduleLookup(currentBeername.toString(), BEERLOOKUP_WAIT_MSEC);
-		        //}
-
-				FilterResults rv = new FilterResults();
 				rv.values = results;
 				rv.count = results.size();
 				return rv;
@@ -229,115 +254,123 @@ public class BeerSearchView extends LinearLayout {
 			}
 		}
 	}
-    
-	private void scheduleLookup(String beername, int msec) {
-	    handler.removeCallbacks(beerInfoLookupRunnable);
-	    beernameWhenLookupScheduled = beername.toString();
-	    handler.postDelayed(beerInfoLookupRunnable, msec);
+
+    /*
+     * Type something
+     * Wait
+     * If text has changed, stop
+     * Loading throbber shows up
+     * In a new thread:
+     *  Search starts
+     *  Search returns
+     *  Tell the UI thread
+     * If text has changed, stop
+     * Hide throbber
+     * Add results to list
+     */
+	private void scheduleLibraryLookup(String beername, int msec) {
+		Message msg = handler.obtainMessage();
+		Bundle msgBundle = new Bundle();
+		
+		msg.what = START_SEARCH;
+		msgBundle.putString("search", beername);
+		msg.setData(msgBundle);
+
+		handler.sendMessageAtTime(msg, SystemClock.uptimeMillis() + msec);
 	}
 	
-	private Runnable beerInfoLookupRunnable = new Runnable() {
-		public void run() {
-			TextView beernameView = (TextView) findViewById(R.id.beername);
-	        String currentBeername = beernameView.getText().toString();
-	        
-	        if (currentBeername != null && currentBeername.length() > 0 &&
-	    		beernameWhenLookupScheduled != null && beernameWhenLookupScheduled.equals(currentBeername)) {
-	    			performSearch(currentBeername);
-	        }
-		}
-	};
-	
-	private void performSearch() {
-		TextView beernameView = (TextView) findViewById(R.id.beername);
-	    String beername = beernameView.getText().toString();
-		performSearch(beername);
+	public Handler getHandler() {
+		return new Handler() {
+	    	@SuppressWarnings("unchecked")
+			public void handleMessage(Message msg) {
+	    		String searchString;
+
+	    		// extract the search
+	    		Bundle msgBundle = msg.getData();
+	    		if (msgBundle == null) return;
+	    		searchString = msgBundle.getString("search");
+	    		if (searchString == null) return;
+	    		
+	    		if (msg.what == START_SEARCH) {
+	    			// start the search
+	    			performLibraryLookup(searchString);
+	    		} else if (msg.what == SEARCH_COMPLETE) {
+	    			List<Beer> results = null; 
+	    			try {
+		    			// extract the results
+	    				results = (List<Beer>) msg.obj;
+	    			} catch (Exception e) {}
+	    			
+	    			if (results == null) return;
+	    			
+	    			showLibraryLookupResults(searchString, results);
+	    		}
+	    	}
+	    };
 	}
-	private void performSearch(final String searchBeerName) {
-		if (searchBeerName == null || searchBeerName.equals("")) {
-			showBeerPreviewNone();
-		} else {
-			Log.i("beerInfoLookup", "looking up " + searchBeerName);
 	
-			// Start looking it up
-			showBeerPreviewLoading();
-			
-			// Actual lookup
-	        // This is potentially expensive. Fire off a thread to do it.
-	        Thread t = new Thread() {
-	            public void run() {
-	            	String fieldValue = getCurrentBeerName();
-	    			Beer beerFound = wsh.findBeerByName(searchBeerName);
-	
-	    			if (beerFound != null) {
-	                	// We don't want to change anything if the field has changed in the meantime
-	    				if (beerFound.getName().equals(fieldValue)) {
-	    					beer = beerFound;
-	
-	    					// Tell the UI thread to update now
-	        				handler.post(showBeerPreviewRunnable);
-	    				}
-	    			}
-	            }
-	        };
-	        t.start();
-		}
+	private void performLibraryLookup(final String search) {
+		String curSearchText = getCurrentSearchText();
+        
+		// Don't search if the text has already changed
+        if (curSearchText == null ||
+        	curSearchText.equals("") ||
+        	search == null ||
+        	search.equals("") ||
+    		!search.equals(curSearchText))
+        	return;
+
+		Log.i("beerInfoLookup", "looking up " + search);
+
+		// Start looking it up
+		showLibraryLookupThrobber();
+		
+		// Actual lookup
+        // This is potentially expensive. Fire off a thread to do it.
+        Thread t = new Thread() {
+            public void run() {
+    			Beer beerFound = wsh.findBeerByName(search);
+
+    			// TEMP - Until the web service returns multiple beers
+    			List<Beer> results = new ArrayList<Beer>();
+    			if (beerFound != null)
+    				results.add(beerFound);
+
+    			Message msg = handler.obtainMessage();
+				Bundle msgBundle = new Bundle();
+				
+				msg.what = SEARCH_COMPLETE;
+				msgBundle.putString("search", search);
+				msg.obj = results;
+				msg.setData(msgBundle);
+
+				handler.sendMessage(msg);
+            }
+        };
+        t.start();
 	}
 
-	private Runnable showBeerPreviewRunnable = new Runnable() {
-		public void run() {
-			if (beer != null)
-				showBeerPreview(beer);
-		}
-	};
-	
-	private void showBeerPreviewNone() {
-		View beerInfoNoneView = findViewById(R.id.beerInfoNone);
-		View beerInfoLoadingView = findViewById(R.id.beerInfoLoading);
-		View beerInfoPreviewView = findViewById(R.id.beerInfoPreview);
-	
-		beerInfoNoneView.setVisibility(View.VISIBLE);
-		beerInfoPreviewView.setVisibility(View.INVISIBLE);
-		beerInfoLoadingView.setVisibility(View.INVISIBLE);
+	private void showLibraryLookupThrobber() {
+		autoCompleter.setSearching();
+		beernameView.showDropDown();
 	}
 	
-	private void showBeerPreviewLoading() {
-		View beerInfoNoneView = findViewById(R.id.beerInfoNone);
-		View beerInfoLoadingView = findViewById(R.id.beerInfoLoading);
-		View beerInfoPreviewView = findViewById(R.id.beerInfoPreview);
-	
-		beerInfoNoneView.setVisibility(View.INVISIBLE);
-		beerInfoPreviewView.setVisibility(View.INVISIBLE);
-		beerInfoLoadingView.setVisibility(View.VISIBLE);
-	}
-	
-	private void showBeerPreview(Beer beer) {
-		View beerInfoNoneView = findViewById(R.id.beerInfoNone);
-		View beerInfoLoadingView = findViewById(R.id.beerInfoLoading);
-		View beerInfoPreviewView = findViewById(R.id.beerInfoPreview);
+	private void showLibraryLookupResults(String search, List<Beer> results) {
+		String curSearchText = getCurrentSearchText();
+        
+		// Don't search if the text has already changed
+        if (curSearchText == null ||
+        	curSearchText.equals("") ||
+        	search == null ||
+        	search.equals("") ||
+    		!search.equals(curSearchText))
+        	return;
+
+		autoCompleter.doneSearching();
+
+		if (results.size() > 0)
+			autoCompleter.addAll(results);
 		
-		// Show the returned values
-		beerInfoNoneView.setVisibility(View.INVISIBLE);
-		beerInfoPreviewView.setVisibility(View.VISIBLE);
-		beerInfoLoadingView.setVisibility(View.INVISIBLE);
-		
-		TextView previewBrewery = (TextView) findViewById(R.id.previewBrewery);
-		String previewBreweryVal = context.getText(R.string.beerInfoBrewery).toString();
-		if (beer.getBrewery() != null && !beer.getBrewery().equals("")) {
-			previewBreweryVal += beer.getBrewery();
-	
-			if (beer.getLocation() != null && !beer.getLocation().equals(""))
-				previewBreweryVal += ", " + beer.getLocation();
-		} else
-			previewBreweryVal += context.getText(R.string.unknownBeerInfo).toString();
-		previewBrewery.setText(previewBreweryVal);
-		
-		TextView previewStyle = (TextView) findViewById(R.id.previewStyle);
-		String previewStyleVal = context.getText(R.string.beerInfoStyle).toString(); 
-		if (beer.getStyle() != null && !beer.getStyle().equals(""))
-			previewStyleVal += beer.getStyle();
-		else
-			previewStyleVal += context.getText(R.string.unknownBeerInfo).toString();
-		previewStyle.setText(previewStyleVal);
+		beernameView.showDropDown();
 	}
 }
