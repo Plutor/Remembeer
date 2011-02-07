@@ -1,0 +1,4 @@
+"tasting_notes","stamp","uuid","rating","container","brewery","beername","style","abv","location","about_this_beer"
+"This is the first row","2010-01-23 21:17:57","78218b04-c9b7-4714-bb5c-edb76d0a86a8",3,"Bottle",,"Wachusett Winter Ale",,,"Somewhere, MA",
+"This is a second row","2010-01-27 17:47:37","36a063e5-ecfa-455f-95d8-68e04b0b92da",4,"Bottle","Left Hand","Left Hand Milk Stout","Stout",4,"Milwaukee","This is a beer note"
+,"2010-01-29 20:30:41","e3c2e12f-41a9-478d-b44a-08d7118ddd87",5,"Draught","Left Hand","Left Hand Milk Stout","India Pale Ale",5,,"This is also that"
