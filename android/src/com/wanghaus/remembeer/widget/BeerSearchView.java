@@ -217,11 +217,30 @@ public class BeerSearchView extends LinearLayout {
 		}
 		
 		public void addAll(Collection<Beer> list) {
-			// TODO - We don't want to add library results that are already
-			// on the list.
-			for (Beer b : list)
-				if (beerList.size() < MAX_RESULTS)
-					beerList.add(b);
+			for (Beer libraryBeer : list) {
+				if (beerList.size() >= MAX_RESULTS) break;
+				
+				// Don't add library results that are already on the list
+				boolean alreadyInList = false;
+				for (int i=0; i<beerList.size(); ++i) {
+					Beer b = beerList.get(i);
+					String entryname = b.getName();
+					if ( entryname.equals(libraryBeer.getName()) ) {
+						// If this is the exact beer, replace it
+						if ( entryname.equals(getCurrentSearchText()) ) {
+							beerList.add(i, libraryBeer);
+							beerList.remove(i+1);
+						}
+						
+						alreadyInList = true;
+						break;
+					}
+				}
+				
+				if (!alreadyInList)
+					beerList.add(libraryBeer);
+			}
+			
 			notifyDataSetChanged();
 		}
 		
