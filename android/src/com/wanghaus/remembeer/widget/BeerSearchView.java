@@ -31,7 +31,7 @@ import com.wanghaus.remembeer.helper.WebServiceHelper;
 import com.wanghaus.remembeer.model.Beer;
 
 public class BeerSearchView extends LinearLayout {
-	private final int BEERINFO_DIALOG_ID = 2;
+	//private final int BEERINFO_DIALOG_ID = 2;
 	private final int MAX_RESULTS = 10;
 	private final int MAX_RESULTS_TO_SEARCH_LIBRARY = 3;
 	private final int BEERLOOKUP_WAIT_MSEC = 1000;
@@ -75,10 +75,26 @@ public class BeerSearchView extends LinearLayout {
 	
 	public void setBeer(Beer beer) {
 		this.beer = beer;
+
+		View beerPreview = findViewById(R.id.beerPreview);
+
+		beerPreview.setVisibility(VISIBLE);
+        beernameView.setVisibility(GONE);
+        beernameView.setText(""); // So the dropdown doesn't show
         
-		if (beer != null) {
-			beernameView.setText(beer.getName());
-		}
+		TextView beerPreviewName = (TextView)findViewById(R.id.beerPreviewName);
+		beerPreviewName.setText(beer.getName());
+		TextView beerPreviewStyle= (TextView)findViewById(R.id.beerPreviewStyle);
+		beerPreviewStyle.setText(beer.getStyle());
+	}
+	
+	public void unsetBeer() {
+		View beerPreview = findViewById(R.id.beerPreview);
+        beerPreview.setVisibility(GONE);
+
+        beernameView.setVisibility(VISIBLE);
+		beernameView.setText(beer.getName());
+		beernameView.selectAll();
 	}
 	
 	public Beer getBeer() {
@@ -96,8 +112,9 @@ public class BeerSearchView extends LinearLayout {
         
         beernameView.setAdapter(autoCompleter); 
         
-        // TODO - When an autocomplete item is chosen, remember it
+        // When an autocomplete item is chosen, remember it
         beernameView.setOnItemClickListener( new OnItemClickListener() {
+			@Override
 			public void onItemClick(AdapterView<?> parent, View v, int position, long id) {
 				Beer selected = autoCompleter.getItem(position);
 				if (selected != null)
@@ -105,11 +122,15 @@ public class BeerSearchView extends LinearLayout {
 			}
         });
         
-        //if (beer != null)
-        	// TODO - We already have a beer, this is probably a reorientation
-        	// TODO - Also handle "drink another"
-        	//showBeerPreview(beer);
-    }
+        // The beer preview magnifying glass should reopen the search
+        View beerPreviewSearch = findViewById(R.id.searchAgainIcon);
+        beerPreviewSearch.setOnClickListener( new OnClickListener() {
+			@Override
+			public void onClick(View v) {
+				unsetBeer();
+			}
+        });
+	}
 
     private class BeerAutoCompleteAdapter extends BaseAdapter implements Filterable {
     	private List<Beer> beerList;
