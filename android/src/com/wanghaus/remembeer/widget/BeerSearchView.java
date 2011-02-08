@@ -165,9 +165,15 @@ public class BeerSearchView extends LinearLayout {
 	            	icon.setImageDrawable( getResources().getDrawable(R.drawable.library_loading) );
 	            	icon.startAnimation( 
 	            		    AnimationUtils.loadAnimation(context, R.anim.rotate_indefinitely) );
+	            } else if (beer != null) {
+	            	String iconName = beer.getIcon();
+	            	int id = getResources().getIdentifier(iconName, "drawable", "com.wanghaus.remembeer");
+	            	if (id > 0)
+		            	icon.setImageDrawable(getResources().getDrawable(id));
+	            	icon.clearAnimation();
 	            } else {
-	            	// XXX - Do this better
-	            	icon.setImageDrawable( getResources().getDrawable(R.drawable.beer_full) );
+	            	// TODO - 'New beer' icon
+	            	icon.setImageDrawable(getResources().getDrawable(R.drawable.beer_full));
 	            	icon.clearAnimation();
 	            }
             }

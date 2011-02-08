@@ -83,4 +83,10 @@ public class Beer extends Model {
 		
 		return details;
 	}
+	
+	public String getIcon() {
+		// TODO - Do this better
+		String icon = "beer_full";
+		return icon;
+	}
 }
