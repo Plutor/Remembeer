@@ -61,4 +61,26 @@ public class Beer extends Model {
 	//** READ ONLY PROPERTIES
 	//
 	public String getCount()			{ return get("count"); }
+	
+	public String getDetails() {
+		String details = "";
+		
+		String style = getStyle();
+		if (style != null && !style.equals(""))
+			details += getStyle();
+		
+		String brewery = getBrewery();
+		if (brewery != null && !brewery.equals("")) {
+			if (details.equals(""))
+				details = "Brewed by " + brewery;
+			else
+				details += ", brewed by " + brewery;
+			
+			String location = getLocation();
+			if (location != null)
+				details += " in " + location;
+		}
+		
+		return details;
+	}
 }

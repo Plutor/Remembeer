@@ -84,8 +84,8 @@ public class BeerSearchView extends LinearLayout {
         
 		TextView beerPreviewName = (TextView)findViewById(R.id.beerPreviewName);
 		beerPreviewName.setText(beer.getName());
-		TextView beerPreviewStyle= (TextView)findViewById(R.id.beerPreviewStyle);
-		beerPreviewStyle.setText(beer.getStyle());
+		TextView beerPreviewDetails = (TextView)findViewById(R.id.beerPreviewDetails);
+		beerPreviewDetails.setText(beer.getDetails());
 	}
 	
 	public void unsetBeer() {
@@ -158,7 +158,7 @@ public class BeerSearchView extends LinearLayout {
 	            text1.setText(thisBeer.getName());
 	            
 	            TextView text2 = (TextView) view.findViewById(R.id.text2); 
-	            text2.setText(thisBeer.getStyle());
+	            text2.setText(thisBeer.getDetails());
 	            
             	ImageView icon = (ImageView) view.findViewById(R.id.icon);
 	            if (thisBeer == throbber) {
@@ -167,7 +167,7 @@ public class BeerSearchView extends LinearLayout {
 	            		    AnimationUtils.loadAnimation(context, R.anim.rotate_indefinitely) );
 	            } else {
 	            	// XXX - Do this better
-	            	icon.setImageDrawable( getResources().getDrawable(R.drawable.beer_half_full) );
+	            	icon.setImageDrawable( getResources().getDrawable(R.drawable.beer_full) );
 	            	icon.clearAnimation();
 	            }
             }
