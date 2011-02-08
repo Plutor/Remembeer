@@ -352,7 +352,7 @@ public class History extends BaseActivity {
 			// Drink another
 			item = menu.add(0, CTXMNU_DRINK_ANOTHER, 0, getString(R.string.history_drink_another));
 			Intent nextIntent = new Intent(getBaseContext(), AddBeer.class);
-			nextIntent.putExtra("beername", beername);
+			nextIntent.putExtra("beer", beer);
 			nextIntent.putExtra("container", drink.getContainer());
 			item.setIntent(nextIntent);
 		}

@@ -61,6 +61,7 @@ public class AddBeer extends BaseActivity {
         initContainerSpinner();
         initDrinkWhenSpinner();
 
+        // For rotating
         if (savedInstanceState != null) {
         	Beer beerSaved = (Beer) savedInstanceState.getSerializable("beer");
         	beerSearch.setBeer(beerSaved);
@@ -86,6 +87,11 @@ public class AddBeer extends BaseActivity {
     
 	private void initBeerSearch() {
 		beerSearch = (BeerSearchView) findViewById(R.id.beersearch);
+
+		// Fill in the search field if we're drinking another
+        Beer intentBeer = (Beer)getIntent().getSerializableExtra("beer");
+        if (intentBeer != null)
+        	beerSearch.setBeer(intentBeer);
     }
 	
     private void initContainerSpinner() {

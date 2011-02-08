@@ -133,8 +133,6 @@ public class BeerSearchView extends LinearLayout {
 			
             Beer thisBeer = getItem(position);
             if (thisBeer != null) {
-	            Log.d("getView", "Trying to show beer autocomplete " + thisBeer.getName());
-	            
 	            TextView text1 = (TextView) view.findViewById(R.id.text1); 
 	            text1.setText(thisBeer.getName());
 	            
