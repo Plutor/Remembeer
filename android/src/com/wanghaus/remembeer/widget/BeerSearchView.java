@@ -396,7 +396,8 @@ public class BeerSearchView extends LinearLayout {
 
 	private void showLibraryLookupThrobber() {
 		autoCompleter.setSearching();
-		beernameView.showDropDown();
+		if (beernameView.hasWindowFocus())
+			beernameView.showDropDown();
 	}
 	
 	private void showLibraryLookupResults(String search, List<Beer> results) {
@@ -415,6 +416,7 @@ public class BeerSearchView extends LinearLayout {
 		if (results.size() > 0)
 			autoCompleter.addAll(results);
 		
-		beernameView.showDropDown();
+		if (beernameView.hasWindowFocus())
+			beernameView.showDropDown();
 	}
 }

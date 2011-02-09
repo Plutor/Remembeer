@@ -38,7 +38,6 @@ import com.wanghaus.remembeer.widget.BeerSearchView;
 public class AddBeer extends BaseActivity {
 	private static final int DATE_DIALOG_ID = 0;
 	private static final int TIME_DIALOG_ID = 1;
-	private static final int BEERINFO_DIALOG_ID = 2;
 
 	private BeerSearchView beerSearch;
 	private Spinner drinkWhenSpinner;
@@ -64,7 +63,8 @@ public class AddBeer extends BaseActivity {
         // For rotating
         if (savedInstanceState != null) {
         	Beer beerSaved = (Beer) savedInstanceState.getSerializable("beer");
-        	beerSearch.setBeer(beerSaved);
+        	if (beerSaved != null)
+        		beerSearch.setBeer(beerSaved);
         }
         
     	// If webservice setting is unset, ask
@@ -321,26 +321,11 @@ public class AddBeer extends BaseActivity {
     }
 
 	@Override
-	protected void onActivityResult(int requestCode, int resultCode, Intent data) {
-		switch (requestCode) {
-		case BEERINFO_DIALOG_ID:
-			// We get a beer object back, remember it here for later
-			if (resultCode == RESULT_OK && data != null) {
-				Beer returnBeer = (Beer) data.getSerializableExtra("beer");
-				if (returnBeer != null)
-					beerSearch.setBeer(returnBeer);
-			}
-			
-			break;
-		default:
-			super.onActivityResult(requestCode, resultCode, data);
-		}
-	}
-
-	@Override
 	protected void onSaveInstanceState(Bundle outState) {
 		super.onSaveInstanceState(outState);
-		
-		outState.putSerializable("beer", beerSearch.getBeer());
+
+		Beer beer = beerSearch.getBeer();
+		if (beer != null)
+			outState.putSerializable("beer", beer);
 	}
 }
