@@ -1,5 +1,10 @@
 package com.wanghaus.remembeer.activity;
 
+import java.text.DateFormat;
+import java.text.ParseException;
+import java.text.SimpleDateFormat;
+import java.util.Date;
+
 import android.app.AlertDialog;
 import android.app.SearchManager;
 import android.content.Context;
@@ -141,12 +146,18 @@ public class History extends BaseActivity {
     	private Context context;
     	@SuppressWarnings("unused")
 		private int layout;
+    	private SimpleDateFormat rfc3339;
+    	private DateFormat df;
+    	private DateFormat tf;
     	
 		public HistoryCursorAdapter(Context context, int layout, Cursor c, String[] from, int[] to) {
 			super(context, layout, c, from, to);
 			
 			this.context = context;
 			this.layout = layout;
+			rfc3339 = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
+			df = android.text.format.DateFormat.getDateFormat(getApplicationContext());
+			tf = android.text.format.DateFormat.getTimeFormat(getApplicationContext());
 		}
 
 	     public View getView(int position, View convertView, ViewGroup parent) {
@@ -179,7 +190,14 @@ public class History extends BaseActivity {
 					beername.setText(beer.getName());
 
 				TextView details = (TextView) row.findViewById(R.id.details);
-				details.setText(drink.getContainer() + " at " + drink.getStamp());
+				String stamp = drink.getStamp();
+				try {
+					Date stampDate = rfc3339.parse(stamp);
+					details.setText(drink.getContainer() + " at " +
+							df.format(stampDate) + " " + tf.format(stampDate));
+				} catch (ParseException e) {
+					Log.e("history", "Unable to parse date " + stamp);
+				}
 
 				RatingBar smallRatingBar = (RatingBar) row.findViewById(R.id.smallRating);
 				if (smallRatingBar != null) {
