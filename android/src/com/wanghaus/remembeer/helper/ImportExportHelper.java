@@ -8,7 +8,11 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.io.InputStreamReader;
 import java.io.PrintWriter;
+import java.text.ParseException;
+import java.text.SimpleDateFormat;
 import java.util.Arrays;
+import java.util.Calendar;
+import java.util.Date;
 import java.util.List;
 import java.util.Map;
 
@@ -122,8 +126,14 @@ public class ImportExportHelper {
     				String val = "";
     				if (col != -1)
     					val = elements.get(col);
-    				if (val != null && !val.equals(""))
+
+    				if (val != null && !val.equals("")) {
+        				if (column.equals("stamp"))
+        					// Make sure it's in a good format
+        					val = reformatStamp(val);
+
     					drink.put(attr, val);
+    				}
     			}
 
     			// Build/update beer
@@ -148,14 +158,18 @@ public class ImportExportHelper {
     			}
 
     			// First, write the beer
-    			int beerId = dbs.updateOrAddBeer(beer);
-    			Log.i("import", "Added or updated beer " + beerId);
-
-    			drink.setBeerId(beerId);
-    			int drinkId = dbs.updateOrAddDrink(drink);
-    			Log.i("import", "Added or updated drink " + drinkId);
-
-    			count++;
+    			try {
+	    			int beerId = dbs.updateOrAddBeer(beer);
+	    			Log.i("import", "Added or updated beer " + beerId);
+	
+	    			drink.setBeerId(beerId);
+	    			int drinkId = dbs.updateOrAddDrink(drink);
+	    			Log.i("import", "Added or updated drink " + drinkId);
+	    			
+	    			count++;
+    			} catch (Exception e) {
+    				Log.e("import", "Couldn't import a beer", e);
+    			}
     		}
     		csvFile.close();
     	} catch(Exception e){
@@ -307,5 +321,42 @@ public class ImportExportHelper {
 
 	public void setDbs(BeerDbHelper dbs) {
 		this.dbs = dbs;
+	}
+	
+	private String reformatStamp(String originalStamp) {
+    	SimpleDateFormat rfc3339 = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
+    	SimpleDateFormat okay_formats[] = new SimpleDateFormat[] { 
+    			new SimpleDateFormat("yyyy/MM/dd HH:mm:ss"),
+    			new SimpleDateFormat("yyyy-MM-dd HH:mm"),
+    			new SimpleDateFormat("yyyy/MM/dd HH:mm"),
+    			new SimpleDateFormat("yyyy-MM-dd"),
+    			new SimpleDateFormat("yyyy/MM/dd")
+    	};
+    	Calendar cal = Calendar.getInstance();
+
+    	// If it's RFC-3339, great
+		try {
+			rfc3339.parse(originalStamp);
+			return originalStamp;
+		} catch (ParseException e) {}
+
+		// If it's in something else we can parse, reformat to RFC-3339 and return
+		for (SimpleDateFormat sdf : okay_formats) {
+			try {
+				Date d = sdf.parse(originalStamp);
+				// mm/dd/yy can be misinterpreted as yyyy/mm/dd
+				// by SimpleDateFormat - this is the simplest fix
+				cal.setTime(d);
+				if (cal.get(Calendar.YEAR) < 1900) continue;
+				
+				String newStamp = rfc3339.format(d);
+				Log.d("reformatStamp", "Converted '" + originalStamp + "' to '" + newStamp + "' with " + sdf.toPattern());
+				return newStamp;
+			} catch (ParseException e) {}
+		}
+		
+		Log.e("reformatStamp", "Can't parse and reformat timestamp '" + originalStamp + "'");
+		
+		return null;
 	}
 }

@@ -2,8 +2,6 @@ package com.wanghaus.remembeer.test;
 
 import java.util.List;
 
-import android.util.Log;
-
 import com.wanghaus.remembeer.model.Beer;
 import com.wanghaus.remembeer.model.Drink;
 

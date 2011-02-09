@@ -16,12 +16,12 @@ public class ImportTestWithBadDates extends ImportTest {
 	 */
 	public void testBeersCount() throws Throwable {
 		int count = dbs.getBeersCount();
-		assertTrue(count == 1);
+		assertTrue(count == 2);
 	}	
 
 	public void testDrinksCount() throws Throwable {
 		int count = dbs.getDrinkCount();
-		assertTrue(count == 1);
+		assertTrue(count == 2);
 	}	
 	
 	public void testGetDrinksWhen() throws Throwable {
