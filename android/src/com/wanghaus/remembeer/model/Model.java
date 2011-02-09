@@ -41,7 +41,12 @@ public abstract class Model implements Serializable {
 	}
 	
 	public String get(String key) {
-		return stash.get(key);
+		String val = stash.get(key);
+		
+		if (val == null || !val.equals("null")) // Get rid of 'null' strings from old bugs
+			return val;
+		else
+			return null;
 	}
 	protected int getInt(String key) {
 		try {

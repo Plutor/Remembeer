@@ -80,7 +80,7 @@ public class ImportExportHelper {
     		Log.i("import", "Stamp is column: " + stampcol);
     		Log.i("import", "Beer name is column: " + beernamecol);
     		Log.i("import", "Container is column: " + containercol);
-    		
+
         	if (beernamecol == -1 || stampcol == -1 || containercol == -1) {
 				// The header in the file wasn't right, so we're out of here
         		Log.e("import", "Missing at least one of the required columns: beername, container, stamp");
@@ -123,7 +123,7 @@ public class ImportExportHelper {
     				if (col != -1)
     					val = elements.get(col);
     				if (val != null && !val.equals(""))
-    					drink.put(attr, elements.get(col));
+    					drink.put(attr, val);
     			}
 
     			// Build/update beer
@@ -144,7 +144,7 @@ public class ImportExportHelper {
     				if (col != -1)
     					val = elements.get(col);
     				if (val != null && !val.equals(""))
-    					beer.put(attr, elements.get(col));
+    					beer.put(attr, val);
     			}
 
     			// First, write the beer
