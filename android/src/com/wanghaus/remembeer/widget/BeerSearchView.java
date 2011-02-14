@@ -15,6 +15,7 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.view.animation.AnimationUtils;
+import android.view.inputmethod.InputMethodManager;
 import android.widget.AdapterView;
 import android.widget.AutoCompleteTextView;
 import android.widget.BaseAdapter;
@@ -111,14 +112,19 @@ public class BeerSearchView extends LinearLayout {
 	    beernameView = (AutoCompleteTextView) findViewById(R.id.beername);
         
         beernameView.setAdapter(autoCompleter); 
-        
+
         // When an autocomplete item is chosen, remember it
         beernameView.setOnItemClickListener( new OnItemClickListener() {
 			@Override
 			public void onItemClick(AdapterView<?> parent, View v, int position, long id) {
 				Beer selected = autoCompleter.getItem(position);
-				if (selected != null)
+				if (selected != null) {
 					setBeer(selected);
+					
+					// Also hide the soft keyboard
+					InputMethodManager imm = (InputMethodManager)context.getSystemService(Context.INPUT_METHOD_SERVICE);
+					imm.hideSoftInputFromWindow(beernameView.getWindowToken(), 0);
+				}
 			}
         });
         

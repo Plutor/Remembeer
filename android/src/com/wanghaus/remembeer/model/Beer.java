@@ -33,6 +33,13 @@ public class Beer extends Model {
 		return rv;
 	}
 	
+	public String toString() {
+		String rv = getName();
+		if (rv == null)
+			return "???";
+		else
+			return rv;
+	}
 	//
 	//** READ-WRITE PROPERTIES
 	//
