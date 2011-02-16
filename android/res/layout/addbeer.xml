@@ -11,6 +11,11 @@
 		android:paddingLeft="6dip"
 		android:paddingRight="6dip">
 
+		<TextView
+			android:id="@+id/beernameCaption"
+			android:layout_width="fill_parent"
+			android:layout_height="wrap_content"
+			android:text="@string/beername" />
 		<com.wanghaus.remembeer.widget.BeerSearchView
 			android:layout_width="fill_parent"
 			android:layout_height="wrap_content"
