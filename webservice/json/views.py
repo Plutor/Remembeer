@@ -50,15 +50,15 @@ def query(request):
             try:
                 d.save()
             except IntegrityError, err:
-                return HttpResponse( "{ \"error\": \"" + str(err) + "\" }" )
+                return HttpResponse( "[ { \"error\": \"" + str(err) + "\" } ]" )
 
             # respond with the detailed results
-            return HttpResponse( d.json(detailed=True) )
+            return HttpResponse( '[' + d.json(detailed=True) + ']' )
         else:
             # Else, respond with the simple results
-            return HttpResponse( d.json() )
+            return HttpResponse( '[' + d.json() + ']' )
 
-    return HttpResponse( "{}" )
+    return HttpResponse( "[]" )
 
 def form(request):
     t = loader.get_template('form.html')
