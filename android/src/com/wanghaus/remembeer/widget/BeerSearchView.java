@@ -379,12 +379,7 @@ public class BeerSearchView extends LinearLayout {
         // This is potentially expensive. Fire off a thread to do it.
         Thread t = new Thread() {
             public void run() {
-    			Beer beerFound = wsh.findBeerByName(search);
-
-    			// TEMP - Until the web service returns multiple beers
-    			List<Beer> results = new ArrayList<Beer>();
-    			if (beerFound != null)
-    				results.add(beerFound);
+    			List<Beer> results = wsh.findBeersBySubstring(search);
 
     			Message msg = handler.obtainMessage();
 				Bundle msgBundle = new Bundle();

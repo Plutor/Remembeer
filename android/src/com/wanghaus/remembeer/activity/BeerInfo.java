@@ -76,7 +76,7 @@ public class BeerInfo extends BaseActivity {
         if (beer != null && beer.size() > 0) {
         	setViewWithValue( R.id.beerinfo_abv, beer, "abv" );
         	setViewWithValue( R.id.beerinfo_brewery, beer, "brewery" );
-        	setViewWithValue( R.id.beerinfo_location, beer, "location" );
+        	setViewWithValue( R.id.beerinfo_location, beer, "brewery_location" );
         	setViewWithValue( R.id.beerinfo_style, beer, "style" );
         	setViewWithValue( R.id.beerinfo_notes, beer, "notes" );
 

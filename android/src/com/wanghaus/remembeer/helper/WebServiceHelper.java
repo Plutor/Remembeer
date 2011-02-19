@@ -6,8 +6,11 @@ import java.io.OutputStreamWriter;
 import java.net.URL;
 import java.net.URLConnection;
 import java.net.URLEncoder;
+import java.util.ArrayList;
 import java.util.Iterator;
+import java.util.List;
 
+import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
 
@@ -33,24 +36,14 @@ public class WebServiceHelper {
     	this.dbs = dbs;
 	}
 
-	public Beer findBeerByName(String beername) {
-		Beer beer = dbs.findBeerByName(beername);
-		
-		if (beer == null) {
-			// Do a lookup
-			beer = new Beer();
-			beer.setName(beername);
-	
-			Beer response = sendWebServiceRequest(beer, true);
-			if (response != null) { // and other criteria?
-				beer = response;
-			}
-		}
-		
-		return beer;
+	public List<Beer> findBeersBySubstring(String beername) {
+		Beer beer = new Beer();
+		beer.setName(beername);
+
+		return sendWebServiceRequest(beer, true);
 	}
 
-	public JSONObject sendWebServiceRequest(JSONObject json) {
+	public JSONArray sendWebServiceRequest(JSONObject json) {
 		// Don't do anything if web service is off
         SharedPreferences settings = PreferenceManager.getDefaultSharedPreferences(dbs.context);
         if (!settings.getBoolean("useWebService", false))
@@ -67,6 +60,7 @@ public class WebServiceHelper {
 		// Send it
 		String response = "";
 		try {
+			Log.d("WebServiceHelper", "url = " + webserviceRoot);
 			URL url = new URL(webserviceRoot);
 			String data = json.toString();
 			
@@ -93,11 +87,12 @@ public class WebServiceHelper {
 			Log.e("WebServiceHelper", "Failed to make request", e);
 		}
 		
+		// TODO - This will be a list of objects
 		// Extract beer object from response
 		if (response != null && !response.equals("")) {
 			Log.d("WebServiceHelper", "Got response: " + response);
 			try {
-				JSONObject responseJSON = new JSONObject(response);
+				JSONArray responseJSON = new JSONArray(response);
 				return responseJSON;
 			} catch (Exception e) {
 				Log.e("WebServiceHelper", "Unable to parse JSON response", e);
@@ -107,7 +102,7 @@ public class WebServiceHelper {
 		return null;
 	}
 	
-	public Beer sendWebServiceRequest(Beer beer, boolean search) {
+	public List<Beer> sendWebServiceRequest(Beer beer, boolean search) {
 		// Build JSON
 		JSONObject json = beer.toJSONObject();
 		try {
@@ -115,19 +110,22 @@ public class WebServiceHelper {
 		} catch (JSONException e) {}
 		
 		// Send it
-		JSONObject responseJSON = sendWebServiceRequest(json);
+		JSONArray responseJSON = sendWebServiceRequest(json);
+		List<Beer> responseBeers = new ArrayList<Beer>();
 		
-		// Extract beer object from response
+		// Extract beer objects from response
 		if (responseJSON != null) {
 			try {
-				Beer responseBeer = new Beer(responseJSON);
-				return responseBeer;
+				for (int i=0; i<responseJSON.length(); ++i) {
+					Beer b = new Beer(responseJSON.getJSONObject(i));
+					responseBeers.add(b);
+				}
 			} catch (Exception e) {
 				Log.e("WebServiceHelper", "Unable to parse JSON response", e);
 			}
 		}
 		
-		return null;
+		return responseBeers;
 	}
 	
 	@SuppressWarnings("unchecked")
@@ -153,13 +151,14 @@ public class WebServiceHelper {
 		}
 		
 		// Send it
-		JSONObject responseJSON = sendWebServiceRequest(json);
+		JSONArray responseJSON = sendWebServiceRequest(json);
 		
 		// Extract drink and beer objects from response
-		if (responseJSON != null) {
+		if (responseJSON != null && responseJSON.length() > 0) {
 			try {
-				Beer responseBeer = new Beer(responseJSON);
-				Drink responseDrink = new Drink(responseJSON);
+				JSONObject firstResponse = responseJSON.getJSONObject(0);
+				Beer responseBeer = new Beer(firstResponse);
+				Drink responseDrink = new Drink(firstResponse);
 				
 				// Update the original drink and beer in the db
 				if (drink.getId() > 0) {
