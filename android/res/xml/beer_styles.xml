@@ -1,0 +1,117 @@
+<?xml version="1.0" encoding="utf-8"?>
+
+<resources>
+	<beerstyle name="Adjunct Lager" />
+	<beerstyle name="Altbier" />
+	<beerstyle name="Amber" />
+	<beerstyle name="Ancient Herbed Ale" />
+	<beerstyle name="Baltic Porter" icon="pint_black" />
+	<beerstyle name="Barleywine" />
+	<beerstyle name="Belgian White" icon="pilsner_light" />
+	<beerstyle name="Berliner Weissbier" icon="pilsner_light" />
+	<beerstyle name="Bière Brut" />
+	<beerstyle name="Bière de Champagne" />
+	<beerstyle name="Bière de Garde" />
+	<beerstyle name="Black and Tan" />
+	<beerstyle name="Blonde Ale" icon="pint_light" />
+	<beerstyle name="Bock" />
+	<beerstyle name="Braggot" />
+	<beerstyle name="Brown Ale" />
+	<beerstyle name="California Common" />
+	<beerstyle name="Chile Beer" />
+	<beerstyle name="Cream Ale" />
+	<beerstyle name="Czech Pilsener" icon="pilsner_light" />
+	<beerstyle name="Dark Ale" />
+	<beerstyle name="Dark Mild Ale" />
+	<beerstyle name="Dark Wheat Ale" icon="pilsner_light" />
+	<beerstyle name="Doppelbock" />
+	<beerstyle name="Dortmunder" />
+	<beerstyle name="Double IPA" />
+	<beerstyle name="Double" />
+	<beerstyle name="Dubbel" />
+	<beerstyle name="Dunkelweizen" icon="pilsner_medlight" />
+	<beerstyle name="Eisbock" />
+	<beerstyle name="English Bitter" />
+	<beerstyle name="English Brown Ale" />
+	<beerstyle name="ESB" />
+	<beerstyle name="European Dark Lager" />
+	<beerstyle name="European Pale Lager" icon="pint_light" />
+	<beerstyle name="European Strong Lager" />
+	<beerstyle name="Export Lager" icon="pint_light" />
+	<beerstyle name="Extra Special Bitter" />
+	<beerstyle name="Extra Strong Bitter" />
+	<beerstyle name="Farmhouse Ale" />
+	<beerstyle name="Faro" />
+	<beerstyle name="Flanders Oud Bruin" />
+	<beerstyle name="Flanders Red Ale" />
+	<beerstyle name="Fruit Beer" />
+	<beerstyle name="German Pilsener" icon="pilsner_light" />
+	<beerstyle name="Gose" />
+	<beerstyle name="Gueuze" />
+	<beerstyle name="Happoshu" />
+	<beerstyle name="Hefeweizen" icon="pilsner_light" />
+	<beerstyle name="Helles Bock" />
+	<beerstyle name="Herbed Beer" />
+	<beerstyle name="Imperial Pilsner" icon="pilsner_light" />
+	<beerstyle name="Imperial Stout" icon="pint_black" />
+	<beerstyle name="Imperial IPA" icon="pint_medium" />
+	<beerstyle name="IPA" icon="pint_medium" />
+	<beerstyle name="Irish Dry Stout" icon="pint_black" />
+	<beerstyle name="Irish Red Ale" />
+	<beerstyle name="Japanese Rice Lager" />
+	<beerstyle name="Keller Bier" />
+	<beerstyle name="Kölsch" icon="pilsner_verylight" />
+	<beerstyle name="Kristalweizen" />
+	<beerstyle name="Kvass" />
+	<beerstyle name="Lambic" />
+	<beerstyle name="Light Lager" />
+	<beerstyle name="Maibock" />
+	<beerstyle name="Malt Liquor" />
+	<beerstyle name="Märzen" />
+	<beerstyle name="Mild Ale" icon="pint_light" />
+	<beerstyle name="Milk Stout" icon="pint_black" />
+	<beerstyle name="Munich Dunkel Lager" />
+	<beerstyle name="Munich Helles Lager" />
+	<beerstyle name="Oatmeal Stout" icon="pint_black" />
+	<beerstyle name="Oktoberfest" />
+	<beerstyle name="Old Ale" />
+	<beerstyle name="Pale Ale" icon="pint_light" />
+	<beerstyle name="Pale Lager" />
+	<beerstyle name="Pale Mild Ale" icon="pint_light" />
+	<beerstyle name="Pale Wheat Ale" icon="pilsner_verylight" />
+	<beerstyle name="Pilsner" icon="pilsner_light" />
+	<beerstyle name="Porter" />
+	<beerstyle name="Pumpkin Ale" />
+	<beerstyle name="Quadrupel (Quad)" />
+	<beerstyle name="Rauchbier" />
+	<beerstyle name="Red Ale" />
+	<beerstyle name="Red Lager" />
+	<beerstyle name="Roggenbier" />
+	<beerstyle name="Russian Imperial Stout" icon="pint_black" />
+	<beerstyle name="Rye Beer" />
+	<beerstyle name="Sahti" />
+	<beerstyle name="Saison" />
+	<beerstyle name="Schwarzbier" />
+	<beerstyle name="Scotch Ale" />
+	<beerstyle name="Scottish Ale" />
+	<beerstyle name="Scottish Gruit" />
+	<beerstyle name="Smoked Beer" />
+	<beerstyle name="Spiced Beer" />
+	<beerstyle name="Steam Beer" />
+	<beerstyle name="Stout" icon="pint_black" />
+	<beerstyle name="Strong Ale" />
+	<beerstyle name="Strong Dark Ale" />
+	<beerstyle name="Strong Pale Ale" icon="pint_light" />
+	<beerstyle name="Summer Pilsner" icon="pilsner_light" />
+	<beerstyle name="Sweet Stout" icon="pint_black" />
+	<beerstyle name="Tripel" />
+	<beerstyle name="Vegetable Beer" />
+	<beerstyle name="Vienna Lager" />
+	<beerstyle name="Weizenbock" />
+	<beerstyle name="Wheatwine" icon="pilsner_medlight" />
+	<beerstyle name="Wild Ale" />
+	<beerstyle name="Winter Warmer" />
+	<beerstyle name="Witbier" icon="pilsner_light" />
+	<beerstyle name="Zwickel Bier" />
+
+</resources>

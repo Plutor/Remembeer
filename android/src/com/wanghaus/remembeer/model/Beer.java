@@ -9,7 +9,7 @@ import android.database.Cursor;
 
 public class Beer extends Model {	
 	private static final long serialVersionUID = -2080563347089735252L;
-
+	
 	public Beer() {
 		super();
 	}
@@ -89,11 +89,5 @@ public class Beer extends Model {
 		}
 		
 		return details;
-	}
-	
-	public String getIcon() {
-		// TODO - Do this better
-		String icon = "beer_full";
-		return icon;
 	}
 }

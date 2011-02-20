@@ -2,9 +2,12 @@ package com.wanghaus.remembeer.widget;
 
 import java.util.ArrayList;
 import java.util.Collection;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
 import android.content.Context;
+import android.content.res.XmlResourceParser;
 import android.os.Bundle;
 import android.os.Handler;
 import android.os.Message;
@@ -46,6 +49,7 @@ public class BeerSearchView extends LinearLayout {
 
     private BeerAutoCompleteAdapter autoCompleter;
     private AutoCompleteTextView beernameView;
+	private Map<String, String> beerIconMap = null;
 
 	private Context context;
 	private Beer beer;
@@ -171,15 +175,17 @@ public class BeerSearchView extends LinearLayout {
 	            	icon.setImageDrawable( getResources().getDrawable(R.drawable.library_loading) );
 	            	icon.startAnimation( 
 	            		    AnimationUtils.loadAnimation(context, R.anim.rotate_indefinitely) );
-	            } else if (beer != null) {
-	            	String iconName = beer.getIcon();
+	            } else if (thisBeer.getStyle() == null && thisBeer.getId() == 0) {
+	            	// TODO - 'New beer' icon
+	            	icon.setImageDrawable(getResources().getDrawable(R.drawable.pint_medium));
+	            	icon.clearAnimation();
+	            } else {
+	            	String iconName = getBeerIcon(thisBeer);
 	            	int id = getResources().getIdentifier(iconName, "drawable", "com.wanghaus.remembeer");
 	            	if (id > 0)
 		            	icon.setImageDrawable(getResources().getDrawable(id));
-	            	icon.clearAnimation();
-	            } else {
-	            	// TODO - 'New beer' icon
-	            	icon.setImageDrawable(getResources().getDrawable(R.drawable.beer_full));
+	            	else
+	            		icon.setImageDrawable(getResources().getDrawable(R.drawable.pint_medium));
 	            	icon.clearAnimation();
 	            }
             }
@@ -187,6 +193,39 @@ public class BeerSearchView extends LinearLayout {
             return view;
 		}
 
+		public String getBeerIcon(Beer beer) {
+			if (beer == null) return "";
+			
+			if (beerIconMap == null) {
+				beerIconMap = new HashMap<String, String>();
+				try {
+					XmlResourceParser xrp = getResources().getXml(R.xml.beer_styles);
+					while (xrp.getEventType() != XmlResourceParser.END_DOCUMENT) {
+						if (xrp.getEventType() == XmlResourceParser.START_TAG) {
+							String tagname = xrp.getName();
+							if (tagname.equals("beerstyle")) {
+								String name = xrp.getAttributeValue(null, "name");
+								String icon = xrp.getAttributeValue(null, "icon");
+								if (name != null && icon != null) {
+									beerIconMap.put(name, icon);
+								}
+							}
+						}
+						
+						xrp.next();
+					}
+				} catch (Exception e) {
+					Log.e("getBeerIcon", "Problem parsing beer_styles.xml", e);
+				}
+			}
+
+			String beer_style = beer.getStyle();
+			if (beer_style != null && beerIconMap.containsKey(beer_style))
+				return beerIconMap.get(beer_style);
+			
+			return "pint_medium";
+		}
+		
 		@Override
 		public int getCount() {
 			return beerList.size();

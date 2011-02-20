@@ -1,14 +1,21 @@
 package com.wanghaus.remembeer.activity;
 
+import java.io.IOException;
+import java.util.ArrayList;
+import java.util.List;
+
+import org.xmlpull.v1.XmlPullParserException;
+
 import android.content.Context;
 import android.content.Intent;
+import android.content.res.XmlResourceParser;
 import android.database.Cursor;
 import android.os.Bundle;
 import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
-import android.view.View.OnClickListener;
 import android.view.ViewGroup;
+import android.view.View.OnClickListener;
 import android.widget.ArrayAdapter;
 import android.widget.AutoCompleteTextView;
 import android.widget.Button;
@@ -81,7 +88,7 @@ public class BeerInfo extends BaseActivity {
         	setViewWithValue( R.id.beerinfo_notes, beer, "notes" );
 
             AutoCompleteTextView styleInput = (AutoCompleteTextView) findViewById(R.id.beerinfo_style);
-            String[] known_styles = getResources().getStringArray(R.array.beer_styles_list);
+            String[] known_styles = getBeerStylesList();
             ArrayAdapter<String> styleArray = new ArrayAdapter<String>(this, R.layout.list_item, known_styles);
             styleInput.setAdapter(styleArray);
             
@@ -128,6 +135,30 @@ public class BeerInfo extends BaseActivity {
         b.setOnClickListener(saveClickListener);
 	}
 	
+	private String[] getBeerStylesList() {
+		List<String> beerStylesList = new ArrayList<String>();
+		
+		try {
+			XmlResourceParser xrp = getResources().getXml(R.xml.beer_styles);
+			while (xrp.getEventType() != XmlResourceParser.END_DOCUMENT) {
+				if (xrp.getEventType() == XmlResourceParser.START_TAG) {
+					String tagname = xrp.getName();
+					if (tagname.equals("beerstyle")) {
+						String name = xrp.getAttributeValue(null, "name");
+						if (name != null)
+							beerStylesList.add(name);
+					}
+				}
+				
+				xrp.next();
+			}
+		} catch (Exception e) {
+			Log.e("getBeerStylesList", "Failure to parse beer_styles.xml", e);
+		}
+		
+		return beerStylesList.toArray( new String[]{} );
+	}
+
 	private void setViewWithValue(int viewId, Beer beer, String key) {
     	try {
     		EditText v = (EditText) findViewById( viewId );
