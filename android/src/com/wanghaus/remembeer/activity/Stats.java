@@ -16,7 +16,7 @@ import com.wanghaus.remembeer.R;
 import com.wanghaus.remembeer.helper.BeerDbHelper;
 import com.wanghaus.remembeer.model.Beer;
 
-public class Stats extends BaseActivity {
+public class Stats extends Activity {
 	private List<BeerStat> stats = new ArrayList<BeerStat>();
 	
     @Override

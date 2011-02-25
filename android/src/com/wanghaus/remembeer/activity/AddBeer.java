@@ -4,6 +4,7 @@ import java.text.DateFormat;
 import java.util.Calendar;
 import java.util.Date;
 
+import android.app.Activity;
 import android.app.DatePickerDialog;
 import android.app.Dialog;
 import android.app.TimePickerDialog;
@@ -35,7 +36,7 @@ import com.wanghaus.remembeer.model.Drink;
 import com.wanghaus.remembeer.service.NotifyService;
 import com.wanghaus.remembeer.widget.BeerSearchView;
 
-public class AddBeer extends BaseActivity {
+public class AddBeer extends Activity {
 	private static final int DATE_DIALOG_ID = 0;
 	private static final int TIME_DIALOG_ID = 1;
 

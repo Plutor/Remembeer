@@ -1,11 +1,9 @@
 package com.wanghaus.remembeer.activity;
 
-import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
 
-import org.xmlpull.v1.XmlPullParserException;
-
+import android.app.Activity;
 import android.content.Context;
 import android.content.Intent;
 import android.content.res.XmlResourceParser;
@@ -31,7 +29,7 @@ import com.wanghaus.remembeer.model.Drink;
 
 
 
-public class BeerInfo extends BaseActivity {
+public class BeerInfo extends Activity {
 	private String beername;
 	private Beer beer;
 	private Drink drink;

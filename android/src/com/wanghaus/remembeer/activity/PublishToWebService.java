@@ -2,6 +2,7 @@ package com.wanghaus.remembeer.activity;
 
 import java.util.List;
 
+import android.app.Activity;
 import android.app.ProgressDialog;
 import android.content.Context;
 import android.os.Bundle;
@@ -17,7 +18,7 @@ import com.wanghaus.remembeer.helper.BeerDbHelper;
 import com.wanghaus.remembeer.helper.WebServiceHelper;
 import com.wanghaus.remembeer.model.Drink;
 
-public class PublishToWebService extends BaseActivity {
+public class PublishToWebService extends Activity {
 
 	protected void onCreate(Bundle savedInstanceState) {
 	    super.onCreate(savedInstanceState);

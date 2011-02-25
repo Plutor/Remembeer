@@ -5,6 +5,7 @@ import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.util.Date;
 
+import android.app.Activity;
 import android.app.AlertDialog;
 import android.app.SearchManager;
 import android.content.Context;
@@ -39,7 +40,7 @@ import com.wanghaus.remembeer.helper.WebServiceHelper;
 import com.wanghaus.remembeer.model.Beer;
 import com.wanghaus.remembeer.model.Drink;
 
-public class History extends BaseActivity {
+public class History extends Activity {
 	private static final int BEERINFO_DIALOG_ID = 0;
 	private static final int CTXMNU_DRINK_ANOTHER = 1;
 	private static final int CTXMNU_DELETE = 2;	
