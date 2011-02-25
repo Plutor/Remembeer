@@ -231,17 +231,15 @@ public class History extends BaseActivity {
             	sortItem.setTitle(R.string.optionsmenu_history_sort_alpha);
             }
         }
-        
+
 		return super.onPrepareOptionsMenu(menu);
 	}
-    
+
 	@Override
 	public boolean onOptionsItemSelected(MenuItem item) {
+		Intent nextIntent;
+		
 	    switch (item.getItemId()) {
-	    case R.id.optionsmenu_export:
-	    	final Intent next = new Intent(this, ImportExport.class);
-	    	startActivity(next);
-		    return true;
 	    case R.id.optionsmenu_history_sort:
 	        SharedPreferences settings = PreferenceManager.getDefaultSharedPreferences(this);
         	Editor prefsEditor = settings.edit();
@@ -257,6 +255,26 @@ public class History extends BaseActivity {
 	    	initBeerList();
 	    	
 	    	return true;
+	    case R.id.optionsmenu_addbeer:
+	    	nextIntent = new Intent(this, AddBeer.class);
+	    	startActivity(nextIntent);
+
+	        return true;
+	    case R.id.optionsmenu_export:
+	    	nextIntent = new Intent(this, ImportExport.class);
+		    startActivity(nextIntent);
+	    	
+	        return true;
+	    case R.id.optionsmenu_statistics:
+	    	nextIntent = new Intent(this, Stats.class);
+	    	startActivity(nextIntent);
+
+	        return true;
+	    case R.id.optionsmenu_settings:
+	    	nextIntent = new Intent(this, Config.class);
+	    	startActivity(nextIntent);
+
+	        return true;
 	    }
 
 	    // We don't want search results to stay in the stack
@@ -403,4 +421,13 @@ public class History extends BaseActivity {
 		});
 	}
 
+	/* Creates the menu items */
+    @Override
+	public boolean onCreateOptionsMenu(Menu menu) {
+		if (!super.onCreateOptionsMenu(menu))
+			return false;
+		
+		getMenuInflater().inflate(R.layout.optionsmenu, menu);
+		return true;  
+	}
 }

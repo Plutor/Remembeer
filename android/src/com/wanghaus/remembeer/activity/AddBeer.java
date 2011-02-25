@@ -267,25 +267,7 @@ public class AddBeer extends BaseActivity {
     		// TODO - throw an error?
     	}
     	
-    	showNextScreen();
-    }
-
-    private void showNextScreen() {    	
-    	Intent nextIntent;
-		SharedPreferences prefs = PreferenceManager.getDefaultSharedPreferences(this);
-		String nextActivity = prefs.getString("addBeerDoneActivity", "");
-
-    	if (nextActivity.equals("Stats"))
-    		nextIntent = new Intent(this, Stats.class);
-    	else if (nextActivity.equals("AddBeer"))
-    		nextIntent = new Intent(this, AddBeer.class);
-    	else
-    		nextIntent = new Intent(this, History.class);
-
-    	startActivity(nextIntent);
-
-    	Intent popupIntent = new Intent(this, AddBeerDone.class);
-    	startActivity(popupIntent);
+    	finish();
     }
     
     @Override

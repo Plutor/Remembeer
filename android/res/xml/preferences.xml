@@ -4,12 +4,6 @@
 	
 	<PreferenceCategory
 		android:title="Basic settings">
-		<ListPreference
-			android:title="@string/pref_addBeerDoneActivity"
-			android:defaultValue="@string/pref_addBeerDoneActivity_default"
-			android:key="addBeerDoneActivity"
-			android:entries="@array/pref_addBeerDoneActivityChoices"
-			android:entryValues="@array/pref_addBeerDoneActivityValues" />
 		<CheckBoxPreference
 			android:title="@string/pref_useWebService"
 			android:summary="@string/pref_useWebService_summary"
