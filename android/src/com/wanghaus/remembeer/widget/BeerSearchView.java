@@ -103,6 +103,15 @@ public class BeerSearchView extends LinearLayout {
 	}
 	
 	public Beer getBeer() {
+		if (beer == null) {
+			String beername = getCurrentSearchText();
+			if (beername == null || beername.equals("")) return null;
+			
+			Beer newBeer = new Beer();
+			newBeer.setName(beername);
+			return newBeer;
+		}
+
 		return beer;
 	}
 
@@ -176,8 +185,7 @@ public class BeerSearchView extends LinearLayout {
 	            	icon.startAnimation( 
 	            		    AnimationUtils.loadAnimation(context, R.anim.rotate_indefinitely) );
 	            } else if (thisBeer.getStyle() == null && thisBeer.getId() == 0) {
-	            	// TODO - 'New beer' icon
-	            	icon.setImageDrawable(getResources().getDrawable(R.drawable.pint_medium));
+	            	icon.setImageDrawable(getResources().getDrawable(R.drawable.new_beer));
 	            	icon.clearAnimation();
 	            } else {
 	            	String iconName = getBeerIcon(thisBeer);
