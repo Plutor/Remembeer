@@ -63,6 +63,19 @@
 			
 		<service
 			android:name=".service.NotifyService"></service>
+
+		<!-- AddBeer 1x1 app widget  -->
+		<activity
+			android:name=".widget.AddBeerAppWidgetProvider"></activity>
+		<receiver
+			android:name=".widget.AddBeerAppWidgetProvider">
+			<intent-filter>
+				<action android:name="android.appwidget.action.APPWIDGET_UPDATE" />
+			</intent-filter>
+			<meta-data
+				android:name="android.appwidget.provider"
+				android:resource="@xml/addbeer_appwidget_info" />
+		</receiver>
 	</application>
 	
 	<uses-sdk
@@ -76,4 +89,5 @@
 		android:name="android.permission.VIBRATE"></uses-permission>
 	<uses-permission
 		android:name="android.permission.WRITE_EXTERNAL_STORAGE"></uses-permission>
+	
 </manifest> 
