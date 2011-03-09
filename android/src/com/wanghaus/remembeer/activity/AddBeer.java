@@ -3,6 +3,7 @@ package com.wanghaus.remembeer.activity;
 import java.text.DateFormat;
 import java.util.Calendar;
 import java.util.Date;
+import java.util.List;
 
 import android.app.DatePickerDialog;
 import android.app.Dialog;
@@ -11,6 +12,8 @@ import android.content.DialogInterface;
 import android.content.Intent;
 import android.content.SharedPreferences;
 import android.content.DialogInterface.OnClickListener;
+import android.content.pm.PackageManager;
+import android.content.pm.ResolveInfo;
 import android.os.Bundle;
 import android.preference.PreferenceManager;
 import android.util.Log;
@@ -45,6 +48,7 @@ public class AddBeer extends BaseActivity {
 	private BeerDbHelper dbs;	
 	private WebServiceHelper wsh;
 	private Button saveButton = null;
+	private Button scanButton = null;
 	
     /** Called when the activity is first created. */
     @Override
@@ -57,6 +61,7 @@ public class AddBeer extends BaseActivity {
         
         initSaveButton();
         initBeerSearch();
+        initScanButton();
         initContainerSpinner();
         initDrinkWhenSpinner();
 
@@ -75,7 +80,7 @@ public class AddBeer extends BaseActivity {
         }
     }
     
-    private void initSaveButton() {
+	private void initSaveButton() {
         // Save button
         saveButton = (Button) findViewById(R.id.save);
         saveButton.setOnClickListener(new View.OnClickListener() {
@@ -93,7 +98,46 @@ public class AddBeer extends BaseActivity {
         if (intentBeer != null)
         	beerSearch.setBeer(intentBeer);
     }
-	
+
+    private void initScanButton() {
+    	scanButton = (Button) findViewById(R.id.scan_button);
+    	if (scanButton == null) return;
+
+        final Intent intent = new Intent("com.google.zxing.client.android.SCAN");
+        intent.setPackage("com.google.zxing.client.android");
+        intent.putExtra("SCAN_MODE", "QR_CODE_MODE");
+
+        // Find out if anything supports this intent
+        final PackageManager packageManager = getPackageManager();
+        List<ResolveInfo> list =
+            packageManager.queryIntentActivities(intent,
+                    PackageManager.MATCH_DEFAULT_ONLY);
+        
+        // If so, show the button
+        if (list != null && list.size() > 0) {
+	    	scanButton.setOnClickListener( new Button.OnClickListener() {
+	    	    public void onClick(View v) {
+	    	        startActivityForResult(intent, 0);
+	    	    }
+	    	} );
+        } else {
+        	scanButton.setVisibility(View.GONE);
+        }
+    }
+    
+	public void onActivityResult(int requestCode, int resultCode, Intent intent) {
+	    if (requestCode == 0) {
+	        if (resultCode == RESULT_OK) {
+	            String contents = intent.getStringExtra("SCAN_RESULT");
+	            String format = intent.getStringExtra("SCAN_RESULT_FORMAT");
+	            // Handle successful scan
+	            Log.d("barcode returned", "contents = " + contents + ", format = " + format);
+	        } else if (resultCode == RESULT_CANCELED) {
+	            // Handle cancel
+	        }
+	    }
+	}
+
     private void initContainerSpinner() {
         // Containers dropdown
         Spinner containerSpinner = (Spinner) findViewById(R.id.container);
