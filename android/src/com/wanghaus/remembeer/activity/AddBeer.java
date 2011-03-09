@@ -48,7 +48,6 @@ public class AddBeer extends BaseActivity {
 	private BeerDbHelper dbs;	
 	private WebServiceHelper wsh;
 	private Button saveButton = null;
-	private Button scanButton = null;
 	
     /** Called when the activity is first created. */
     @Override
@@ -99,13 +98,13 @@ public class AddBeer extends BaseActivity {
         	beerSearch.setBeer(intentBeer);
     }
 
+	// TODO - Move this to BeerSearchView - how do we allow startActivityForResult?
     private void initScanButton() {
-    	scanButton = (Button) findViewById(R.id.scan_button);
+    	View scanButton = findViewById(R.id.scan_button);
     	if (scanButton == null) return;
 
         final Intent intent = new Intent("com.google.zxing.client.android.SCAN");
         intent.setPackage("com.google.zxing.client.android");
-        intent.putExtra("SCAN_MODE", "QR_CODE_MODE");
 
         // Find out if anything supports this intent
         final PackageManager packageManager = getPackageManager();
@@ -115,7 +114,7 @@ public class AddBeer extends BaseActivity {
         
         // If so, show the button
         if (list != null && list.size() > 0) {
-	    	scanButton.setOnClickListener( new Button.OnClickListener() {
+	    	scanButton.setOnClickListener( new View.OnClickListener() {
 	    	    public void onClick(View v) {
 	    	        startActivityForResult(intent, 0);
 	    	    }
@@ -130,10 +129,12 @@ public class AddBeer extends BaseActivity {
 	        if (resultCode == RESULT_OK) {
 	            String contents = intent.getStringExtra("SCAN_RESULT");
 	            String format = intent.getStringExtra("SCAN_RESULT_FORMAT");
+
 	            // Handle successful scan
 	            Log.d("barcode returned", "contents = " + contents + ", format = " + format);
-	        } else if (resultCode == RESULT_CANCELED) {
-	            // Handle cancel
+	            
+	            // TODO - look it up
+	            beerSearch.setCurrentSearchText(contents);
 	        }
 	    }
 	}

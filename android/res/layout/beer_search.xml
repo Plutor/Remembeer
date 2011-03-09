@@ -3,13 +3,13 @@
 	xmlns:android="http://schemas.android.com/apk/res/android"
 	android:orientation="vertical"
 	android:layout_width="fill_parent"
-	android:layout_height="wrap_content"
-	android:background="@drawable/beer_preview_outline">
+	android:layout_height="wrap_content">
 
 	<FrameLayout
 		android:layout_width="fill_parent"
 		android:layout_height="wrap_content"
-		android:measureAllChildren="true">
+		android:measureAllChildren="true"
+		android:background="@drawable/beer_preview_outline">
 		<AutoCompleteTextView
 			android:id="@+id/beername"
 			android:layout_width="fill_parent"
@@ -54,4 +54,13 @@
 		        android:scaleType="center" />
 		</LinearLayout>
 	</FrameLayout>
+	
+	<TextView
+		android:id="@+id/scan_button"
+		android:layout_width="wrap_content"
+		android:layout_height="wrap_content"
+		android:text="Scan a barcode"
+		android:layout_gravity="right"
+		android:layout_marginRight="10dip" />
+
 </LinearLayout>

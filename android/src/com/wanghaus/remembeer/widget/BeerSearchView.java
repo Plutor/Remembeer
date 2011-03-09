@@ -115,6 +115,10 @@ public class BeerSearchView extends LinearLayout {
 		return beer;
 	}
 
+	public void setCurrentSearchText(String text) {
+		beernameView.setText(text);
+	}
+    
 	private String getCurrentSearchText() {
 		return beernameView.getText().toString();
 	}
