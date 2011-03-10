@@ -32,6 +32,7 @@ import com.wanghaus.remembeer.app.DatePickerCancellableDialog;
 import com.wanghaus.remembeer.app.TimePickerCancellableDialog;
 import com.wanghaus.remembeer.helper.BeerDbHelper;
 import com.wanghaus.remembeer.helper.TwitterHelper;
+import com.wanghaus.remembeer.helper.UpcHelper;
 import com.wanghaus.remembeer.helper.WebServiceHelper;
 import com.wanghaus.remembeer.model.Beer;
 import com.wanghaus.remembeer.model.Drink;
@@ -112,7 +113,7 @@ public class AddBeer extends BaseActivity {
             packageManager.queryIntentActivities(intent,
                     PackageManager.MATCH_DEFAULT_ONLY);
         
-        // If so, show the button
+        // If so, the button launches the intent
         if (list != null && list.size() > 0) {
 	    	scanButton.setOnClickListener( new View.OnClickListener() {
 	    	    public void onClick(View v) {
@@ -120,7 +121,8 @@ public class AddBeer extends BaseActivity {
 	    	    }
 	    	} );
         } else {
-        	scanButton.setVisibility(View.GONE);
+        	// TODO - If not, the button shows a dialog that 
+        	// suggests downloading Barcode Scanner
         }
     }
     
@@ -133,8 +135,16 @@ public class AddBeer extends BaseActivity {
 	            // Handle successful scan
 	            Log.d("barcode returned", "contents = " + contents + ", format = " + format);
 	            
-	            // TODO - look it up
-	            beerSearch.setCurrentSearchText(contents);
+	            // Look it up
+	            UpcHelper uh = new UpcHelper(this);
+	            String productName = uh.getUpcProductName(contents);
+	            
+	            if (productName != null && productName != "") {
+	            	beerSearch.unsetBeer();
+	            	beerSearch.setCurrentSearchText(productName);
+	            } else {
+	            	// TODO - Show a toast that no product name was found
+	            }
 	        }
 	    }
 	}
