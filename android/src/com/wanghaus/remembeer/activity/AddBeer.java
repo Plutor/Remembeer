@@ -136,7 +136,7 @@ public class AddBeer extends BaseActivity {
 	            Log.d("barcode returned", "contents = " + contents + ", format = " + format);
 	            
 	            // Look it up
-	            UpcHelper uh = new UpcHelper(this);
+	            UpcHelper uh = new UpcHelper();
 	            String productName = uh.getUpcProductName(contents);
 	            
 	            if (productName != null && productName != "") {

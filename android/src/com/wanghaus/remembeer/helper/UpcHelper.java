@@ -5,28 +5,14 @@ import java.util.Map;
 
 import org.xmlrpc.android.XMLRPCClient;
 
-import android.content.Context;
-import android.content.SharedPreferences;
-import android.preference.PreferenceManager;
 import android.util.Log;
 
 public class UpcHelper {
 	private static String webserviceRoot = "http://www.upcdatabase.com/xmlrpc";
 	private static String rpc_key = "f99ddc07a3ecea5b84d8c9bcc71028e19cc1e003";
-	private Context context;
 	
-	public UpcHelper(Context context) {
-		this.context = context;
-	}
-
 	@SuppressWarnings("unchecked")
 	public String getUpcProductName(String upc) {
-		// TODO - different pref
-		// Don't do anything if web service is off
-        SharedPreferences settings = PreferenceManager.getDefaultSharedPreferences(context);
-        if (!settings.getBoolean("useWebService", false))
-        	return null;
-
         XMLRPCClient client = new XMLRPCClient(webserviceRoot);
 
     	try {
