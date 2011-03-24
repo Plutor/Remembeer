@@ -98,7 +98,10 @@ public class BeerSearchView extends LinearLayout {
         beerPreview.setVisibility(GONE);
 
         beernameView.setVisibility(VISIBLE);
-		beernameView.setText(beer.getName());
+        if (beer != null)
+        	beernameView.setText(beer.getName());
+        else
+        	beernameView.setText("");
 		beernameView.selectAll();
 	}
 	

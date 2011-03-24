@@ -25,6 +25,7 @@ import android.widget.DatePicker;
 import android.widget.Spinner;
 import android.widget.TextView;
 import android.widget.TimePicker;
+import android.widget.Toast;
 import android.widget.AdapterView.OnItemSelectedListener;
 
 import com.wanghaus.remembeer.R;
@@ -136,14 +137,17 @@ public class AddBeer extends BaseActivity {
 	            Log.d("barcode returned", "contents = " + contents + ", format = " + format);
 	            
 	            // Look it up
-	            UpcHelper uh = new UpcHelper();
+	            UpcHelper uh = new UpcHelper(this);
 	            String productName = uh.getUpcProductName(contents);
 	            
 	            if (productName != null && productName != "") {
 	            	beerSearch.unsetBeer();
 	            	beerSearch.setCurrentSearchText(productName);
 	            } else {
-	            	// TODO - Show a toast that no product name was found
+	            	// Show a toast that no product name was found
+	            	int duration = Toast.LENGTH_SHORT;
+	            	Toast toast = Toast.makeText(this, getText(R.string.barcode_unrecognized), duration);
+	            	toast.show();
 	            }
 	        }
 	    }
