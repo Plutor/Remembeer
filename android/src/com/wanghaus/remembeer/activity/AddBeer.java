@@ -3,6 +3,7 @@ package com.wanghaus.remembeer.activity;
 import java.text.DateFormat;
 import java.util.Calendar;
 import java.util.Date;
+import java.util.List;
 
 import android.app.Activity;
 import android.app.DatePickerDialog;
@@ -12,6 +13,8 @@ import android.content.DialogInterface;
 import android.content.Intent;
 import android.content.SharedPreferences;
 import android.content.DialogInterface.OnClickListener;
+import android.content.pm.PackageManager;
+import android.content.pm.ResolveInfo;
 import android.os.Bundle;
 import android.preference.PreferenceManager;
 import android.util.Log;
@@ -23,6 +26,7 @@ import android.widget.DatePicker;
 import android.widget.Spinner;
 import android.widget.TextView;
 import android.widget.TimePicker;
+import android.widget.Toast;
 import android.widget.AdapterView.OnItemSelectedListener;
 
 import com.wanghaus.remembeer.R;
@@ -30,6 +34,7 @@ import com.wanghaus.remembeer.app.DatePickerCancellableDialog;
 import com.wanghaus.remembeer.app.TimePickerCancellableDialog;
 import com.wanghaus.remembeer.helper.BeerDbHelper;
 import com.wanghaus.remembeer.helper.TwitterHelper;
+import com.wanghaus.remembeer.helper.UpcHelper;
 import com.wanghaus.remembeer.helper.WebServiceHelper;
 import com.wanghaus.remembeer.model.Beer;
 import com.wanghaus.remembeer.model.Drink;
@@ -58,6 +63,7 @@ public class AddBeer extends Activity {
         
         initSaveButton();
         initBeerSearch();
+        initScanButton();
         initContainerSpinner();
         initDrinkWhenSpinner();
 
@@ -76,7 +82,7 @@ public class AddBeer extends Activity {
         }
     }
     
-    private void initSaveButton() {
+	private void initSaveButton() {
         // Save button
         saveButton = (Button) findViewById(R.id.save);
         saveButton.setOnClickListener(new View.OnClickListener() {
@@ -94,7 +100,60 @@ public class AddBeer extends Activity {
         if (intentBeer != null)
         	beerSearch.setBeer(intentBeer);
     }
-	
+
+	// TODO - Move this to BeerSearchView - how do we allow startActivityForResult?
+    private void initScanButton() {
+    	View scanButton = findViewById(R.id.scan_button);
+    	if (scanButton == null) return;
+
+        final Intent intent = new Intent("com.google.zxing.client.android.SCAN");
+        intent.setPackage("com.google.zxing.client.android");
+
+        // Find out if anything supports this intent
+        final PackageManager packageManager = getPackageManager();
+        List<ResolveInfo> list =
+            packageManager.queryIntentActivities(intent,
+                    PackageManager.MATCH_DEFAULT_ONLY);
+        
+        // If so, the button launches the intent
+        if (list != null && list.size() > 0) {
+	    	scanButton.setOnClickListener( new View.OnClickListener() {
+	    	    public void onClick(View v) {
+	    	        startActivityForResult(intent, 0);
+	    	    }
+	    	} );
+        } else {
+        	// TODO - If not, the button shows a dialog that 
+        	// suggests downloading Barcode Scanner
+        }
+    }
+    
+	public void onActivityResult(int requestCode, int resultCode, Intent intent) {
+	    if (requestCode == 0) {
+	        if (resultCode == RESULT_OK) {
+	            String contents = intent.getStringExtra("SCAN_RESULT");
+	            String format = intent.getStringExtra("SCAN_RESULT_FORMAT");
+
+	            // Handle successful scan
+	            Log.d("barcode returned", "contents = " + contents + ", format = " + format);
+	            
+	            // Look it up
+	            UpcHelper uh = new UpcHelper(this);
+	            String productName = uh.getUpcProductName(contents);
+	            
+	            if (productName != null && productName != "") {
+	            	beerSearch.unsetBeer();
+	            	beerSearch.setCurrentSearchText(productName);
+	            } else {
+	            	// Show a toast that no product name was found
+	            	int duration = Toast.LENGTH_SHORT;
+	            	Toast toast = Toast.makeText(this, getText(R.string.barcode_unrecognized), duration);
+	            	toast.show();
+	            }
+	        }
+	    }
+	}
+
     private void initContainerSpinner() {
         // Containers dropdown
         Spinner containerSpinner = (Spinner) findViewById(R.id.container);

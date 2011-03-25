@@ -21,6 +21,11 @@
 	<string name="addbeer_fromhistory">Add a beer</string>
 	<string name="charts_fromstats">View charts</string>
 	
+	<string name="barcode_scan">Scan a barcode</string>
+	<string name="barcode_unrecognized">Sorry, Remembeer can\'t identify that barcode.</string>
+	<string name="barcode_inprogress_title">UPC Database</string>
+	<string name="barcode_inprogress_message">Looking up barcode</string>
+	
 	<string name="loadingBeerInfo">Looking up beer info..</string>
 	<string name="noneBeerInfo">Enter a beer name</string>
 	<string name="unknownBeerInfo">Unknown</string>

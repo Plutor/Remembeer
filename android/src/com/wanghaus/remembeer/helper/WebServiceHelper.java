@@ -18,7 +18,7 @@ import android.content.Context;
 import android.content.SharedPreferences;
 import android.content.pm.PackageManager.NameNotFoundException;
 import android.preference.PreferenceManager;
-import android.provider.Settings;
+import android.provider.Settings.Secure;
 import android.util.Log;
 
 import com.wanghaus.remembeer.R;
@@ -28,12 +28,14 @@ import com.wanghaus.remembeer.model.Drink;
 public class WebServiceHelper {
 	public static String webserviceRoot = "http://api.remembeer.info/";
 	private BeerDbHelper dbs;
+	private Context context;
 	
 	public WebServiceHelper(Context context) {
 		this(new BeerDbHelper(context));
 	}
 	public WebServiceHelper(BeerDbHelper dbs) {
     	this.dbs = dbs;
+    	this.context = dbs.context;
 	}
 
 	public List<Beer> findBeersBySubstring(String beername) {
@@ -180,8 +182,13 @@ public class WebServiceHelper {
 	}
 	
 	private String getUniqueUserId() {
-		Log.d("getUniqueUserId", "user = " + Settings.Secure.ANDROID_ID);
-		return Settings.Secure.ANDROID_ID;
+		String user_id = Secure.getString(context.getContentResolver(), Secure.ANDROID_ID);
+		
+		if (user_id == null) // Emulators return null
+			user_id = "emulator";
+		
+		Log.d("getUniqueUserId", "user = " + user_id);
+		return user_id;
 	}
 	
 	private String getClientVersion() {
