@@ -108,7 +108,17 @@ public class History extends Activity {
         }
     }
     
-    private void initBeerList() {
+    @Override
+	protected void onResume() {
+    	// This is run when another Activity comes in front and then goes away    	
+    	super.onResume();
+
+    	// Update the history, in case that other activity was add or edit
+		SimpleCursorAdapter listAdapter = (SimpleCursorAdapter) historyList.getAdapter();
+		listAdapter.getCursor().requery();
+	}
+
+	private void initBeerList() {
     	if (historyList == null)
     		historyList = (ListView)findViewById(R.id.history_list);
         
