@@ -8,7 +8,9 @@ import java.util.List;
 import android.app.Activity;
 import android.app.DatePickerDialog;
 import android.app.Dialog;
+import android.app.ProgressDialog;
 import android.app.TimePickerDialog;
+import android.content.Context;
 import android.content.DialogInterface;
 import android.content.Intent;
 import android.content.SharedPreferences;
@@ -16,6 +18,8 @@ import android.content.DialogInterface.OnClickListener;
 import android.content.pm.PackageManager;
 import android.content.pm.ResolveInfo;
 import android.os.Bundle;
+import android.os.Handler;
+import android.os.Message;
 import android.preference.PreferenceManager;
 import android.util.Log;
 import android.view.View;
@@ -51,6 +55,8 @@ public class AddBeer extends Activity {
 	private BeerDbHelper dbs;	
 	private WebServiceHelper wsh;
 	private Button saveButton = null;
+    private ProgressDialog upcLookupProgress;
+	private Handler upcResultHandler;
 	
     /** Called when the activity is first created. */
     @Override
@@ -117,6 +123,27 @@ public class AddBeer extends Activity {
         
         // If so, the button launches the intent
         if (list != null && list.size() > 0) {
+        	// Setup handler and dialog
+        	final Context context = this;
+            upcLookupProgress = new ProgressDialog(this);
+        	upcResultHandler = new Handler() {
+                public void handleMessage(Message msg) {
+                	String productName = (String)msg.obj;
+                	
+                	if (productName != null && productName != "") {
+                    	beerSearch.unsetBeer();
+                    	beerSearch.setCurrentSearchText(productName);
+                    } else {
+                    	// Show a toast that no product name was found
+                    	int duration = Toast.LENGTH_SHORT;
+                    	Toast toast = Toast.makeText(context, getText(R.string.barcode_unrecognized), duration);
+                    	toast.show();
+                    }
+                	
+                	upcLookupProgress.dismiss();
+                }
+        	};
+
 	    	scanButton.setOnClickListener( new View.OnClickListener() {
 	    	    public void onClick(View v) {
 	    	        startActivityForResult(intent, 0);
@@ -137,19 +164,15 @@ public class AddBeer extends Activity {
 	            // Handle successful scan
 	            Log.d("barcode returned", "contents = " + contents + ", format = " + format);
 	            
-	            // Look it up
-	            UpcHelper uh = new UpcHelper(this);
-	            String productName = uh.getUpcProductName(contents);
-	            
-	            if (productName != null && productName != "") {
-	            	beerSearch.unsetBeer();
-	            	beerSearch.setCurrentSearchText(productName);
-	            } else {
-	            	// Show a toast that no product name was found
-	            	int duration = Toast.LENGTH_SHORT;
-	            	Toast toast = Toast.makeText(this, getText(R.string.barcode_unrecognized), duration);
-	            	toast.show();
-	            }
+	            // Start a throbber
+	    		upcLookupProgress.setTitle(getText(R.string.barcode_inprogress_title));
+	    		upcLookupProgress.setMessage(getText(R.string.barcode_inprogress_message));
+	    		upcLookupProgress.setIndeterminate(true);
+	    		upcLookupProgress.show();
+	    		
+	            // Start looking it up
+	            UpcHelper uh = new UpcHelper();
+	            uh.getUpcProductName(contents, upcResultHandler);
 	        }
 	    }
 	}
