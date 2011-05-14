@@ -5,42 +5,49 @@ import java.util.Map;
 
 import org.xmlrpc.android.XMLRPCClient;
 
-import android.os.Handler;
-import android.os.Message;
+import android.app.Activity;
+import android.app.ProgressDialog;
 import android.util.Log;
+
+import com.wanghaus.remembeer.R;
 
 public class UpcHelper {
 	private static String webserviceRoot = "http://www.upcdatabase.com/xmlrpc";
 	private static String rpc_key = "f99ddc07a3ecea5b84d8c9bcc71028e19cc1e003";
+	private Activity activity;
+	private ProgressDialog progress;
+
+	public UpcHelper(Activity activity) {
+		this.activity = activity;
+	}
 	
 	@SuppressWarnings("unchecked")
-	public void getUpcProductName(final String upc, final Handler resultHandler) {
-		Thread t = new Thread() {
-			@Override
-			public void run() {
-		        XMLRPCClient client = new XMLRPCClient(webserviceRoot);
+	public String getUpcProductName(final String upc) {
+        // Show a throbber
+		progress = new ProgressDialog(activity);
+		progress.setTitle(activity.getText(R.string.barcode_inprogress_title));
+		progress.setMessage(activity.getText(R.string.barcode_inprogress_message));
+		progress.setIndeterminate(true);
+		progress.show();
 
-		    	try {
-		    		Map<String, String> params = new HashMap<String, String>();
-		    		params.put("rpc_key", rpc_key);
-		    		params.put("upc", upc);
-		    		HashMap result = (HashMap) client.call("lookup", params);
+		// TODO - what's the best way to do this in another thread?
+		// We probably will have to make it so the result doesn't come straight from this method
+        XMLRPCClient client = new XMLRPCClient(webserviceRoot);
 
-		    		String resultDesc = "";
-		    		if (result != null && result.get("description") != null)
-		    			resultDesc = result.get("description").toString();
-		    		Log.d("getUpcProductName", "Got " + resultDesc);
+    	try {
+    		Map<String, String> params = new HashMap<String, String>();
+    		params.put("rpc_key", rpc_key);
+    		params.put("upc", upc);
+    		HashMap result = (HashMap) client.call("lookup", params);
 
-		    		// Tell the UI thread about the result
-		    		Message msg = resultHandler.obtainMessage();
-		    		msg.obj = resultDesc;
-		    		resultHandler.sendMessage(msg);
-		    	} catch (Exception e) {
-		    		e.printStackTrace();
-		    	}
-			}
-		};
-		
-		t.start();
+    		String resultDesc = result.get("description").toString();
+    		Log.d("getUpcProductName", "Got " + resultDesc);
+
+    		return resultDesc;
+    	} catch (Exception e) {
+    		e.printStackTrace();
+    	}
+    	
+    	return "";
 	}
 }
