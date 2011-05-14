@@ -135,19 +135,6 @@ public class AddBeer extends Activity {
             packageManager.queryIntentActivities(intent,
                     PackageManager.MATCH_DEFAULT_ONLY);
 
-    	scanButton.setOnClickListener( new View.OnClickListener() {
-    	    public void onClick(View v) {
-    	        if (list != null && list.size() > 0) {
-        	        // If so, the button launches the intent
-        	        startActivityForResult(intent, 0);
-    	        } else {
-    	        	// Go To Market
-    	        	showDialog(INSTALL_SCANNER_ID);
-    	        }
-
-    	    }
-    	} );
-
         // If so, the button launches the intent
         if (list != null && list.size() > 0) {
         	// Setup handler and dialog
@@ -170,16 +157,19 @@ public class AddBeer extends Activity {
                 	upcLookupProgress.dismiss();
                 }
         	};
-
-	    	scanButton.setOnClickListener( new View.OnClickListener() {
-	    	    public void onClick(View v) {
-	    	    	doScan();
-	    	    }
-	    	} );
-        } else {
-        	// TODO - If not, the button shows a dialog that 
-        	// suggests downloading Barcode Scanner
         }
+        
+    	scanButton.setOnClickListener( new View.OnClickListener() {
+    	    public void onClick(View v) {
+    	        if (list != null && list.size() > 0) {
+        	        // If so, the button launches the intent
+        	        doScan();
+    	        } else {
+    	        	// Go To Market
+    	        	showDialog(INSTALL_SCANNER_ID);
+    	        }
+    	    }
+    	} );
     }
 
     private void doScan() {
