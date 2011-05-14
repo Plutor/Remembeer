@@ -29,12 +29,10 @@ import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
 import android.view.ContextMenu.ContextMenuInfo;
-import android.view.MenuItem.OnMenuItemClickListener;
 import android.widget.AdapterView;
 import android.widget.ArrayAdapter;
 import android.widget.Button;
 import android.widget.DatePicker;
-import android.widget.SimpleCursorAdapter;
 import android.widget.Spinner;
 import android.widget.TextView;
 import android.widget.TimePicker;
@@ -446,6 +444,26 @@ public class AddBeer extends Activity {
 		position--;
 
 	}
+	@Override
+	public boolean onOptionsItemSelected(MenuItem item) {
+		Intent nextIntent;
+		
+	    switch (item.getItemId()) {
+	    case R.id.optionsmenu_history:
+	    	setResult(RESULT_CANCELED);
+	    	finish();
+	    	
+	    	// We never get here, but hey the IDE likes to have it
+	        return true;
+	    case R.id.optionsmenu_settings:
+	    	nextIntent = new Intent(this, Config.class);
+	    	startActivity(nextIntent);
+
+	        return true;
+	    }
+
+		return super.onOptionsItemSelected(item);
+	}
 
 	/* Creates the menu items */
     @Override
@@ -453,7 +471,7 @@ public class AddBeer extends Activity {
 		if (!super.onCreateOptionsMenu(menu))
 			return false;
 		
-		getMenuInflater().inflate(R.layout.optionsmenu, menu);
+		getMenuInflater().inflate(R.layout.addbeer_menu, menu);
 		return true;  
 	}
 
