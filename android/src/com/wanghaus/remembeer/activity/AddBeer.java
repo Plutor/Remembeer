@@ -6,27 +6,37 @@ import java.util.Date;
 import java.util.List;
 
 import android.app.Activity;
+import android.app.AlertDialog;
 import android.app.DatePickerDialog;
 import android.app.Dialog;
 import android.app.TimePickerDialog;
+import android.content.Context;
 import android.content.DialogInterface;
 import android.content.Intent;
 import android.content.SharedPreferences;
 import android.content.DialogInterface.OnClickListener;
 import android.content.pm.PackageManager;
 import android.content.pm.ResolveInfo;
+import android.net.Uri;
 import android.os.Bundle;
 import android.preference.PreferenceManager;
 import android.util.Log;
+import android.view.ContextMenu;
+import android.view.Menu;
+import android.view.MenuItem;
 import android.view.View;
+import android.view.ContextMenu.ContextMenuInfo;
+import android.view.MenuItem.OnMenuItemClickListener;
 import android.widget.AdapterView;
 import android.widget.ArrayAdapter;
 import android.widget.Button;
 import android.widget.DatePicker;
+import android.widget.SimpleCursorAdapter;
 import android.widget.Spinner;
 import android.widget.TextView;
 import android.widget.TimePicker;
 import android.widget.Toast;
+import android.widget.AdapterView.AdapterContextMenuInfo;
 import android.widget.AdapterView.OnItemSelectedListener;
 
 import com.wanghaus.remembeer.R;
@@ -44,6 +54,7 @@ import com.wanghaus.remembeer.widget.BeerSearchView;
 public class AddBeer extends Activity {
 	private static final int DATE_DIALOG_ID = 0;
 	private static final int TIME_DIALOG_ID = 1;
+	private static final int INSTALL_SCANNER_ID = 2;
 
 	private BeerSearchView beerSearch;
 	private Spinner drinkWhenSpinner;
@@ -111,21 +122,23 @@ public class AddBeer extends Activity {
 
         // Find out if anything supports this intent
         final PackageManager packageManager = getPackageManager();
-        List<ResolveInfo> list =
+        final List<ResolveInfo> list =
             packageManager.queryIntentActivities(intent,
                     PackageManager.MATCH_DEFAULT_ONLY);
-        
-        // If so, the button launches the intent
-        if (list != null && list.size() > 0) {
-	    	scanButton.setOnClickListener( new View.OnClickListener() {
-	    	    public void onClick(View v) {
-	    	        startActivityForResult(intent, 0);
-	    	    }
-	    	} );
-        } else {
-        	// TODO - If not, the button shows a dialog that 
-        	// suggests downloading Barcode Scanner
-        }
+
+    	scanButton.setOnClickListener( new View.OnClickListener() {
+    	    public void onClick(View v) {
+    	        if (list != null && list.size() > 0) {
+        	        // If so, the button launches the intent
+        	        startActivityForResult(intent, 0);
+    	        } else {
+    	        	// Go To Market
+    	        	showDialog(INSTALL_SCANNER_ID);
+    	        }
+
+    	    }
+    	} );
+
     }
     
 	public void onActivityResult(int requestCode, int resultCode, Intent intent) {
@@ -354,6 +367,23 @@ public class AddBeer extends Activity {
                 );
 	        	t.setOnCancelListener(dialogCancelListener);
 	        	dialog = (Dialog)t;
+	        	break;
+	        case INSTALL_SCANNER_ID:
+	        	AlertDialog.Builder builder = new AlertDialog.Builder(this);
+	        	builder.setMessage("You don't have a scanner, install one now?")
+	        	       .setCancelable(true)
+	        	       
+	        	       .setPositiveButton("Yes", new DialogInterface.OnClickListener() {
+	        	           public void onClick(DialogInterface dialog, int id) {
+	        	        	   startActivityForResult(new Intent(Intent.ACTION_VIEW, Uri.parse("market://search?q=pname:com.google.zxing.client.android")), id);
+	        	           }
+	        	       })
+	        	       .setNegativeButton("No", new DialogInterface.OnClickListener() {
+	        	           public void onClick(DialogInterface dialog, int id) {
+	        	                dialog.cancel();
+	        	           }
+	        	       });
+	        	dialog = builder.create();
 	        }
         
         if (dialog != null)
@@ -370,4 +400,28 @@ public class AddBeer extends Activity {
 		if (beer != null)
 			outState.putSerializable("beer", beer);
 	}
+	
+	public void onCreateContextMenu(ContextMenu menu, View v, ContextMenuInfo menuInfo) {
+		int position = 0;
+		if (menuInfo instanceof AdapterContextMenuInfo) {
+			AdapterContextMenuInfo acmi = (AdapterContextMenuInfo)menuInfo;
+			position = acmi.position;
+		}
+		
+		if (position <= 0)
+			return;
+		position--;
+
+	}
+
+	/* Creates the menu items */
+    @Override
+	public boolean onCreateOptionsMenu(Menu menu) {
+		if (!super.onCreateOptionsMenu(menu))
+			return false;
+		
+		getMenuInflater().inflate(R.layout.optionsmenu, menu);
+		return true;  
+	}
+
 }
