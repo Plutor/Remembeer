@@ -3,24 +3,36 @@
 <RelativeLayout
 	xmlns:android="http://schemas.android.com/apk/res/android"
 	android:orientation="horizontal"
-	android:layout_width="64dip"
-	android:layout_height="64dip">
+	android:layout_width="fill_parent"
+	android:layout_height="72dp"
+	android:gravity="center_vertical"
+	android:background="@drawable/search_floater">
+	
+	<ImageView
+		android:layout_width="wrap_content"
+		android:layout_height="72dp"
+		android:scaleType="centerInside"
+		android:src="@drawable/addbeer"
+		android:layout_marginLeft="6dp"
+		android:layout_alignParentLeft="true"
+		android:id="@+id/addbeer_icon" />
+		
+	<ImageView
+		android:layout_width="wrap_content"
+		android:layout_height="72dp"
+		android:src="@drawable/barcode"
+		android:scaleType="centerInside"
+		android:layout_marginRight="6dp"
+		android:layout_alignParentRight="true"
+		android:id="@+id/barcode_icon" />
 
-    <ImageView android:id="@+id/icon"
-    	android:src="@drawable/addbeer_appwidget"
-        android:layout_width="64dip"
-        android:layout_height="64dip"
-        android:layout_gravity="center"
-        android:scaleType="fitCenter" />
-        
-	<TextView android:id="@+id/count"
-		android:layout_alignLeft="@id/icon"
-		android:layout_alignTop="@id/icon"
-		android:paddingLeft="34dip"
-		android:paddingTop="25dip"
-		android:layout_width="57dip"
-		android:layout_height="47dip"
-		android:gravity="center"
-		android:textColor="#000"
-		android:textSize="15dip" />
+	<TextView
+		android:layout_width="fill_parent"
+		android:layout_height="wrap_content"
+		android:id="@+id/beersearch"
+		android:layout_toRightOf="@id/addbeer_icon"
+		android:layout_toLeftOf="@id/barcode_icon"
+		android:layout_marginTop="6dp"
+		android:layout_marginBottom="6dp"
+		android:background="@drawable/textfield_search_empty" />
 </RelativeLayout>

@@ -57,6 +57,7 @@ public class AddBeer extends Activity {
 	private Button saveButton = null;
     private ProgressDialog upcLookupProgress;
 	private Handler upcResultHandler;
+	private View scanButton;
 	
     /** Called when the activity is first created. */
     @Override
@@ -86,6 +87,11 @@ public class AddBeer extends Activity {
 			Intent configure = new Intent(this, ConfigureWebService.class);
 			startActivity(configure);
         }
+        
+        if (getIntent().getBooleanExtra("scanBarcode", false) && scanButton != null) {
+        	// Launch barcode scanning
+        	doScan();
+        }
     }
     
 	private void initSaveButton() {
@@ -109,7 +115,7 @@ public class AddBeer extends Activity {
 
 	// TODO - Move this to BeerSearchView - how do we allow startActivityForResult?
     private void initScanButton() {
-    	View scanButton = findViewById(R.id.scan_button);
+    	scanButton = findViewById(R.id.scan_button);
     	if (scanButton == null) return;
 
         final Intent intent = new Intent("com.google.zxing.client.android.SCAN");
@@ -146,7 +152,7 @@ public class AddBeer extends Activity {
 
 	    	scanButton.setOnClickListener( new View.OnClickListener() {
 	    	    public void onClick(View v) {
-	    	        startActivityForResult(intent, 0);
+	    	    	doScan();
 	    	    }
 	    	} );
         } else {
@@ -154,7 +160,12 @@ public class AddBeer extends Activity {
         	// suggests downloading Barcode Scanner
         }
     }
-    
+
+    private void doScan() {
+        final Intent intent = new Intent("com.google.zxing.client.android.SCAN");
+        intent.setPackage("com.google.zxing.client.android");
+    	startActivityForResult(intent, 0);
+    }
 	public void onActivityResult(int requestCode, int resultCode, Intent intent) {
 	    if (requestCode == 0) {
 	        if (resultCode == RESULT_OK) {

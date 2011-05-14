@@ -34,24 +34,19 @@ public class AddBeerAppWidgetProvider extends AppWidgetProvider {
         }
 	}
 
-	private void updateAppWidget(Context context,
-			AppWidgetManager appWidgetManager, int appWidgetId) {
-		
-        // Create an Intent to launch ExampleActivity
-        Intent intent = new Intent(context, AddBeer.class);
-        PendingIntent pendingIntent = PendingIntent.getActivity(context, 0, intent, 0);
+	private void updateAppWidget(Context context, AppWidgetManager appWidgetManager, int appWidgetId) {
+		RemoteViews views = new RemoteViews(context.getPackageName(), R.layout.addbeer_appwidget);
 
-        // Get the layout for the App Widget and attach an on-click listener to the button
-        RemoteViews views = new RemoteViews(context.getPackageName(), R.layout.addbeer_appwidget);
-        views.setOnClickPendingIntent(R.id.icon, pendingIntent);
+        // Create an Intent to launch AddBeer
+        Intent addbeer = new Intent(context, AddBeer.class);
+        PendingIntent pendingAddbeer = PendingIntent.getActivity(context, 0, addbeer, 0);
+        views.setOnClickPendingIntent(R.id.beersearch, pendingAddbeer);
 
-        // Set the count to the number of beers in the last week
-        // TODO - Configurable duration
-        int count = bdb.getDrinkCountLastDays(7);
-        if (count > 10)
-        	views.setCharSequence(R.id.count, "setText", "10+");
-        else
-        	views.setCharSequence(R.id.count, "setText", String.valueOf(count));
+        // Create an Intent to launch AddBeer
+        Intent barcode = new Intent(context, AddBeer.class);
+        barcode.putExtra("scanBarcode", true);
+        PendingIntent pendingBarcode = PendingIntent.getActivity(context, 0, barcode, 0);
+        views.setOnClickPendingIntent(R.id.barcode_icon, pendingBarcode);
         
         // Tell the AppWidgetManager to perform an update on the current App Widget
         appWidgetManager.updateAppWidget(appWidgetId, views);
