@@ -56,6 +56,7 @@ public class AddBeer extends Activity {
 	private static final int DATE_DIALOG_ID = 0;
 	private static final int TIME_DIALOG_ID = 1;
 	private static final int INSTALL_SCANNER_ID = 2;
+	private static String ACTION_SCAN_BARCODE="ActionScanBarcode";
 
 	private BeerSearchView beerSearch;
 	private Spinner drinkWhenSpinner;
@@ -96,7 +97,9 @@ public class AddBeer extends Activity {
 			startActivity(configure);
         }
         
-        if (getIntent().getBooleanExtra("scanBarcode", false) && scanButton != null) {
+    	Log.e("addbeer", "Launched with action = " + getIntent().getAction());
+        if (getIntent().getAction() != null && 
+        		getIntent().getAction().equals(ACTION_SCAN_BARCODE) && scanButton != null) {
         	// Launch barcode scanning
         	doScan();
         }

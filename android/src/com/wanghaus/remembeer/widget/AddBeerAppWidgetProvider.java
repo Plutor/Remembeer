@@ -13,6 +13,7 @@ import com.wanghaus.remembeer.activity.AddBeer;
 import com.wanghaus.remembeer.helper.BeerDbHelper;
 
 public class AddBeerAppWidgetProvider extends AppWidgetProvider {
+	private static String ACTION_SCAN_BARCODE="ActionScanBarcode";
 	private static BeerDbHelper bdb = null;
 	
 	@Override
@@ -42,9 +43,9 @@ public class AddBeerAppWidgetProvider extends AppWidgetProvider {
         PendingIntent pendingAddbeer = PendingIntent.getActivity(context, 0, addbeer, 0);
         views.setOnClickPendingIntent(R.id.beersearch, pendingAddbeer);
 
-        // Create an Intent to launch AddBeer
+        // Create an Intent to launch AddBeer with barcode scanning
         Intent barcode = new Intent(context, AddBeer.class);
-        barcode.putExtra("scanBarcode", true);
+        barcode.setAction(ACTION_SCAN_BARCODE);
         PendingIntent pendingBarcode = PendingIntent.getActivity(context, 0, barcode, 0);
         views.setOnClickPendingIntent(R.id.barcode_icon, pendingBarcode);
         
