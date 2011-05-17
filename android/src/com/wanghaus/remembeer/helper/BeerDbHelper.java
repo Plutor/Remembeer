@@ -66,7 +66,6 @@ public class BeerDbHelper {
 	    	ImportExportHelper ieh = new ImportExportHelper(this);
 	        if (ieh.localCsvModifiedDate() > 0 && getDrinkCount() == 0) {
 	        	ieh.importHistoryFromCsvFile();
-	        	// Should we remove CSV once we import?
 	        }
         }
     }
