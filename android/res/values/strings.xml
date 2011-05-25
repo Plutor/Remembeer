@@ -50,7 +50,7 @@
 	<string name="pref_twitterEnabled">Post to Twitter</string>
 	<string name="pref_twitterEnabled_summary">Automatically post Drink Now beers to Twitter</string>
 	<string name="pref_twitterTemplate">Twitter template</string>
-	<string name="pref_twitterTemplate_default">I just drank a BEERNAME #beer</string>
+	<string name="pref_twitterTemplate_default">I just drank a BEERNAME #beer</string>	
 	
 	<string name="twitter_signin">Setup your Twitter account</string>
 	<string name="twitter_setup_username">Username</string>
@@ -117,7 +117,7 @@
 	
 	<string name="search_label">Search your Beers</string>
 
-	<string name="pref_useWebService">Use the Remembeer library</string>
+	<string name="pref_useWebService">Use the beer cloud</string>
 	<string name="pref_useWebService_summary">Contribute to and get information from the beer library</string>
 	<string name="webService_warning_title">Remembeer Library</string>
 	<string name="webService_warning_text">By using the Remembeer library, you will get information about beers you drink from our centralized database, and will also send information you collect to share with our other users.</string>
