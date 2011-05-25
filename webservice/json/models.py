@@ -64,3 +64,18 @@ class Drink(models.Model):
                                       'abv': self.abv,
                                       'style': self.style} )
 
+class CanonicalBeer(models.Model):
+    beername = models.CharField(max_length=255, primary_key=True)
+    brewery = models.CharField(max_length=255, blank=True, null=True)
+    location = models.CharField(max_length=255, blank=True, null=True)
+    abv = models.FloatField(blank=True, null=True)
+    num_drunk = models.IntegerField(blank=True, null=True)
+    style = models.CharField(max_length=255, blank=True, null=True)
+    updated = models.DateTimeField(auto_now=True)
+
+    def json(self, detailed=False):
+        return simplejson.dumps( {'beername': self.beername,
+                                  'brewery': self.brewery,
+                                  'location': self.location,
+                                  'abv': self.abv,
+                                  'style': self.style} )
