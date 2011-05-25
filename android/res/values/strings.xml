@@ -133,4 +133,6 @@
 	
 	<string name="webService_publish_dialog_title">Publishing</string>
 	<string name="webService_publish_dialog_message">Publishing all beers to library</string>	
+
+	<string name="widget_hint">Search for a beer</string>
 </resources>

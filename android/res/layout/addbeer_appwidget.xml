@@ -34,5 +34,8 @@
 		android:layout_toLeftOf="@id/barcode_icon"
 		android:layout_marginTop="6dp"
 		android:layout_marginBottom="6dp"
-		android:background="@drawable/textfield_search_empty" />
+		android:background="@drawable/textfield_search_empty"
+		android:text="@string/widget_hint"
+		android:color="#cccccc"
+		android:gravity="center_vertical" />
 </RelativeLayout>
