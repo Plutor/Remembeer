@@ -9,15 +9,19 @@ import android.database.Cursor;
 
 public class Beer extends Model {	
 	private static final long serialVersionUID = -2080563347089735252L;
+	private boolean fromLibrary;
 	
 	public Beer() {
 		super();
+		fromLibrary = false;
 	}
 	public Beer(Cursor c) {
 		super(c);
+		fromLibrary = false;
 	}
 	public Beer(JSONObject j) {
 		super(j);
+		fromLibrary = false;
 	}
 
 	public Map<String, String> getExportMap() { // export column name => db column name
@@ -63,6 +67,13 @@ public class Beer extends Model {
 
 	public String getNotes()			{ return get("notes"); }
 	public void setNotes(String val)	{ put("notes", val); }
+	
+	public boolean isFromLibrary() {
+		return fromLibrary;
+	}
+	public void setFromLibrary(boolean fromLibrary) {
+		this.fromLibrary = fromLibrary;
+	}
 	
 	//
 	//** READ ONLY PROPERTIES

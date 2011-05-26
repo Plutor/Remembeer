@@ -8,6 +8,20 @@
         <item name="android:textSize">35sp</item>
     </style>
     
+    <style name="BeerSearchBeername" parent="android:attr/dropDownItemStyle">
+        <item name="android:textSize">18dip</item>
+    	<item name="android:textStyle">bold</item>
+    	<item name="android:textColor">#000</item>
+    </style>
+    <style name="BeerSearchLibraryBeername" parent="@style/BeerSearchBeername">
+    	<item name="android:textColor">#339</item>
+    	<item name="android:textStyle">bold|italic</item>
+    </style>
+    <style name="BeerSearchBeerDetail" parent="android:attr/dropDownItemStyle">
+        <item name="android:textSize">11dip</item>
+    	<item name="android:textColor">#666</item>
+    </style>     
+     
 	<!--
 		This weird style is to fix a 1.6 bug
            <http://groups.google.com/group/android-developers/browse_thread/thread/d3c076e7a0165e64/f553df5324bf5da4>

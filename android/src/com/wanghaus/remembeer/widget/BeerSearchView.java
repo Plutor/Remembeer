@@ -191,7 +191,8 @@ public class BeerSearchView extends LinearLayout {
 	            	icon.setImageDrawable( getResources().getDrawable(R.drawable.library_loading) );
 	            	icon.startAnimation( 
 	            		    AnimationUtils.loadAnimation(context, R.anim.rotate_indefinitely) );
-	            } else if (thisBeer.getStyle() == null && thisBeer.getId() == 0) {
+	            } else if (thisBeer.getStyle() == null && thisBeer.getId() == 0 &&
+	            			!thisBeer.isFromLibrary()) {
 	            	icon.setImageDrawable(getResources().getDrawable(R.drawable.new_beer));
 	            	icon.clearAnimation();
 	            } else {
@@ -202,6 +203,14 @@ public class BeerSearchView extends LinearLayout {
 	            	else
 	            		icon.setImageDrawable(getResources().getDrawable(R.drawable.pint_medium));
 	            	icon.clearAnimation();
+	            }
+	            
+            	// Make the text the right style, based on source
+            	text1.setTextAppearance(getContext(), R.style.BeerSearchLibraryBeername);
+	            if (thisBeer.isFromLibrary()) {
+	            	text1.setTextAppearance(getContext(), R.style.BeerSearchLibraryBeername);
+	            } else {
+	            	text1.setTextAppearance(getContext(), R.style.BeerSearchBeername);
 	            }
             }
             
@@ -279,6 +288,7 @@ public class BeerSearchView extends LinearLayout {
 		public void addAll(Collection<Beer> list) {
 			for (Beer libraryBeer : list) {
 				if (beerList.size() >= MAX_RESULTS) break;
+				libraryBeer.setFromLibrary(true);
 				
 				// Don't add library results that are already on the list
 				boolean alreadyInList = false;
