@@ -5,9 +5,26 @@ from django.core import serializers
 from django.utils import simplejson
 from django.db import IntegrityError
 from django.db.models import Q, Count
+from django.shortcuts import render_to_response
+from datetime import datetime, timedelta
 
-def show_index(q):
-    return HttpResponse( "This is the API index" )
+def show_index():
+    today = datetime.today()
+    dayago = today - timedelta(1)
+    pastdaycount = Drink.objects.filter(stamp__range=(dayago, today)).aggregate(Count('stamp'))
+    
+    totalcount = Drink.objects.aggregate(Count('stamp'))
+
+    beercount = CanonicalBeer.objects.aggregate(Count('beername'))
+
+    recent_beers = Drink.objects.all().order_by('-stamp')[:10]
+
+    return render_to_response('index.html', {
+        'recent_beers': recent_beers,
+        'pastdaycount': pastdaycount['stamp__count'],
+        'totalcount': totalcount['stamp__count'],
+        'beercount': beercount['beername__count'],
+    })
 
 def search(q):
     beers = []

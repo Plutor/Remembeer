@@ -1,0 +1,47 @@
+<html>
+<head>
+    <title>Remembeer Library</title>
+    <script type="text/javascript" src="http://remembeer.info/webservice/jquery-1.4.2.min.js"></script>
+
+    <script type="text/javascript">
+        $(document).ready( function() {
+        } );
+    </script>
+
+    <style type="text/css">
+        .value {
+            font-weight: bold;
+            background: #ff0;
+            padding: 0 0.3em;
+        }
+        li {
+            padding: 0.2em 0;
+        }
+    </style>
+</head>
+<body>
+    <h1>Remembeer Library</h1>
+
+    <h2>Beers in Library:
+        <span class="value">{{ beercount }}</span></h2>
+
+    <h2>Drinks submitted:
+        <span class="value">{{ totalcount }}</span></h2>
+
+    <h2>Drinks submitted in past 24 hours:
+        <span class="value">{{ pastdaycount }}</span></h2>
+
+    <h2>Last 10 beers submitted:</h2>
+    <ul>
+        {% for beer in recent_beers %}
+            <li>
+                <span class="value">{{ beer.beername }}</span>
+                ({{ beer.stamp|timesince }} ago)
+            </li>
+        {% endfor %}
+    </ul>
+
+</body>
+</head>
+</html>
+
