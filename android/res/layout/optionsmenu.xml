@@ -3,24 +3,19 @@
 	xmlns:android="http://schemas.android.com/apk/res/android">
 
 	<item
-		android:id="@+id/optionsmenu_addbeer"
-		android:title="@string/optionsmenu_addbeer"
-		android:icon="@android:drawable/ic_menu_add" />
-
-	<item
 		android:id="@+id/optionsmenu_history_sort"
 		android:title="@string/optionsmenu_history_sort_alpha"
 		android:icon="@android:drawable/ic_menu_sort_by_size" />
 
 	<item
-		android:id="@+id/optionsmenu_export"
-		android:title="@string/optionsmenu_export"
-		android:icon="@android:drawable/ic_menu_share" />
-
-	<item
 		android:id="@+id/optionsmenu_statistics"
 		android:title="@string/optionsmenu_statistics"
 		android:icon="@android:drawable/ic_menu_info_details" />
+
+	<item
+		android:id="@+id/optionsmenu_export"
+		android:title="@string/optionsmenu_export"
+		android:icon="@android:drawable/ic_menu_share" />
 
 	<item
 		android:id="@+id/optionsmenu_settings"

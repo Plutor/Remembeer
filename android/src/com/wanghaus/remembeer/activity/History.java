@@ -256,11 +256,6 @@ public class History extends Activity {
 	    	initBeerList();
 	    	
 	    	return true;
-	    case R.id.optionsmenu_addbeer:
-	    	nextIntent = new Intent(this, AddBeer.class);
-	    	startActivity(nextIntent);
-
-	        return true;
 	    case R.id.optionsmenu_export:
 	    	nextIntent = new Intent(this, ImportExport.class);
 		    startActivity(nextIntent);
