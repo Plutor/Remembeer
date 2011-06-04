@@ -61,6 +61,7 @@
 		android:layout_height="wrap_content"
 		android:text="@string/barcode_scan"
 		android:layout_gravity="right"
+		android:textSize="14dip"
 		android:layout_marginRight="10dip" />
 
 </LinearLayout>
